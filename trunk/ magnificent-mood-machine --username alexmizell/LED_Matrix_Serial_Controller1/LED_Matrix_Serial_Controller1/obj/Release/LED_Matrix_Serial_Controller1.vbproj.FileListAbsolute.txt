@@ -1,0 +1,21 @@
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.exe
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.pdb
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.xml
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\ResolveAssemblyReference.cache
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.Form1.resources
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.Resources.resources
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.vbproj.GenerateResource.Cache
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.exe
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.xml
+C:\Users\alex\AppData\Local\Temporary Projects\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.pdb
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.exe.config
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.exe
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.pdb
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\bin\Release\LED_Matrix_Serial_Controller1.xml
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\ResolveAssemblyReference.cache
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.Form1.resources
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.Resources.resources
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.vbproj.GenerateResource.Cache
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.exe
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.xml
+C:\Users\alex\Documents\Visual Studio 2008\Projects\LED_Matrix_Serial_Controller1\LED_Matrix_Serial_Controller1\obj\Release\LED_Matrix_Serial_Controller1.pdb
