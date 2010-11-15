@@ -1,6 +1,10 @@
 //  Magnificent Mood Machine / LED Matrix Driver Firmware 1.0
 //  By Alex Mizell based on the work of Alex Leone
 //  March - July 2010
+// 
+//  Changelog:
+//
+//  11/12/2010 - Begin cleanup and refactoring for official version 1.0 release
 
 // Include ALeone's brilliant driver
 #include "Tlc5940.h"
@@ -10,42 +14,43 @@ boolean debugMode = false;
 int slowDown = 50;
 
 // mapping arrays!
-int tlcMap[16] = {14, 9, 8, 3, 2, 13, 10, 7, 4, 1, 12, 11, 6, 5, 0}; // create the tlcMap array, initialize with 16 TLCs chained left to right
+int tlcMap[16] = {14, 9, 8, 3, 2, 13, 10, 7, 4, 1, 12, 11, 6, 5, 0, 0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
 int colorMap[3] = {2, 1, 0}; // this can map any of the three color channels to any other, in this case: blue to red, green to green, red to blue.  can adjust for different wiring schemes.
 
 // Pins for matrix expansion
 int logicEnable = 2;
 
 //  don't really need these with direct port manipulation code except to init pinmodes
-//  for Atmega644P pinout scheme
+//  these pin numbers used for Atmega644P pinout scheme, these are different for Arduino
 int rowSelectA = 31;
 int rowSelectB = 30;
 int rowSelectC = 29;
 
-int numTLCRows = 3;  // this is the default, usually set from the console software
-int numTLCCols = 5;  // this is the default, usually set from the console software
-int numTLCs = numTLCRows * numTLCCols;
+// these environment variables set up the matrix geometry
+int numTLCRows = 3;   // number of rows of TLC panels
+int numTLCCols = 5;   // number of columns of TLC panels
+int numTLCs = numTLCRows * numTLCCols;  // total number of TLCs chained together
 
-int numRows = 5;
-int numChannels = 15;  // channel 16 can be used, but not for our purposes
-int channelsPerLED = 3;
-int numColumns = numChannels / channelsPerLED;
-int numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-int ledsPerPanel = numLEDs / numTLCs;
-int matrixColumns = numTLCCols * numColumns;
-
+unsigned int numRows = 5;  // number of rows driven by a single TLC
+unsigned int numChannels = 15;  // channel 16 can be used, but not for our purposes
+unsigned int channelsPerLED = 3;  //  1 for monochromatic LEDs, 3 for RGBs
+unsigned int numColumns = numChannels / channelsPerLED; // 15 channels in use by one TLC divided by 3 colors per RGB LED = 5 columns per TLC
+unsigned int numLEDs = numTLCRows * numRows * numColumns * numTLCCols; // total number of LEDs across all panels
+unsigned int ledsPerPanel = numLEDs / numTLCs; // number of LEDs on a single panel
+unsigned int matrixColumns = numTLCCols * numColumns; // number of columns across entire matrix
 
 // variables for flipping the display
 boolean flipHorizontal = false;
 boolean flipVertical = false;
 boolean flipTLCMapHorizontal = false;
 boolean flipTLCMapVertical = false;
-int transformedRow = 0;
-int transformedCol = 0;
-int transformedTLCRow = 0;
-int transformedTLCCol = 0;
+unsigned int transformedRow = 0;
+unsigned int transformedCol = 0;
+unsigned int transformedTLCRow = 0;
+unsigned int transformedTLCCol = 0;
 
-
+// variables used when figuring pixelArray offsets
+// see if some of these can be ditched or made local
 unsigned int currentTLC = 0;
 unsigned int currentArrayTLC = 0;
 unsigned int tlcOffset = 0;
@@ -64,9 +69,6 @@ unsigned int whichTLC = 0;
 
 byte pixelArray[1200]; // maximum size supported for now:  16 TLCs * 5 rows * 5 columns * 3 colors = 1200 bytes for 400 RGBs
 
-
-
-
 byte red = 0;
 byte green = 0;
 byte blue = 0;
@@ -75,10 +77,10 @@ unsigned int pixel = 0;
 unsigned long onDelay = 106;
 unsigned long offDelay = 53; 
 
-byte incomingByte;
-byte incomingByte2;	// for incoming serial data
-byte commandInProgress = 'n';  // no command in progress
-byte inputBuffer[9]={0, 0, 0, 0, 0, 0, 0 ,0 ,0};  // largest parameter data size = 9 bytes
+byte incomingByte; //  for incoming serial data
+byte incomingByte2;	// for incoming serial data when the first byte is used?  do i need this?
+byte commandInProgress = 'n';  // no command in progress to begin with
+byte inputBuffer[16]={0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0};  // largest parameter data size = 16 bytes
 unsigned int byteNum = 0;  //  for counting incoming bytes
 
 void setup()
@@ -91,12 +93,11 @@ pinMode(rowSelectC, OUTPUT);
 pinMode(logicEnable, OUTPUT);
 
 // for now, just light up the first row
-
-digitalWrite(logicEnable, LOW);
-
 digitalWrite(rowSelectA, LOW);
 digitalWrite(rowSelectB, LOW);
 digitalWrite(rowSelectC, LOW);
+
+digitalWrite(logicEnable, LOW);  //  setting the logicEnable pin LOW turns on the selected row
 
 Tlc.init();
 
@@ -109,199 +110,164 @@ Serial.println("Ready.");
 
 void matrixUpdate(){
 
-  // row loop -- top level --
+	// row loop -- top level --
   
-  //for (int row = (numRows - 1) * flipVertical; (row < numRows) && (row > -1); row = row + (1 + (flipVertical * -2))) {
-  for (int row = numRows - 1; row >= 0; row--) {  // iterate backwards through rows, this makes for left-to-right strobing
+	for (int row = numRows - 1; row >= 0; row--) {  // iterate backwards through rows, this makes for left-to-right strobing
+	
+		if (flipHorizontal == false){
+			transformedRow = numRows - 1 - row; // reverse the row numbers
+		}
+		else{
+			transformedRow = row; // do not reverse row numbers
+		}
   
-    if (flipHorizontal == false){
-      transformedRow = numRows - 1 - row; // reverse the row numbers
-    }
-    else{
-      transformedRow = row; // do not reverse row numbers
-    }
+		if(debugMode){
+			Serial.print("Start row loop: ");
+			Serial.println(row);
+			delay(slowDown);
+		}
   
-    // TLC row loop  -- we have to load data for every TLC before advancing the row - they all drive one unique row
+		// TLC row loop  -- we have to load data for every TLC before advancing the row - they all drive one unique row
     
-    //Serial.println("Start row loop");
-    //delay(slowDown);
+		for (int tlcRow = 0; tlcRow < numTLCRows; tlcRow++) {  // iterate forward through tlcRows
     
-    for (int tlcRow = 0; tlcRow < numTLCRows; tlcRow++) {  // iterate forward through tlcRows
-    
-      if (flipTLCMapVertical == true){
-        transformedTLCRow = numTLCRows - 1 - tlcRow; // reverse the tlcRow numbers
-      }
-      else{
-        transformedTLCRow = tlcRow; // do not reverse tlcRow numbers
-      }
-    
-    //for (int tlcCol = 0; tlcCol < numTLCCols; tlcCol++) { 
+			if (flipTLCMapVertical == true){
+				transformedTLCRow = numTLCRows - 1 - tlcRow; // reverse the tlcRow numbers
+			}
+			else{
+				transformedTLCRow = tlcRow; // do not reverse tlcRow numbers
+			}
       
-          // TLC column loop
-          
-          //Serial.print("TLC row loop: ");
-          //Serial.println(tlcRow);
-          //delay(slowDown);
+			if(debugMode){
+				Serial.print("TLC row loop: ");
+				Serial.println(tlcRow);
+				delay(slowDown);
+			}
+		  
+			// TLC column loop
 
-          for (int tlcCol = 0; tlcCol < numTLCCols; tlcCol++) {  // iterate forward through tlcCols
+			for (int tlcCol = 0; tlcCol < numTLCCols; tlcCol++) {  // iterate forward through tlcCols
           
-            if (flipTLCMapHorizontal == true){
-              transformedTLCCol = numTLCCols - 1 - tlcCol; // reverse the tlcCols
-            }
-            else{
-              transformedTLCCol = tlcCol; // do not reverse tlcCols
-            }
+				if (flipTLCMapHorizontal == true){
+					transformedTLCCol = numTLCCols - 1 - tlcCol; // reverse the tlcCols
+				}
+				else{
+					transformedTLCCol = tlcCol; // do not reverse tlcCols
+				}
           
-          //for (int tlcRow = 0; tlcRow < numTLCRows; tlcRow++) {
-            
-            
-            //Serial.print("TLC col loop: ");
-            //Serial.println(tlcCol);
-            //delay(slowDown);
-      
-            //  calculate the pixelArray offset by consulting the tlcMap array
-            
-            // these are for mapping to TLC channels
-            currentTLC = (transformedTLCRow * numTLCCols) + transformedTLCCol;
-            tlcOffset = tlcMap[currentTLC] * 16;  // offset to current tlc pixel0 in pixels
-            
-            
-            // these are for indexing the pixel array
-            currentArrayTLC = (tlcRow * numTLCCols) + tlcCol;
-            arrayTlcOffset = currentArrayTLC * numRows * numColumns;
-            
+				if(debugMode){
+					Serial.print("TLC col loop: ");
+					Serial.println(tlcCol);
+					delay(slowDown);
+				}
+			
+				//  calculate the pixelArray offset by consulting the tlcMap array
+            	// these variables are for mapping to TLC channels
+				currentTLC = (transformedTLCRow * numTLCCols) + transformedTLCCol;
+				tlcOffset = tlcMap[currentTLC] * 16;  // offset to current TLC channel 0 measured in TLC channels (hence * 16) via tlcMap[]
 
-            //Serial.print("tlcOffset: ");
-            //Serial.println(tlcOffset);
-            //delay(slowDown);
+				// these are for indexing the pixel array
+				currentArrayTLC = (tlcRow * numTLCCols) + tlcCol;
+				arrayTlcOffset = currentArrayTLC * numRows * numColumns;
+            
+				if(debugMode){
+					Serial.print("tlcOffset: ");
+					Serial.println(tlcOffset);
+					delay(slowDown);
+				}
+				
 
-            // Column loop
+				// Column loop
         
-            for (int col = numColumns - 1; col >= 0; col--) { // iterate backwards through columns
-            
-              //Serial.print("col loop: ");
-              //Serial.println(col);
-              //delay(slowDown);
-      
-              //if (channel < numChannels) { // if col => numChannels then the channel is skipped
-              
-                //Serial.print("row: ");
-                //Serial.println(row);
-                //Serial.print("channel: ");
-                //Serial.println(channel);
-                
-                //unsigned int channelOffset = (row * numColumns) + channel;
-                //Serial.print("channelOffset: ");
-                //Serial.println(channelOffset);
-                //delay(slowDown);
-         
-                // set TLC values from pixelArray data
-                // broken:  Tlc.set((((tlcRow * numTLCCols) + tlcCol) * 16) + channel, pixelArray[tlcOffset + (col)]);
-                
-                //broken:  Tlc.set((tlcMap[currentTLC] * 16) + channel, pixelArray[(currentTLC * numChannels * numRows) + (row * numColumns) + channel] );
-                
-                //Tlc.set((tlcMap[currentTLC] * 16) + channel, pixelArray[((currentTLC * numRows * numColumns * channelsPerLED) + row * numChannels * numTLCCols) + channel] * 16);
-                
-                // calculate row offset
-                //unsigned int rowOffset = (numRows - 1 - row) * numColumns 
-
-                // calculate pixel/element offset
-            
-                // add the offsets to get the element's address in pixelArray
-                
-                
-                //short element = (numLEDs * channelsPerLED * flipVertical) + (tlcRow * numRows * numTLCCols * numChannels) + (row * numTLCCols * numChannels) + (tlcCol * numChannels) + channel;
-                
-                // flipping sub - also have to transform the tlcMap
+				for (int col = numColumns - 1; col >= 0; col--) { // iterate backwards through columns
+				
+					if(debugMode){
+						Serial.print("col loop: ");
+						Serial.println(col);
+						delay(slowDown);
+					}
                
-                if (flipVertical == true){
-                  transformedCol = numColumns - 1 - col; // reverse the cols
-                }
-                else{
-                  transformedCol = col; // don't reverse
-                }
-                
-                pixelOffset = ((col * numRows) + row);  // * channelsPerLED; // reverses rows and columns (to reflect rl positioning) then finds pixel address
-                
-                // set one pixel of color data from the pixelarray to the TLC columns
-                
-                totalByteOffset = (arrayTlcOffset + pixelOffset) * channelsPerLED;
-                //tlcChannelOffset = (tlcMap[currentTLC] * 16);
-                totalChannelOffset = tlcOffset + (transformedCol * channelsPerLED);
+					if (flipVertical == true){
+						transformedCol = numColumns - 1 - col; // reverse the cols
+					}
+					else{
+						transformedCol = col; // don't reverse
+					}
+					
+					// calculate the pixel's byte offset in the pixelArray
+					pixelOffset = ((col * numRows) + row);  // 
+					totalByteOffset = (arrayTlcOffset + pixelOffset) * channelsPerLED;
+					totalChannelOffset = tlcOffset + (transformedCol * channelsPerLED);
+					
+					// now FINALLY set the TLC from the correct color bytes in the pixelArray
+					Tlc.set(totalChannelOffset, pixelArray[totalByteOffset + colorMap[0]] * 16);
+					Tlc.set(totalChannelOffset + 1, pixelArray[totalByteOffset + colorMap[1]] * 16);
+					Tlc.set(totalChannelOffset + 2, pixelArray[totalByteOffset + colorMap[2]] * 16);
 
-                Tlc.set(totalChannelOffset, pixelArray[totalByteOffset + colorMap[0]] * 16);
-                Tlc.set(totalChannelOffset + 1, pixelArray[totalByteOffset + colorMap[1]] * 16);
-                Tlc.set(totalChannelOffset + 2, pixelArray[totalByteOffset + colorMap[2]] * 16);
+					if(debugMode == true){
 
-                //Tlc.set((tlcMap[currentTLC] * 16) + channel, pixelArray[element] * 16);  // * 16 scales 8 bit value to 12 bit
+						Serial.println("----------------------------");
+						Serial.print("Tlc.set: ");
+						Serial.println(totalChannelOffset, DEC);
+						//Serial.print(", ");
+						//Serial.println(pixelArray[totalByteOffset + colorMap[1]], DEC);
+						//Serial.print("tlcRow: ");
+						//Serial.println(tlcRow, DEC);
+						//Serial.print("tlcCol: ");
+						//Serial.println(tlcCol, DEC);
+						//Serial.print("Tlc number: ");
+						//Serial.println(currentTLC, DEC);
+						//Serial.print("Row: ");
+						//Serial.println(row, DEC);
+						//Serial.print("Col: ");
+						//Serial.println(col, DEC);
+						//Serial.print("transformedRow: ");
+						//Serial.println(transformedRow, DEC);
+						//Serial.print("transformedCol: ");
+						//Serial.println(transformedCol, DEC);
+						//Serial.print("arrayTlcOffset: ");
+						//Serial.println(arrayTlcOffset, DEC);
+						//Serial.print("pixelOffset: ");
+						//Serial.println(pixelOffset, DEC);
+						//Serial.print("totalByteOffset: ");
+						//Serial.println(totalByteOffset, DEC);
+						//Serial.println("----------------------------");
 
-                if(debugMode == true){
-                
-                /*
-                Serial.println("----------------------------");
-                Serial.print("Tlc.set: ");
-                Serial.print(totalChannelOffset, DEC);
-                Serial.print(", ");
-                Serial.println(pixelArray[totalByteOffset + colorMap[1]], DEC);
-                //Serial.print("Mapped TLC number: ");
-                //Serial.println(tlcMap[currentTLC], DEC);
-                Serial.print("tlcRow: ");
-                Serial.println(tlcRow, DEC);
-                Serial.print("tlcCol: ");
-                Serial.println(tlcCol, DEC);
-                Serial.print("Tlc number: ");
-                Serial.println(currentTLC, DEC);
-                Serial.print("Row: ");
-                Serial.println(row, DEC);
-                Serial.print("Col: ");
-                Serial.println(col, DEC);
-                Serial.print("transformedRow: ");
-                Serial.println(transformedRow, DEC);
-                Serial.print("transformedCol: ");
-                Serial.println(transformedCol, DEC);
-                
-                Serial.print("arrayTlcOffset: ");
-                Serial.println(arrayTlcOffset, DEC);
-                Serial.print("pixelOffset: ");
-                Serial.println(pixelOffset, DEC);
-                Serial.print("totalByteOffset: ");
-                Serial.println(totalByteOffset, DEC);
-                Serial.println("----------------------------");
- 
-                
-                
-                
-                delay(slowDown);
-                */
-                }
-                
-                
-      
-               // }
+						delay(slowDown);
+						
+					}
+					
           
-          // the columns for one TLC is loaded, advance to next TLC in the row
-
-          }
-
-      }
+				// the columns for one TLC is loaded, advance to next TLC in the row
+				}
+				
+			// loaded one column of TLCs
+			}
       
-      // one row of TLCs across the matrix has been loaded, advance to the next row of TLCs
-
-    }
+		// one row of TLCs across the matrix has been loaded, advance to the next row of TLCs
+		}
    
-      digitalWrite(logicEnable, HIGH); // all rows off
+    digitalWrite(logicEnable, HIGH); // all rows off
       
-      // all of the TLCs have been set
-      // shift all of the data to the chips
-      Tlc.update();
-      //Serial.println("Tlc.update()");
-      //delay(slowDown);
-      
-      // select the current row with the 74LS138
-      PORTA = row;  // for 644p
-      //PORTC = row; // for 328P
-      //Serial.println("PORTC = row");
-      //delay(slowDown);
+    // all of the TLCs have been set
+    // shift all of the data to the chips
+    Tlc.update();
+    
+	if(debugMode){
+		Serial.println("Tlc.update()");
+		delay(slowDown);
+	}
+	
+	// select the current row with the 74LS138
+    PORTA = row;  // for 644p
+
+	//PORTC = row; // for 328P
+    
+	if(debugMode){
+		Serial.println("row selected");
+		delay(slowDown);
+	}
+	
       
       //Serial.println("offDelay");
       //delay(slowDown);
