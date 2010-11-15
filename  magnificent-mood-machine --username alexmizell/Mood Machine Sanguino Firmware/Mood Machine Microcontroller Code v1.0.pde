@@ -162,7 +162,7 @@ void matrixUpdate(){
 				}
 			
 				//  calculate the pixelArray offset by consulting the tlcMap array
-            	// these variables are for mapping to TLC channels
+            	//  these variables are used to map to TLC channels
 				currentTLC = (transformedTLCRow * numTLCCols) + transformedTLCCol;
 				tlcOffset = tlcMap[currentTLC] * 16;  // offset to current TLC channel 0 measured in TLC channels (hence * 16) via tlcMap[]
 
@@ -247,923 +247,647 @@ void matrixUpdate(){
 		// one row of TLCs across the matrix has been loaded, advance to the next row of TLCs
 		}
    
-    digitalWrite(logicEnable, HIGH); // all rows off
-      
-    // all of the TLCs have been set
-    // shift all of the data to the chips
-    Tlc.update();
-    
-	if(debugMode){
-		Serial.println("Tlc.update()");
-		delay(slowDown);
-	}
-	
-	// select the current row with the 74LS138
-    PORTA = row;  // for 644p
+		digitalWrite(logicEnable, HIGH); // all rows off
+		  
+		// all of the TLCs have been set
+		// shift all of the data to the chips
+		Tlc.update();
+		
+		if(debugMode){
+			Serial.println("Tlc.update()");
+			delay(slowDown);
+		}
+		
+		// select the current row with the 74LS138
+		//PORTC = row; // for 328P
+		PORTA = row;  // for 644p
+		
+		if(debugMode){
+		
+			Serial.println("row selected, offDelay started");
+			delay(slowDown);
+		
+		}
+		
+		for(int i = 0; i <= offDelay; i++){  //  <= ensures that the serial handler is called at least once for every matrix refresh
+		
+			//  Previous designers have encountered problems with color smearing because they did not allow sufficient time for the 
+			//  row-switching transistors to turn off before moving to the next row.  Our design includes a delay between the time
+			//  that the previous row is switched off and the next switched on.  Instead of twiddling our thumbs during this time we
+			//  instead run the serial input handler so that something useful can be going on.  The offDelay value should be about 55 
+			//  iterations to avoid smearing in a 3 x 5 TLC matrix.  Fewer TLCs allow a slightly shorter delay.
+			
+				serialInputHandler();
+			
+		}
 
-	//PORTC = row; // for 328P
-    
-	if(debugMode){
-		Serial.println("row selected");
-		delay(slowDown);
-	}
+		digitalWrite(logicEnable, LOW);  // switch on the row
+		
+		if(debugMode){
+		
+			Serial.println("switch on row");
+			delay(slowDown);
+		
+		}
+		
+		// This delay should be at least as long as the offDelay to allow the LEDs to get some PWM cycles in before moving on to the 
+		// next row.  The ratio of off/on time will affect the overall LED brightness and amount of visible flicker.
+	  
+		for(int i = 0; i < onDelay; i++){
 	
-      
-      //Serial.println("offDelay");
-      //delay(slowDown);
-      // we need to kill some time while the logic chip flips bits, so call the serial handler while we wait
-      for(int i = 0; i <= offDelay; i++){  //  <= ensures that the serial handler is called at least once for every matrix refresh
-      // off delay is caused by continued serial input handling and not by useless delay
-      
-      // if you don't do this enough (about 55 cycles per row) then you won't kill enough time and the colors will bleed together on the matrix
-      
-      serialInputHandler();
-      //serialInputHandler();
-      
-      }
-      
-      //Serial.println("switch on row");
-      //delay(slowDown);
-      digitalWrite(logicEnable, LOW);  // switch on the row 
-    
-      //Serial.println("onDelay");
-      //delay(slowDown);
-      // this delay should be at least as long as the offDelay to allow the LEDs to get some PWM cycles in before moving on to the next row
-      // the ratio of off/on time will affect the overall LED brightness and the flicker frequency.  adjust high for strobing effects, low for blurring
-      
-      for(int i = 0; i < onDelay; i++){
-      // on delay is caused by continued serial input handling and not by useless delay
-      serialInputHandler();
-      //serialInputHandler();
-      //serialInputHandler();
-
-      }
-      
-      //if(onDelay > 0){
-        
-      //delayMicroseconds(onDelay);
-        
-      //}
-      
-    
-  }
+			serialInputHandler();
+	
+		}
+		
+	}
   
 }
 
 void colorSolid(){
-
-  //Serial.println("starting colorsolid()");
+	
+	if(debugMode){
+		
+		Serial.println("starting colorsolid()");
+	
+	}
   
-  // set the pixel array with a solid color
-  for(int cpixel = 0; cpixel < numLEDs * channelsPerLED; cpixel = cpixel + channelsPerLED) {
+	// set the pixel array with a solid color
+	for(int cpixel = 0; cpixel < numLEDs * channelsPerLED; cpixel = cpixel + channelsPerLED) {
   
-    pixelArray[cpixel] = red;
-    pixelArray[cpixel + 1] = green;
-    pixelArray[cpixel + 2] = blue;
-    //dirtyMatrix = true;
+		pixelArray[cpixel] = red;
+		pixelArray[cpixel + 1] = green;
+		pixelArray[cpixel + 2] = blue;
 
     }
 }
 
 void shiftLeft(){
 
-  for(int tlcCol=0; tlcCol < numTLCCols; tlcCol++) {
+	// we will iterate through all TLCs
+	for(int tlcCol=0; tlcCol < numTLCCols; tlcCol++) {
       
-     if (debugMode == true){
+		if (debugMode){
      
-       Serial.println("begin shifting left");
+			Serial.println("begin shifting left");
  
-     }
+		}
      
-    
-     for(int col=0; col < numColumns; col++) {
+		for(int col=0; col < numColumns; col++) {
        
-       if (debugMode == true){
+			if (debugMode){
        
-       Serial.print("starting col ");
-       Serial.println(col, DEC);
+				Serial.print("starting col ");
+				Serial.println(col, DEC);
        
-       }
+			}
        
-       for(int tlcRow=0; tlcRow < numTLCRows; tlcRow++) {
+			for(int tlcRow=0; tlcRow < numTLCRows; tlcRow++) {
          
-         if (debugMode == true){
+				if (debugMode){
        
-         Serial.print("starting tlcRow ");
-         Serial.println(tlcRow, DEC);
+					Serial.print("starting tlcRow ");
+					Serial.println(tlcRow, DEC);
        
-         }
+				}
          
-         int tlcOffset1 = ((tlcRow * numTLCCols) + tlcCol) * ledsPerPanel;
+				int tlcOffset1 = ((tlcRow * numTLCCols) + tlcCol) * ledsPerPanel;
          
-         if (debugMode == true){
+				if (debugMode){
        
-         Serial.print("tlcOffset1:  ");
-         Serial.println(tlcOffset1, DEC);
+					Serial.print("tlcOffset1:  ");
+					Serial.println(tlcOffset1, DEC);
        
-         }
+				}
          
-         for(int row=0; row < numRows; row++) {
+				for(int row=0; row < numRows; row++) {
          
+					int pixelOffset1 = (row * numColumns) + col;  
+					int totalOffset1 = (tlcOffset1 + pixelOffset1) * channelsPerLED;
+			   
+					if (debugMode){
+		   
+						Serial.print("pixelOffset1: ");
+						Serial.println(pixelOffset1, DEC);
+						Serial.print("totalOffset1: ");
+						Serial.println(totalOffset1, DEC);
+						Serial.print("row ");
+						Serial.println(row, DEC);
+		   
+					}
            
+					// for the first four columns of each panel, just go one LED to the right
+					if (col < numColumns - 1){
+					
+						pixelArray[totalOffset1] = pixelArray[totalOffset1 + channelsPerLED];
+						pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + channelsPerLED + 1];
+						pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + channelsPerLED + 2];
+					
+					}
+					
+					else {
            
-           int pixelOffset1 = (row * numColumns) + col;  
-           int totalOffset1 = (tlcOffset1 + pixelOffset1) * channelsPerLED;
-           
-           if (debugMode == true){
-       
-           Serial.print("pixelOffset1: ");
-           Serial.println(pixelOffset1, DEC);
-           Serial.print("totalOffset1: ");
-           Serial.println(totalOffset1, DEC);
+						// for the fifth column, go one TLC right (use the TLCMap) and then back four pixels (numColumns - 1)
              
-           Serial.print("row ");
-           Serial.println(row, DEC);
-
-       
-           }
-           
-           // for the first four columns of each panel, just go one LED to the right
-           if (col < numColumns - 1){
-           pixelArray[totalOffset1] = pixelArray[totalOffset1 + channelsPerLED];
-           pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + channelsPerLED + 1];
-           pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + channelsPerLED + 2];
-           }
-           else {
-           
-             // for the fifth column, go one TLC right (use the TLCMap) and back four pixels
+						if(tlcCol < numTLCCols - 1) {
              
-             if(tlcCol < numTLCCols - 1) {
-             
-               pixelArray[totalOffset1] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED) - ((numColumns - 1) * channelsPerLED)];
-               pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED)  - ((numColumns - 1) * channelsPerLED)+ 1];
-               pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED)  - ((numColumns - 1) * channelsPerLED)+ 2];
+							pixelArray[totalOffset1] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED) - ((numColumns - 1) * channelsPerLED)];
+							pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED)  - ((numColumns - 1) * channelsPerLED)+ 1];
+							pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + (ledsPerPanel * channelsPerLED)  - ((numColumns - 1) * channelsPerLED)+ 2];
                
-               if (debugMode == true){
+							if (debugMode){
        
-               Serial.println("a fifth column! ");
-               
-               Serial.print("totalOffset1 + (ledsPerPanel * channelsPerLED): ");
-               Serial.println(totalOffset1 + (ledsPerPanel * channelsPerLED), DEC);
+								Serial.println("a fifth column! ");
+								Serial.print("totalOffset1 + (ledsPerPanel * channelsPerLED): ");
+								Serial.println(totalOffset1 + (ledsPerPanel * channelsPerLED), DEC);
      
-               }
+							}
              
-             }
-             else{
+						}
+						
+						else{
              
-               // on the last column of the last TLC in the row, just return 0s to avoid reading beyond the array bounds
+							// on the last column of the last TLC in the row, just return zeros to avoid reading beyond the array bounds
                
-               pixelArray[totalOffset1] = 0;
-               pixelArray[totalOffset1 + 1] = 0;
-               pixelArray[totalOffset1 + 2] = 0;
+							pixelArray[totalOffset1] = 0;
+							pixelArray[totalOffset1 + 1] = 0;
+							pixelArray[totalOffset1 + 2] = 0;
                
-               if (debugMode == true){
+							if (debugMode){
        
-               Serial.println("a fifth column on the last tlcCol! ");
-               
-               Serial.println("wrote black");
+								Serial.println("a fifth column on the last tlcCol! ");
+								Serial.println("wrote black");
      
-               }
-               
+							}
              
-             }
+						}
              
-             
-             
-           }
+					}
            
-           
-          
-          
-        }
+				}
         
-      }
+			}
       
-    }
+		}
     
-  }
+	}
   
-
 }
 
-
-
-
-/*void shiftLeft(){
-
-  // shift the entire pixel array one pixel to the left
-  // this sould be possible copying data from 75 bytes forward and ignoring the last column
-  //  of course it's not that easy, durp
+void loop(){
   
-  //byte pixelArrayCopy[1200];
-  
-  //pixelArrayCopy = pixelArray;
- 
- 
-  if (debugMode == true){
-          
-  Serial.println("RCVD: k shift left");
-  Serial.print("numTLCColumns: ");
-  Serial.println(numTLCCols, DEC);
-  Serial.print("numTLCRows: ");
-  Serial.println(numTLCRows, DEC);
-  Serial.print("numColumns: ");
-  Serial.println(numColumns, DEC);
-  Serial.print("numRows: ");
-  Serial.println(numRows, DEC);
-          
-  }
- 
-  for (int i1 = 0; i1 < numTLCCols; i1++) {
-  
-    for (int j1 = 0; j1 < numTLCRows; j1++) {
-  
-      int tlcOffset1 = (j1 * numTLCCols) + i1;
-      
-      for (int x1 = 0; x1 < numColumns; x1++) {
-    
-        for (int y1 = 0; y1 < numRows; y1++) { 
- 
-          if (debugMode == true){
-          Serial.print("col after init: ");
-          Serial.println(x1, DEC);
-          }
-
-          int totalOffset1 = (tlcOffset1 + ((y1 * numColumns) + x1)) * channelsPerLED; 
-          
-          if (debugMode == true){
-          Serial.print("col after offsets: ");
-          Serial.println(x1, DEC);
-          }
-          
-          //int currentPixel = ((tlcRow * numRows * matrixColumns) + (row * matrixColumns) + (tlcCol * numColumns) + col) * channelsPerLED;
-          
-          
-          if (x1 < numColumns - 1){ // do this on every column but the last on each TLC
-          
-          // for most columns you just read the color data from one pixel (3 channels) to the right:
-          pixelArray[totalOffset1] = pixelArray[totalOffset1 + channelsPerLED];
-          pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + 1 + channelsPerLED];
-          pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + 2 + channelsPerLED];
-          
-          }
-          
-          else { // do this on the last column
-          
-          
-          
-            // but for this one you have to read a whole TLC to the right
-          
-            // unless it's the far right TLC, in which case just return 0s
-          
-            if(i1 < numTLCCols - 1) {
-            
-              pixelArray[totalOffset1] = pixelArray[totalOffset1 + (numLEDs * channelsPerLED)];
-              pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + 1 + (numLEDs * channelsPerLED)];
-              pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + 2 + (numLEDs * channelsPerLED)];
-            
-              }
-          
-            else {
-          
-              pixelArray[totalOffset1] = 0;
-              pixelArray[totalOffset1 + 1] = 0;
-              pixelArray[totalOffset1 + 2] = 0;
-          
-              }
-          
-          
-          }
-          
-
-          if (debugMode == true){
-          
-
-            Serial.print("tlcCol: ");
-            Serial.println(j1, DEC);
-            Serial.print("tlcRow: ");
-            Serial.println(i1, DEC);
-            Serial.print("col: ");
-            Serial.println(x1, DEC);
-            Serial.print("row: ");
-            Serial.println(y1);
-            Serial.print("totalOffset: ");
-            Serial.println(totalOffset1, DEC);
-            //Serial.print("color: ");
-            //Serial.print(pixelArray[totalOffset1 + (numLEDs * channelsPerLED)], DEC);
-            //Serial.print(" ");
-            //Serial.print(pixelArray[totalOffset1 + 1 + (numLEDs * channelsPerLED)], DEC);
-            //Serial.print(" ");
-            //Serial.println(pixelArray[totalOffset1 + 2 + (numLEDs * channelsPerLED)], DEC);
-
-            delay(slowDown);
-          
-          }
-        
-        }
-      }
-    }
-  }
-}*/
-
-/*void shiftRight(){
-
-  // shift the entire pixel array one pixel to the left
-  // this sould be possible copying data from 75 bytes forward and ignoring the last column
-  //  of course it's not that easy, durp 
- 
-  if (debugMode == true){
-          
-  Serial.println("RCVD: whatever shift right");
-
-  }
- 
-  for (int i = numTLCCols - 1; i >= 0; i--) {  // do the columns in reverse to avoid overwriting the pixels you need to read from
-  
-    for (int j = 0; j < numTLCRows; j++) {
-  
-      int tlcOffset1 = ((j * numTLCCols) + i) * numLEDs;
-      
-      for (int x = numColumns - 1; x >= 0; x--) { // do the columns in reverse
-    
-        for (int y = 0; y < numRows; y++) { 
- 
-          if (debugMode == true){
-          Serial.print("col after init: ");
-          Serial.println(x, DEC);
-          }
-
-          int totalOffset1 = (tlcOffset1 + ((y * numColumns) + x)) * channelsPerLED; 
-          
-          if (debugMode == true){
-          Serial.print("col after offsets: ");
-          Serial.println(x, DEC);
-          }
-          
-          //int currentPixel = ((tlcRow * numRows * matrixColumns) + (row * matrixColumns) + (tlcCol * numColumns) + col) * channelsPerLED;
-          
-          
-          if (x > 0){ // do this on every column but the first on each TLC
-          
-          // for most columns you just read the color data from one pixel (3 channels) to the right:
-          pixelArray[totalOffset1] = pixelArray[totalOffset1 - channelsPerLED];
-          pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + 1 - channelsPerLED];
-          pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + 2 - channelsPerLED];
-          
-          }
-          
-          else { // do this on the first column
-          
-          // but for this one you have to read a whole TLC to the left
-          
-          // but if this is the first column on the first TLC column you don't want to try and read negative pixelArray indices, so just return black in that case
-                          
-          if (i > 0 && y > 0){
-            
-            pixelArray[totalOffset1] = pixelArray[totalOffset1 - (numLEDs * channelsPerLED)];
-            pixelArray[totalOffset1 + 1] = pixelArray[totalOffset1 + 1 - (numLEDs * channelsPerLED)];
-            pixelArray[totalOffset1 + 2] = pixelArray[totalOffset1 + 2 - (numLEDs * channelsPerLED)];
-            
-            }
-          else {
-          
-            pixelArray[totalOffset1] = 0;
-            pixelArray[totalOffset1 + 1] = 0;
-            pixelArray[totalOffset1 + 2] = 0;
-          
-            }
-          
-          }
-          
-
-          if (debugMode == true){
-          
-            Serial.print("numColumns: ");
-            Serial.println(numColumns, DEC);
-            Serial.print("numRows: ");
-            Serial.println(numRows, DEC);
-            Serial.print("tlcCol: ");
-            Serial.println(j, DEC);
-            Serial.print("tlcRow: ");
-            Serial.println(i, DEC);
-            Serial.print("col: ");
-            Serial.println(x, DEC);
-            Serial.print("row: ");
-            Serial.println(y);
-            Serial.print("totalOffset: ");
-            Serial.println(totalOffset1, DEC);
-            Serial.print("color: ");
-            Serial.print(pixelArray[totalOffset1 + (numLEDs * channelsPerLED)], DEC);
-            Serial.print(" ");
-            Serial.print(pixelArray[totalOffset1 + 1 + (numLEDs * channelsPerLED)], DEC);
-            Serial.print(" ");
-            Serial.println(pixelArray[totalOffset1 + 2 + (numLEDs * channelsPerLED)], DEC);
-
-            delay(slowDown);
-          
-          }
-        
-        }
-      }
-    }
-  }
-}
-*/
-
-void loop()
-{
-  
- //serialInputHandler();  // read some bytes
  matrixUpdate();  // always with the matrix updates
  
 }
  
 void serialInputHandler(){
  
-      // serial input handler
+	// serial input handler
    if(Serial.available() > 0){  // don't do any serial handling unless there is a byte waiting
          
-         incomingByte = Serial.read();  // read the byte
-         //fastUpdate();
+		incomingByte = Serial.read();  // read a byte
          
-         //matrixUpdate();
-         //Serial.println(incomingByte, BYTE);
-         
-         //switch(incomingByte){  
+        switch(commandInProgress){  // is there a command in progress?
            
-         //case 255:  // if the byte is 255 then just like never mind then
-         //break;
+            case byte('c'):  //  (c)olor command is in progress, reading 3 bytes of color data into red, green and blue
+            
+				inputBuffer[byteNum] = incomingByte;
+				byteNum++;
+             
+				if(byteNum > 2){  // fires if the input buffer has been filled
+					
+					red = inputBuffer[0];
+					green = inputBuffer[1];
+					blue = inputBuffer[2];
+            
+					if(debugMode){
+					
+						Serial.print("RCVD c: ");
+						Serial.print(red, HEX);
+						Serial.print(" ");
+						Serial.print(green, HEX);
+						Serial.print(" ");
+						Serial.println(blue, HEX);
+					}
 
-         //default:  // anything other than -1 needs to be handled
-         
-         switch(commandInProgress){  // is there a command in progress?
-           
-             case byte('c'):  //  (c)olor command is in progress, reading 3 bytes of color data into red, green and blue
-             inputBuffer[byteNum] = incomingByte;
-             byteNum++;
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "c" command
              
-             //matrixUpdate();
-             //fastUpdate();
+				}	    
+				
+				break;
              
-             if(byteNum > 2){  // fires if the input buffer has been filled
-             //matrixUpdate();
-             red = inputBuffer[0];
-             //matrixUpdate();
-             green = inputBuffer[1];
-             //matrixUpdate();
-             blue = inputBuffer[2];
-             
-             //matrixUpdate();
-             //fastUpdate();
-             
-             //matrixUpdate();
-             
-             if(debugMode == true){
-               Serial.print("RCVD c: ");
-               Serial.print(red, HEX);
-               Serial.print(" ");
-               Serial.print(green, HEX);
-               Serial.print(" ");
-               Serial.println(blue, HEX);
-               }
-             
-             
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "c" command
-             
-             }    
-             break;
-             
-             case byte('p'):  //  (p)ixel command is in progress, reading 2 bytes of pixel offset data
-             inputBuffer[byteNum] = incomingByte;
-             byteNum++;
+            case byte('p'):  //  (p)ixel command is in progress, reading 2 bytes of pixel offset data
+            
+				inputBuffer[byteNum] = incomingByte;
+				byteNum++;
                 
-             if(byteNum > 1){  // fires if the input buffer has been filled
+				if(byteNum > 1){  // fires if the input buffer has been filled
    
-             pixel = (inputBuffer[1] * 256) + inputBuffer[0];
+					pixel = (inputBuffer[1] * 256) + inputBuffer[0];
              
-             if(debugMode == true){
-               Serial.print("RCVD p: (");
-               Serial.print(inputBuffer[1] * 256, DEC);
-               Serial.print(" * 256) + ");
-               Serial.print(inputBuffer[0], DEC);
-               Serial.print(" = ");
-               Serial.println(pixel, DEC);
-               }
+					if(debugMode == true){
+					
+						Serial.print("RCVD p: (");
+						Serial.print(inputBuffer[1] * 256, DEC);
+						Serial.print(" * 256) + ");
+						Serial.print(inputBuffer[0], DEC);
+						Serial.print(" = ");
+						Serial.println(pixel, DEC);
+						
+					}
              
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "c" command
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "c" command
              
-             }    
-             break;
+				}
+				
+				break;
              
-             case byte('r'):  // 'set red' in progress
-             red = incomingByte;
-             //byteNum++;
-             //if(byteNum > 2){  // get 3 bytes of color data
-             //matrixUpdate();
-             //red = inputBuffer[0] * 256 + inputBuffer[1] * 16 + inputBuffer[2];
-             //Serial.print("RCVD r: ");
-             //Serial.println(red, DEC);
-             //byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "r" command
-             //}    
-             break;
+            case byte('r'):  // 'set red' in progress
              
-             case byte('g'):  // 'set green' in progress
-             //inputBuffer[byteNum] = incomingByte;
-             green = incomingByte;             
-             //byteNum++;
-             //if(byteNum > 2){  // get 3 bytes of color data
-             //matrixUpdate();
-             //green = inputBuffer[0] * 256 + inputBuffer[1] * 16 + inputBuffer[2];
-             //Serial.print("RCVD g: ");
-             //Serial.println(green, DEC);
-             //byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "g" command
-             //}    
-             break;
+				red = incomingByte;
+                commandInProgress = 'n'; // end of the "r" command
+				break;
              
-             case byte('b'):  // 'set blue' in progress
-             //inputBuffer[byteNum] = incomingByte;
-             //byteNum++;
-             blue = incomingByte;
-             //if(byteNum > 2){  // get 3 bytes of color data
-             //matrixUpdate();
-             //blue = inputBuffer[0] * 256 + inputBuffer[1] * 16 + inputBuffer[2];
-             //Serial.print("RCVD b: ");
-             //Serial.println(blue, DEC);
-             //byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "b" command
-             //}    
-             break;
+            case byte('g'):  // 'set green' in progress
+             
+				green = incomingByte;             
+				commandInProgress = 'n'; // end of the "g" command
+				break;
+             
+            case byte('b'):  // 'set blue' in progress
+				
+				blue = incomingByte;
+				commandInProgress = 'n'; // end of the "b" command
+				break;
          
-             case byte('d'): //  ON (d)elay setting, get one int from serial and set the onDelay variable with it
-             inputBuffer[byteNum] = incomingByte;
-             byteNum++;
-             if(byteNum > 3){  // get 4 bytes, then do this
-             onDelay = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
+            case byte('d'): //  ON (d)elay setting, get one int from serial and set the onDelay variable with it
+				
+				inputBuffer[byteNum] = incomingByte;
+				byteNum++;
              
-             // feedback
-             if (debugMode == true){             
-               Serial.print("RCVD d: ");
-               Serial.println(onDelay);
-               }
+				if(byteNum > 3){  // get 4 bytes, then do this
+					
+					onDelay = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
+             
+					if (debugMode){             
+						
+						Serial.print("RCVD d: ");
+						Serial.println(onDelay);
+					}
                
-             // cleanup
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "d" command
-             }
-             break;
+					// cleanup
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "d" command
+					
+				}
+				
+				break;
              
-             case byte('e'): //  OFF d(e)lay setting, get one int from serial and set the offDelayMs variable with it
-             // add incoming byte to buffer
-             inputBuffer[byteNum] = incomingByte;
-             byteNum++;
-             // check if all data has been received
-             if(byteNum > 3){  // get 4 bytes, then do this
-             // do it      
-             offDelay = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
-             
-             // feedback
-             if (debugMode == true){             
-               Serial.print("RCVD e: ");
-               Serial.println(offDelay);
-               }
-             
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "e" command
-             }
-             break;
-             
-             case byte('x'): //  slowDown delay
-             // add incoming byte to buffer
-             inputBuffer[byteNum] = incomingByte;
-             byteNum++;
-             // check if all data has been received
-             if(byteNum > 3){  // get 4 bytes, then do this
-             // do it      
-             slowDown = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
-             
-             // feedback
-             if (debugMode == true){             
-               Serial.print("RCVD x: ");
-               Serial.println(slowDown);
-               }
-             
-             // cleanup
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "e" command
-             }
-             break;
-             
-             case byte('m'): //  get an entire frame's worth of data
-             //inputBuffer[byteNum] = incomingByte;
-             
-             pixelArray[byteNum] = incomingByte;
-             
-             if(debugMode == true){
-               Serial.print("z: ");
-               Serial.print(byteNum, DEC);
-               Serial.print(", ");
-               Serial.print(incomingByte, DEC);
-               Serial.println();
-             }
-             
-             byteNum++;
-             
-             if(byteNum > (numLEDs * channelsPerLED) - 1){  // get color data for every pixel      
-             
-             // cleanup
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "m" command
-             }
-             break;
+            case byte('e'): //  OFF d(e)lay setting, get one int from serial and set the offDelayMs variable with it
 
-             case byte('*'): //  load a new tlcMap array
-             //inputBuffer[byteNum] = incomingByte;
+				inputBuffer[byteNum] = incomingByte;
+				byteNum++;
+				
+				if(byteNum > 3){  // get 4 bytes, then do this
+				
+					offDelay = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
              
-             tlcMap[byteNum] = incomingByte;
+					if (debugMode == true){
+				
+						Serial.print("RCVD e: ");
+						Serial.println(offDelay);
+					}
              
-             if(debugMode == true){
-               Serial.print("*: ");
-               Serial.print(byteNum, DEC);
-               Serial.print(", ");
-               Serial.print(incomingByte, DEC);
-               Serial.println();
-             }
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "e" command
+				
+				}
+				
+				break;
              
-             byteNum++;
+            case byte('x'): //  change slowDown delay
+			
+				inputBuffer[byteNum] = incomingByte;
+				byteNum++;
              
-             if(byteNum > numTLCs - 1){  // get a tlcMap byte for every TLC (0-based array)     
+				if(byteNum > 3){  // get 4 bytes, then do this
+				
+					slowDown = (inputBuffer[0] * 4096) + (inputBuffer[1] * 256) + (inputBuffer[2] * 16) + inputBuffer[3];
              
-             // cleanup
-             byteNum = 0; // reinit byteNum
-             commandInProgress = 'n'; // end of the "m" command
-             }
-             break;
-             
-             case byte('s'): //  's'et a parameter, followed by a second char byte indicating the param to be set, then the data
-                 
-                 //Serial.println("beginning set command");
-                 
-                 //incomingByte2 = Serial.read();  // read the byte
-                 
-                 switch(incomingByte){
-                 
-                     case('r'):  // setting the numRows variable
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     incomingByte = Serial.read();  // compensates for ascii - byte conversion *FIX THIS*
-                     while(incomingByte == 255){  // 207 = 255 - 48, wait for valid serial data if necessary
-                     incomingByte = Serial.read();
-                     }                 
-                     //Serial.print("RECD sr: ");
-                     //Serial.println(incomingByte, DEC);
-                     if(incomingByte > 0 && incomingByte < 9){   // numRows should be between 1 and 8
-                     numRows = incomingByte;
-                     
-                     
-                     numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-                     ledsPerPanel = numLEDs / numTLCs;
-                     
-                     }
-                     commandInProgress = 'n'; // end of the "sr" command
-                     break;
-                     
-                     case('c'):  // setting the numChannels variable
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     incomingByte = Serial.read();  // compensates for ascii - byte conversion *FIX THIS*
-                     while(incomingByte == 255){  // wait for valid serial data if necessary
-                     incomingByte = Serial.read();  // hex byte to ascii
-                     }
-                     //incomingByte = incomingByte - 47; // hex/ascii to byte conversion
-                     //Serial.print("RECD sc: ");
-                     //Serial.println(incomingByte, DEC);
-                     if(incomingByte > 0 && incomingByte < 17){   // numChannels should be between 1 and 16
-                     numChannels = incomingByte;
-                     
-                     numColumns = numChannels / channelsPerLED; // recalculate dependent variables
-                     numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-                     matrixColumns = numTLCCols * numColumns;
-                     
-                     }
-                     commandInProgress = 'n'; // end of the "sc" command
-                     break;                
+					if (debugMode){             
+						
+						Serial.print("RCVD x: ");
+						Serial.println(slowDown);
+					}
 
-                     case('p'):  // setting the channelsPerLED variable
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     incomingByte = Serial.read();  
-                     while(incomingByte == 255){  // wait for valid serial data if necessary
-                     incomingByte = Serial.read();
-                     }
-                     //Serial.print("RECD sp: ");
-                     //Serial.println(incomingByte, DEC);
-                     if(incomingByte > 0 && incomingByte < 17){   // channelsPerLED should be between 1 and 16
-                     channelsPerLED = incomingByte;
-                     
-                     numColumns = numChannels / channelsPerLED; // recalculate dependent variables
-                     numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-                     matrixColumns = numTLCCols * numColumns;
-                     
-                     }
-                     commandInProgress = 'n'; // end of the "sp" command
-                     break;
-                  
-                     //case('t'):  // setting the numTLCs variable
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     //incomingByte = Serial.read();  
-                     //while(incomingByte == 255){  // wait for valid serial data if necessary
-                     //incomingByte = Serial.read();
-                     //}
-                     //Serial.print("RECD st: ");
-                     //Serial.println(incomingByte, DEC);
-                     //if(incomingByte > 0 && incomingByte < 101){   // numTLCs should be between 1 and 100
-                     //numTLCs = incomingByte;
-                     //}
-                     //commandInProgress = 'n'; // end of the "st" command
-                     //break;
-                     
-                     case('l'):  // setting numTLCCols
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     incomingByte = Serial.read();  
-                     while(incomingByte == 255){  // wait for valid serial data if necessary
-                     incomingByte = Serial.read();
-                     }
-                     Serial.print("RECD sl: ");
-                     Serial.println(incomingByte, DEC);
-                     if(incomingByte > 0 && incomingByte < 21){   // numTLCCols should be between 1 and 20
-                     
-                     numTLCCols = incomingByte;
-                     
-                     numTLCs = numTLCRows * numTLCCols;
-                     numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-                     matrixColumns = numTLCCols * numColumns;
-                     #define NUM_TLCS = numTLCs;
-                     
-                     }
-                     commandInProgress = 'n'; // end of the "st" command
-                     break;
-                     
-                     case('w'):  // setting the numTLCRows
-                     //Serial.println("beginning set rows");
-                     // try to pull data
-                     incomingByte = Serial.read();  
-                     while(incomingByte == 255){  // wait for valid serial data if necessary
-                     incomingByte = Serial.read();
-                     }
-                     Serial.print("RECD sw: ");
-                     Serial.println(incomingByte, DEC);
-                     if(incomingByte > 0 && incomingByte < 21){   // numTLCRows should be between 1 and 20
-                     
-                     numTLCRows = incomingByte;
-                     
-                     numTLCs = numTLCRows * numTLCCols;  // recalculate dependents
-                     numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
-                     #define NUM_TLCS = numTLCs;
-                     
-                     }
-                     commandInProgress = 'n'; // end of the "st" command
-                     break;
-                     
-                     
-                     } // end set commands
-             break;
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "e" command
+				}
+				
+				break;
              
-             case byte('n'): // no command was in progress, new command starting
-        
-                 //incomingByte = Serial.read();  // read the byte
+            case byte('m'): //  get an entire frame's worth of data
+            
+				pixelArray[byteNum] = incomingByte;
+             
+				if(debugMode == true){
+				
+					Serial.print("z: ");
+					Serial.print(byteNum, DEC);
+					Serial.print(", ");
+					Serial.print(incomingByte, DEC);
+					Serial.println();
+					
+				}
+             
+				byteNum++;
+             
+				if(byteNum > (numLEDs * channelsPerLED) - 1){  // get color data for every pixel      
+				
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "m" command
+					
+				}
+				
+				break;
+
+            case byte('*'): //  load a new tlcMap array
+				
+				tlcMap[byteNum] = incomingByte;
+             
+				if(debugMode == true){
+				
+					Serial.print("*: ");
+					Serial.print(byteNum, DEC);
+					Serial.print(", ");
+					Serial.print(incomingByte, DEC);
+					Serial.println();
+				
+				}
+             
+				byteNum++;
+             
+				if(byteNum > numTLCs - 1){  // get a tlcMap byte for every TLC (0-based array)     
+             
+					byteNum = 0; // reinit byteNum
+					commandInProgress = 'n'; // end of the "m" command
+				}
+				
+				break;
+             
+            case byte('s'): //  's'et a parameter, followed by a second char byte indicating the param to be set, then the data
                  
-                 switch(incomingByte){
+				 //  's' commands are two-tiered, so the next byte in the buffer specifies which 's'et command we are running
+                switch(incomingByte){
                  
-                     /* case byte('c'): // specify a (c)olor, parameters are 9 bytes of RGB color space data
-                                  
-                                  // get 9 bytes of RGB color data
-                                  for(byteNum = 0; byteNum < 9; byteNum++){
-                                  
-                                          while(Serial.available() > 0){
-                                          incomingByte = Serial.read();                                    
-                                          }
-                                                                                                         
-                                  inputBuffer[byteNum] = incomingByte;
-                                  
-                                  }
-                                  //if(byteNum > 8){  // fires if the input buffer has been filled
-                                  red = inputBuffer[0] * 256 + inputBuffer[1] * 16 + inputBuffer[2];  // this would be prettier if it was shifty
-                                  green = inputBuffer[3] * 256 + inputBuffer[4] * 16 + inputBuffer[5];
-                                  blue = inputBuffer[6] * 256 + inputBuffer[7] * 16 + inputBuffer[8];
-                                  Serial.print("RCVD c: ");
-                                  Serial.print(red, HEX);
-                                  Serial.print(" ");
-                                  Serial.print(green, HEX);
-                                  Serial.print(" ");
-                                  Serial.println(blue, HEX);
-                                  byteNum = 0; // reinit byteNum
-                                  }    
-                                  break; */
-                     
-                     case byte('c'):
-                     //Serial.println("Starting c:");
-                     commandInProgress = 'c';
-                     break;
+                    case('r'):  // setting the numRows variable
 
-                     case byte('t'):  // s(T)atus, send parameter dump, reset command state, send "Ready."
+						incomingByte = Serial.read(); 
                      
-                     Serial.println("---------------------");
-                     
-                     Serial.print("numTLCCols: ");
-                     Serial.println(numTLCCols, DEC);
-                     Serial.print("numTLCRows: ");
-                     Serial.println(numTLCRows, DEC);
-                     
-                     Serial.print("numTLCs: ");
-                     Serial.println(numTLCs, DEC);
-                     
-                     Serial.print("numRows: ");
-                     Serial.println(numRows, DEC);
-                     
-                     Serial.print("numColumns: ");
-                     Serial.println(numColumns, DEC);
-                     
-                     Serial.print("numChannels: ");
-                     Serial.println(numChannels, DEC);
-                     Serial.print("channelsPerLED: ");
-                     Serial.println(channelsPerLED, DEC);
-
-                     Serial.print("numLEDs: ");
-                     Serial.println(numLEDs, DEC);
-                     Serial.print("red: ");
-                     
-                     Serial.print(red, DEC);
-                     Serial.print(" green: ");
-                     Serial.print(green, DEC);
-                     Serial.print(" blue: ");
-                     Serial.println(blue, DEC);
-                     Serial.print("onDelay: ");
-                     Serial.println(onDelay, DEC);
-                     Serial.print("offDelay: ");
-                     Serial.println(offDelay, DEC);
-                     //Serial.print("last commandInProgress: ");
-                     //Serial.println(commandInProgress, BYTE);
-                     Serial.print("current pixel: ");
-                     Serial.println(pixel, DEC);
-                     //Serial.print("byteNum: ");
-                     //Serial.println(byteNum, DEC);
-                     Serial.print("Available memory: ");
-                     Serial.println(availableMemory(), DEC);
-                     Serial.println();
-                     Serial.println("Ready.");
-
-                     break;
-                     
-                     case byte('y'): // dump the pixel array to serial port for examination
-                     
-                     if(debugMode == true){
-                     Serial.println("RCVD y: dump pixelArray");
-                     }
-                     
-                     for (int i = 0; i < (numLEDs * channelsPerLED) - 1; i = i + channelsPerLED) {
-                       
+						//  take another look at this line when time allows (we can't send value of 255?)
+						while(incomingByte == 255){  // wait for valid serial data if necessary
+					
+							incomingByte = Serial.read();
+						
+						}
+						
+						if(incomingByte > 0 && incomingByte < 9){   // numRows should be between 1 and 8
+						
+							numRows = incomingByte;
+							
+							// recalculate dependent variables
+							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
+							ledsPerPanel = numLEDs / numTLCs;
+							
+						}
+					 
+						commandInProgress = 'n'; // end of the "sr" command
                     
-                     //Serial.print("pixelArrayOffset: ");
-                     Serial.print(i, DEC);
-                     Serial.print(" contains ");
-                     Serial.print(pixelArray[i], HEX);
-                     //Serial.print(", ");
-                     Serial.print(pixelArray[i + 1], HEX);
-                     //Serial.print(", ");
-                     Serial.println(pixelArray[i + 2], HEX);
+						break;
                      
+                    case('c'):  // setting the numChannels variable
+
+						incomingByte = Serial.read();  // compensates for ascii - byte conversion *FIX THIS*
                      
-                     }
+						//  this doesn't seem right
+						while(incomingByte == 255){  // wait for valid serial data if necessary
+							
+							incomingByte = Serial.read(); 
+							
+						}
+						
+						if(incomingByte > 0 && incomingByte < 17){   // numChannels should be between 1 and 16
+						
+							numChannels = incomingByte;
+							
+							// recalculate dependent variables
+							numColumns = numChannels / channelsPerLED; // recalculate dependent variables
+							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
+							matrixColumns = numTLCCols * numColumns;
                      
-                     break;
+						}
+						
+						commandInProgress = 'n'; // end of the "sc" command
+						
+						break;                
+
+                    case('p'):  // setting the channelsPerLED variable
+                    
+						incomingByte = Serial.read();  
+						
+						while(incomingByte == 255){  // wait for valid serial data if necessary
+							
+							incomingByte = Serial.read();
+						
+						}
+						
+						if(incomingByte > 0 && incomingByte < 17){   // channelsPerLED should be between 1 and 16
+						
+							channelsPerLED = incomingByte;
+                     
+							// recalculate dependent variables
+							numColumns = numChannels / channelsPerLED; // recalculate dependent variables
+							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
+							matrixColumns = numTLCCols * numColumns;
+                     
+						}
+						
+						commandInProgress = 'n'; // end of the "sp" command
+						
+						break;
+                     
+                    case('l'):  // setting numTLCCols
+
+						incomingByte = Serial.read();  
+                     
+						while(incomingByte == 255){  // wait for valid serial data if necessary
+							
+							incomingByte = Serial.read();
+						
+						}
+						
+						if(debugMode){
+							
+							Serial.print("RECD sl: ");
+							Serial.println(incomingByte, DEC);
+							
+						}
+						
+						if(incomingByte > 0 && incomingByte < 21){   // numTLCCols should be between 1 and 20
+                     
+							numTLCCols = incomingByte;
+                     
+							numTLCs = numTLCRows * numTLCCols;
+							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
+							matrixColumns = numTLCCols * numColumns;
+							#define NUM_TLCS = numTLCs;
+                     
+						}
+						
+						commandInProgress = 'n'; // end of the "st" command
+						
+						break;
+                     
+                    case('w'):  // setting the numTLCRows
+                    
+						incomingByte = Serial.read();  
+						
+						while(incomingByte == 255){  // wait for valid serial data if necessary
+						
+							incomingByte = Serial.read();
+						}
+						
+						if(debugMode){
+					
+							Serial.print("RECD sw: ");
+							Serial.println(incomingByte, DEC);
+						}
+						
+						if(incomingByte > 0 && incomingByte < 21){   // numTLCRows should be between 1 and 20
+                     
+						numTLCRows = incomingByte;
+						
+						// recalculate dependent variables
+						numTLCs = numTLCRows * numTLCCols;  // recalculate dependents
+						numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
+						#define NUM_TLCS = numTLCs;
+                     
+						}
+						
+						commandInProgress = 'n'; // end of the "st" command
+						
+						break;
+                     
+                } // end set commands
+					
+				break;
+             
+            case byte('n'): // no command was in progress, new command starting
+                 
+                switch(incomingByte){
+                     
+                    case byte('c'):
+					 
+						commandInProgress = 'c';
+						break;
+
+                    case byte('t'):  // s(T)atus, send parameter dump, reset command state, send "Ready."
+                     
+						Serial.println("---------------------");
+						
+						Serial.print("numTLCCols: ");
+						Serial.println(numTLCCols, DEC);
+						Serial.print("numTLCRows: ");
+						Serial.println(numTLCRows, DEC);
+						 
+						Serial.print("numTLCs: ");
+						Serial.println(numTLCs, DEC);
+						 
+						Serial.print("numRows: ");
+						Serial.println(numRows, DEC);
+						 
+						Serial.print("numColumns: ");
+						Serial.println(numColumns, DEC);
+						 
+						Serial.print("numChannels: ");
+						Serial.println(numChannels, DEC);
+						Serial.print("channelsPerLED: ");
+						Serial.println(channelsPerLED, DEC);
+
+						Serial.print("numLEDs: ");
+						Serial.println(numLEDs, DEC);
+						Serial.print("red: ");
+						 
+						Serial.print(red, DEC);
+						Serial.print(" green: ");
+						Serial.print(green, DEC);
+						Serial.print(" blue: ");
+						Serial.println(blue, DEC);
+						Serial.print("onDelay: ");
+						Serial.println(onDelay, DEC);
+						Serial.print("offDelay: ");
+						Serial.println(offDelay, DEC);
+						//Serial.print("last commandInProgress: ");
+						//Serial.println(commandInProgress, BYTE);
+						Serial.print("current pixel: ");
+						Serial.println(pixel, DEC);
+						//Serial.print("byteNum: ");
+						//Serial.println(byteNum, DEC);
+						Serial.print("Available memory: ");
+						Serial.println(availableMemory(), DEC);
+						Serial.println();
+						Serial.println("Ready.");
+
+						break;
+                     
+                    case byte('y'): // dump the pixel array to serial port for examination
+                     
+						if(debugMode){
+							
+							Serial.println("RCVD y: dump pixelArray");
+						
+						}
+                     
+						for (int i = 0; i < (numLEDs * channelsPerLED) - 1; i = i + channelsPerLED) {
                        
+							//Serial.print("pixelArrayOffset: ");
+							Serial.print(i, DEC);
+							Serial.print(" contains ");
+							Serial.print(pixelArray[i], HEX);
+							//Serial.print(", ");
+							Serial.print(pixelArray[i + 1], HEX);
+							//Serial.print(", ");
+							Serial.println(pixelArray[i + 2], HEX);
+                    
+						}
                      
+						break;
+                       
+                    case byte('p'): // get two bytes specifying a pixel offset in pixelArray
+                    
+						commandInProgress = 'p';
+						break;
                      
-                     case byte('p'): // get two bytes specifying a pixel offset in pixelArray
-                     commandInProgress = 'p';
-                     break;
+                    case byte('d'): // ON delay setting, parameter is one unsigned long (4 bytes), minimum number of microseconds to keep a row lit
+						
+						commandInProgress = 'd';
+						break;
                      
-                     case byte('d'): // ON delay setting, parameter is one unsigned long (4 bytes), minimum number of microseconds to keep a row lit
-                     commandInProgress = 'd';
-                     break;
+                    case byte('e'): // OFF delay setting, parameter is one unsigned long (4 bytes), turns all LEDs off for this number of microseconds before lighting next row
+						
+						commandInProgress = 'e';
+						break;
                      
-                     case byte('e'): // OFF delay setting, parameter is one unsigned long (4 bytes), turns all LEDs off for this number of microseconds before lighting next row
-                     commandInProgress = 'e';
-                     break;
+                    case byte('x'): // slowDown delay
+						
+						commandInProgress = 'x';
+						break;
                      
-                     case byte('x'): // slowDown delay
-                     commandInProgress = 'x';
-                     break;
-                     
-                     case byte('r'): // Set red level, parameter is 3 bytes of color
-                     commandInProgress = 'r';
-                     break;
+					case byte('r'): // Set red level, parameter is 3 bytes of color
+						
+						commandInProgress = 'r';
+						break;
                      
                      case byte('g'): // Set green level, parameter is 3 bytes of color
                      commandInProgress = 'g';
