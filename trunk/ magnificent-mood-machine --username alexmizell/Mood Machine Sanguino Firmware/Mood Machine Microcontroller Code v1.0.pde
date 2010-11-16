@@ -17,11 +17,10 @@ int slowDown = 50;
 int tlcMap[16] = {14, 9, 8, 3, 2, 13, 10, 7, 4, 1, 12, 11, 6, 5, 0, 0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
 int colorMap[3] = {2, 1, 0}; // this can map any of the three color channels to any other, in this case: blue to red, green to green, red to blue.  can adjust for different wiring schemes.
 
-// Pins for matrix expansion
+// This pin maps to the 74LS138 decoder chip's enable input
 int logicEnable = 2;
 
-//  don't really need these with direct port manipulation code except to init pinmodes
-//  these pin numbers used for Atmega644P pinout scheme, these are different for Arduino
+//  these pin numbers for Atmega644P pinout scheme, these are different for Arduino
 int rowSelectA = 31;
 int rowSelectB = 30;
 int rowSelectC = 29;
@@ -83,8 +82,7 @@ byte commandInProgress = 'n';  // no command in progress to begin with
 byte inputBuffer[16]={0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0};  // largest parameter data size = 16 bytes
 unsigned int byteNum = 0;  //  for counting incoming bytes
 
-void setup()
-{
+void setup(){
  
 // initialize the pins as outputs:
 pinMode(rowSelectA, OUTPUT);
@@ -275,7 +273,7 @@ void matrixUpdate(){
 			//  row-switching transistors to turn off before moving to the next row.  Our design includes a delay between the time
 			//  that the previous row is switched off and the next switched on.  Instead of twiddling our thumbs during this time we
 			//  instead run the serial input handler so that something useful can be going on.  The offDelay value should be about 55 
-			//  iterations to avoid smearing in a 3 x 5 TLC matrix.  Fewer TLCs allow a slightly shorter delay.
+			//  iterations to avoid smearing in a 3 x 5 TLC matrix.  Fewer TLCs allows a slightly shorter delay.
 			
 				serialInputHandler();
 			
@@ -442,13 +440,13 @@ void loop(){
 void serialInputHandler(){
  
 	// serial input handler
-   if(Serial.available() > 0){  // don't do any serial handling unless there is a byte waiting
+	if(Serial.available() > 0){  // don't do any serial handling unless there is a byte waiting
          
 		incomingByte = Serial.read();  // read a byte
          
         switch(commandInProgress){  // is there a command in progress?
            
-            case byte('c'):  //  (c)olor command is in progress, reading 3 bytes of color data into red, green and blue
+            case byte('c'):  // (c)olor command is in progress, reading 3 bytes of color data into red, green and blue
             
 				inputBuffer[byteNum] = incomingByte;
 				byteNum++;
@@ -535,8 +533,7 @@ void serialInputHandler(){
 						Serial.print("RCVD d: ");
 						Serial.println(onDelay);
 					}
-               
-					// cleanup
+
 					byteNum = 0; // reinit byteNum
 					commandInProgress = 'n'; // end of the "d" command
 					
@@ -636,7 +633,7 @@ void serialInputHandler(){
 				
 				break;
              
-            case byte('s'): //  's'et a parameter, followed by a second char byte indicating the param to be set, then the data
+            case byte('s'): //  's'et a parameter, followed by a second char indicating the param to be set, then the data
                  
 				 //  's' commands are two-tiered, so the next byte in the buffer specifies which 's'et command we are running
                 switch(incomingByte){
@@ -668,7 +665,7 @@ void serialInputHandler(){
                      
                     case('c'):  // setting the numChannels variable
 
-						incomingByte = Serial.read();  // compensates for ascii - byte conversion *FIX THIS*
+						incomingByte = Serial.read();
                      
 						//  this doesn't seem right
 						while(incomingByte == 255){  // wait for valid serial data if necessary
@@ -707,7 +704,7 @@ void serialInputHandler(){
 							channelsPerLED = incomingByte;
                      
 							// recalculate dependent variables
-							numColumns = numChannels / channelsPerLED; // recalculate dependent variables
+							numColumns = numChannels / channelsPerLED;
 							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
 							matrixColumns = numTLCCols * numColumns;
                      
@@ -889,201 +886,173 @@ void serialInputHandler(){
 						commandInProgress = 'r';
 						break;
                      
-                     case byte('g'): // Set green level, parameter is 3 bytes of color
-                     commandInProgress = 'g';
-                     break;
+                    case byte('g'): // Set green level, parameter is 3 bytes of color
+                    
+						commandInProgress = 'g';
+						break;
                      
-                     case byte('b'): // Set blue level, parameter is 3 bytes of color
-                     commandInProgress = 'b';
-                     break;
+                    case byte('b'): // Set blue level, parameter is 3 bytes of color
+						
+						commandInProgress = 'b';
+						break;
                      
-                     case byte('s'): // Sets a parameter, followed by another char indicating which parameter will be set and then the param data
-                     commandInProgress = 's';
-                     break;
+					case byte('s'): // Sets a parameter, followed by another char indicating which parameter will be set and then the param data
+						
+						commandInProgress = 's';
+						break;
                      
-                     case byte('m'): // receive a frame's worth (numLEDs * channelsPerLED) of color data.  a bit slow at the moment.
-                     commandInProgress = 'm';
+                    case byte('m'): // receive a frame's worth (numLEDs * channelsPerLED) of color data.  a bit slow at the moment.
+						
+						commandInProgress = 'm';
                      
-                     if(debugMode == true){
+						if(debugMode){
                      
-                       Serial.print("Number of bytes to read: ");
-                       Serial.println((numLEDs * channelsPerLED) - 1, DEC);
+							Serial.print("Number of bytes to read: ");
+							Serial.println((numLEDs * channelsPerLED) - 1, DEC);
                        
-                     }
+						}
                      
-                     
-                     break;
+						break;
 
-                     case byte('*'): // Load a new TLC Map array on the fly, size is numTLCs.  
-                     commandInProgress = '*';
+                    case byte('*'): // Load a new TLC Map array on the fly, size is numTLCs.  
+                    
+						commandInProgress = '*';
                      
-                     if(debugMode == true){
+						if(debugMode){
                      
-                       Serial.println("RCVD: * load tlcMap array ");
-                       //Serial.println((numLEDs * channelsPerLED) - 1, DEC);
+							Serial.println("RCVD: * load tlcMap array ");
                        
-                     }
+						}
                      
-                     break;
+						break;
+                     
+                    case byte('a'): // Color (a)ll pixels, no parameter, rgb are taken from global variables
+                    
+						colorSolid();
+						break;
+                     
+                    case byte('k'): // shift matrix left
+						
+						shiftLeft();
+						break;
+                     
+                    case byte('o'): // turn current pixel (o)n with current RGB values
+                    
+						pixelArrayOffset = pixel * channelsPerLED;
+                     
+						pixelArray[pixelArrayOffset] = red;
+						pixelArray[pixelArrayOffset + 1] = green;
+						pixelArray[pixelArrayOffset + 2] = blue;
+                     
+						if(debugMode){
+							
+							Serial.print("RCVD o: ");
+							Serial.print(pixel, DEC);
+							Serial.print(" ");
+							Serial.print(red, DEC);
+							Serial.print(" ");
+							Serial.print(green, DEC);
+							Serial.print(" ");
+							Serial.println(blue, DEC);
+							
+						}
+                     
+						break;
+                     
+                    case byte('f'): // turn current pixel o(f)f
+                     
+						pixelArrayOffset = pixel * channelsPerLED;
+                     
+						pixelArray[pixelArrayOffset] = 0;
+						pixelArray[pixelArrayOffset + 1] = 0;
+						pixelArray[pixelArrayOffset + 2] = 0;
+                     
+						if(debugMode){
+						
+							Serial.print("RCVD f: ");
+							Serial.println(pixel, DEC);
+						}
+                       
+						break;
+                     
+                    case byte('h'): // flip horizontal
+                     
+						flipHorizontal = !flipHorizontal;
+						flipTLCMapHorizontal = !flipTLCMapHorizontal;
+                     
+						if(debugMode){
+							
+							Serial.print("RCVD h: flipHorizontal ");
+							Serial.println(flipHorizontal, DEC);
+							
+						}	
+                       
+						break;
+                     
+                    case byte('v'): // flip vertical
+                     
+						flipVertical = !flipVertical;
+						flipTLCMapVertical = !flipTLCMapVertical;
+                     
+						if(debugMode == true){
+					 
+							Serial.print("RCVD v: flip vertical");
+							Serial.println(flipVertical, DEC);
+                     
+						}
+                       
+						break;
+                     
+                    case byte('@'): // flip TLC map vertically
 
-                     
-                     /*case byte('p'): // Specifies a (p)ixel, parameter is one byte index in pixelArray
-                         //Serial.println("beginning set pixel");
-                         // try to pull data
-                         incomingByte = Serial.read();
-                         
-                         if(debugMode == true){
-                           Serial.print("read from serial and got: ");
-                           Serial.println(incomingByte, DEC);
-                           }
-                           
-                         while(incomingByte == 255){  // wait for valid serial data if necessary
-                             incomingByte = Serial.read();
-                             //matrixUpdate();
-                             //Serial.println(incomingByte, DEC);
-                         }
-                         
-                         if(debugMode == true){
-                           Serial.print("RCVD p: ");
-                           Serial.println(incomingByte, DEC);
-                           }
-                           
-                         if(incomingByte < numLEDs){   // pixel should be between 0 and numLEDs - 1 (cause pixelArray is a 0 based array)
-                           pixel = incomingByte;
-                         }
-                         
-                     break;
-                     */
-                     
-                     case byte('a'): // Color (a)ll pixels, no parameter, rgb are taken from global variables
-                     colorSolid();
-                     break;
-                     
-                     case byte('k'): // shift matrix left
-                     shiftLeft();
-                     break;
-                     
-                     case byte('o'): // turn current pixel (o)n with current RGB values
-                     
-                     // figure out the tlcRow from pixel
-                     
-                     //int ledsPerRow = numTLCCols * numColumns;
-                     //whichTLCRow = int(( pixel / ledsPerRow) / numRows);
-                     //whichTLCCol = int(( pixel - (ledsPerRow * whichTLCRow * numRows)) / ledsPerRow);
-                     
-                     //whichTLC = (whichTLCRow * numTLCCol) + whichTLCCol;
-                     
-                     //tlcOffset = whichTLC * numRows * numColumns * channelsPerLED; // 1050
-                     //channelOffset = (pixel * channelsPerLED) - tlcOffset; // 69
-                     pixelArrayOffset = pixel * channelsPerLED;
-                     
-                     pixelArray[pixelArrayOffset] = red;
-                     pixelArray[pixelArrayOffset + 1] = green;
-                     pixelArray[pixelArrayOffset + 2] = blue;
-                     
-                     //dirtyMatrix = true;
-                     if(debugMode == true){
-                       Serial.print("RCVD o: ");
-                       Serial.print(pixel, DEC);
-                       Serial.print(" ");
-                       Serial.print(red, DEC);
-                       Serial.print(" ");
-                       Serial.print(green, DEC);
-                       Serial.print(" ");
-                       Serial.println(blue, DEC);
-                       }
-                     
-                     break;
-                     
-                     case byte('f'): // turn current pixel o(f)f
-                     
-                     pixelArrayOffset = pixel * channelsPerLED;
-                     
-                     pixelArray[pixelArrayOffset] = 0;
-                     pixelArray[pixelArrayOffset + 1] = 0;
-                     pixelArray[pixelArrayOffset + 2] = 0;
-                     //dirtyMatrix = true;
-                     
-                     if(debugMode == true){
-                       Serial.print("RCVD f: ");
-                       Serial.println(pixel, DEC);
-                       }
-                       
-                     break;
-                     
-                     case byte('h'): // flip horizontal
-                     
-                     flipHorizontal = !flipHorizontal;
-                     flipTLCMapHorizontal = !flipTLCMapHorizontal;
-                     
-                     //dirtyMatrix = true;
-                     
-                     if(debugMode == true){
-                       Serial.print("RCVD h: flipHorizontal ");
-                       Serial.println(flipHorizontal, DEC);
-                       }
-                       
-                     break;
-                     
-                     case byte('v'): // flip vertical
-                     
-                     flipVertical = !flipVertical;
-                     flipTLCMapVertical = !flipTLCMapVertical;
-                     
-                     //dirtyMatrix = true;
-                     if(debugMode == true){
-                       Serial.print("RCVD v: flip vertical");
-                       Serial.println(flipVertical, DEC);
-                       }
-                       
-                     break;
-                     
-                     case byte('@'): // flip TLC vertically
-
-                     flipTLCMapVertical = !flipTLCMapVertical;
+						flipTLCMapVertical = !flipTLCMapVertical;
   
-                     if(debugMode == true){
-                       Serial.print("RCVD @: flip TLC map vertically ");
-                       Serial.println(flipTLCMapVertical, DEC);
-                       }
+						if(debugMode == true){
+							Serial.print("RCVD @: flip TLC map vertically ");
+							Serial.println(flipTLCMapVertical, DEC);
+						}
                        
-                     break;
+						break;
                      
-                     case byte('!'): // flip TLC map horizontal
+                    case byte('!'): // flip TLC map horizontal
                      
-                     flipTLCMapHorizontal = !flipTLCMapHorizontal;
+						flipTLCMapHorizontal = !flipTLCMapHorizontal;
                      
                      
-                     if(debugMode == true){
-                       Serial.print("RCVD !: flip TLC map horizontal ");
-                       Serial.println(flipTLCMapHorizontal, DEC);
-                       }
+						if(debugMode == true){
+							Serial.print("RCVD !: flip TLC map horizontal ");
+							Serial.println(flipTLCMapHorizontal, DEC);
+						}	
                        
-                     break;
+						break;
                      
-                     case byte('w'): // flip debugMode state
+                    case byte('w'): // flip debugMode state
                      
-                     debugMode = !debugMode;
+						debugMode = !debugMode;
                      
-                     //dirtyMatrix = true;
-                     if(debugMode == true){
-                       Serial.print("RCVD w: flip debugMode ");
-                       Serial.println(flipVertical, DEC);
-                       }
+						if(debugMode == true){
+					
+							Serial.print("RCVD w: flip debugMode ");
+							Serial.println(flipVertical, DEC);
+						
+						}
                        
-                     break;  
-                 
-                 }  // end incoming byte
-             }  // end command in progress
-         //}
-     } // end serial handler
+						break;  
+
+                }  // end new command starting
+				 
+            }  // end commandInProgress
+
+		}  // end serial.available
    
- }
+	}  // end serial handler
  
+int availableMemory(){
+
 // this function will return the number of bytes currently free in RAM
 // written by David A. Mellis
 // based on code by Rob Faludi http://www.faludi.com
-int availableMemory() {
+
   int size = 4096; // 4k SRAM
   byte *buf;
 
