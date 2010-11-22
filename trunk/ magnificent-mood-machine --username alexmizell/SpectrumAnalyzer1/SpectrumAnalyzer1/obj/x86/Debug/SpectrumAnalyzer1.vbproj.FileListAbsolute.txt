@@ -1,0 +1,11 @@
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\bin\Debug\SpectrumAnalyzer1.exe
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\bin\Debug\SpectrumAnalyzer1.pdb
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\bin\Debug\SpectrumAnalyzer1.xml
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\ResolveAssemblyReference.cache
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\Spectrum_Analyzer.frmSpectrumAnalyzer.resources
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\Spectrum_Analyzer.Resources.resources
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\GenerateResource.read.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\GenerateResource.write.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\SpectrumAnalyzer1.exe
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\SpectrumAnalyzer1.xml
+J:\Mood Machine Project Files\Code Working Folder\SpectrumAnalyzer1\SpectrumAnalyzer1\obj\x86\Debug\SpectrumAnalyzer1.pdb
