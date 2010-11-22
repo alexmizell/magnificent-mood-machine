@@ -9,3 +9,5 @@ J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGU
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.exe
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.xml
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.pdb
+J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.dll
+J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.xml

@@ -6,7 +6,7 @@
 //
 //  11/12/2010 - Begin cleanup and refactoring for official version 1.0 release
 
-// Include ALeone's brilliant driver
+// Include ALeone's driver
 #include "Tlc5940.h"
 
 // Flag and delay factor to ease troubleshooting

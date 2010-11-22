@@ -49,6 +49,10 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bass.Net, Version=2.4.6.8, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\BASS.NET\Bass.Net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
@@ -72,10 +76,10 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmMoodMachineGUIMain.designer.vb">
-      <DependentUpon>frmMoodMachineGUIMain.vb</DependentUpon>
+    <Compile Include="frmMoodMachineGUIMain_2.designer.vb">
+      <DependentUpon>frmMoodMachineGUIMain_2.vb</DependentUpon>
     </Compile>
-    <Compile Include="frmMoodMachineGUIMain.vb">
+    <Compile Include="frmMoodMachineGUIMain_2.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -95,8 +99,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="frmMoodMachineGUIMain.resx">
-      <DependentUpon>frmMoodMachineGUIMain.vb</DependentUpon>
+    <EmbeddedResource Include="frmMoodMachineGUIMain_2.resx">
+      <DependentUpon>frmMoodMachineGUIMain_2.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
