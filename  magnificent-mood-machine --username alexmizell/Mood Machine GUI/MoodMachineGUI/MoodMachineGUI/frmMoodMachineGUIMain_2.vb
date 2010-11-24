@@ -2,16 +2,67 @@
 Imports Un4seen.Bass
 Imports Un4seen.Bass.Misc.Visuals
 Imports System.Drawing
+Imports System.Runtime.InteropServices
+Imports System.Collections
 
 
 
 Public Class frmMain
+
+    '  this all for visualisation support
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_Init(ByVal hInstance As IntPtr, ByVal hWnd As IntPtr) As Boolean
+    End Function
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_PluginCreate(ByVal file As String, ByVal hPluginWnd As IntPtr, ByVal width As Integer, ByVal height As Integer, ByVal flags As Integer) As Integer
+    End Function
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_PluginStart(ByVal handle As Integer) As Boolean
+    End Function
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_PluginSetStream(ByVal handle As Integer, ByVal stream As Integer) As Boolean
+    End Function
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_PluginRender(ByVal handle As Integer, ByVal hStream As Integer, ByVal hDC As IntPtr) As IntPtr
+    End Function
+
+    <DllImport("bass_sfx.dll")> _
+    Public Shared Function BASS_SFX_PluginResize(ByVal handle As Integer, ByVal width As Integer, ByVal height As IntPtr) As Boolean
+    End Function
+
+    Private Declare Function GetDC Lib "user32.dll" (ByVal hWnd As Int32) As IntPtr
+    Private Declare Function ReleaseDC Lib "user32.dll" (ByVal hWnd As Int32, ByVal hDC As IntPtr) As Int32
+    Private BASS_UNICODE As Integer = -2147483648
+    Private hSFX As Integer = 0
+    Private hVisDC As IntPtr = IntPtr.Zero
+
+    '' for bitblit
+
+    'Declare Auto Function BitBlt Lib "GDI32.DLL" ( _
+    ' ByVal hdcDest As IntPtr, _
+    ' ByVal nXDest As Integer, _
+    ' ByVal nYDest As Integer, _
+    ' ByVal nWidth As Integer, _
+    ' ByVal nHeight As Integer, _
+    ' ByVal hdcSrc As IntPtr, _
+    ' ByVal nXSrc As Integer, _
+    ' ByVal nYSrc As Integer, _
+    ' ByVal dwRop As Int32) As Boolean
 
 
 
     Dim stopWatch1 As New Stopwatch
     Dim stopWatch2 As New Stopwatch
     Dim stopWatch3 As New Stopwatch
+
+    Dim frameDeltaTimer As Stopwatch
+    Dim maxBytesPerFrame As Integer
+
 
     Dim red As Byte = 0
     Dim green As Byte = 0
@@ -22,6 +73,7 @@ Public Class frmMain
     Dim colsWide As Integer
 
     Dim pixelArray As Bitmap
+    Dim lastFrame As Bitmap
     Dim pixelArrayG As Graphics
 
     Dim lastColor As Color
@@ -45,6 +97,11 @@ Public Class frmMain
 
     Dim Rainbow As Integer = 1
 
+    Dim movingAverageList As List(Of Integer)
+    Dim movingAverageCount As Integer
+
+
+
 
 
 
@@ -54,16 +111,16 @@ Public Class frmMain
 
         'stopWatch1.Start()
 
-        'SerialPort1.Open()
+        SerialPort1.Open()
 
         ' too-simple test with no timeout 
         ' for determining whether we're connected to the MCU
         ' slams the CPU, bad code, bad!
 
-        'SerialPort1.Write("t") ' Send reset
+        SerialPort1.Write("t") ' Send reset
 
-        'While SerialPort1.BytesToRead < 1
-        'End While
+        While SerialPort1.BytesToRead < 1
+        End While
 
 
 
@@ -151,6 +208,7 @@ Public Class frmMain
         pbPixelArray.BackgroundImage = pixelArray
         pbPixelArray.Refresh()
 
+        lastFrame = pixelArray.Clone
 
 
         'Dim point As New Point(0, 0)
@@ -200,6 +258,36 @@ Public Class frmMain
         rectangle = New Rectangle(0, 0, pixelArray.Width + 1, pixelArray.Height)
         myVisuals.MaxFrequencySpectrum = 400
         myVisuals.ScaleFactorSqr = 4
+
+        ' for bass_sfx visualisations
+
+        hVisDC = GetDC(pbPixelArray.Handle)
+
+        BASS_SFX_Init(System.Diagnostics.Process.GetCurrentProcess().Handle, Me.Handle)
+
+        BASS_SFX_PluginSetStream(hSFX, stream)
+
+        pbMiniMe.Height = pixelArray.Height
+        pbMiniMe.Width = pixelArray.Width
+
+        hSFX = BASS_SFX_PluginCreate("Plugins\MetreX.svp", pbPixelArray.Handle, pbPixelArray.Width, pbPixelArray.Height, 0)
+
+        'BASS_SFX_PluginResize(hSFX, pixelArray.Width, pixelArray.Height)
+
+
+        BASS_SFX_PluginStart(hSFX)
+
+        frameDeltaTimer = New Stopwatch
+        movingAverageList = New List(Of Integer)
+
+        For i = 0 To 99
+
+            movingAverageList.Add(0)
+
+        Next
+
+        movingAverageCount = 0
+
 
     End Sub
 
@@ -395,24 +483,47 @@ Public Class frmMain
 
             'If SerialPort1.IsOpen Then
 
-            ' prepare the byte array
-            ' since 4 bits can store 16 values, we pack two of those per byte to double the frame rate
+            ' do this the right way - delta frames, sort the pixels to minimize color changes
 
-            Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
-
-            ' if there's an odd number of columns then add 1 because we're sending columns in pairs
-            If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
-
-            byteArrayLength = byteArrayLength / 2
+            sendFrameDelta()
 
 
-            ' send command plus byteArrayLength bytes for columns
+
+            '' prepare the byte array
+            '' since 4 bits can store 16 values, we pack two of those per byte to double the frame rate
+
+            'Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
+
+            '' if there's an odd number of columns then add 1 because we're sending columns in pairs
+            'If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
+
+            'byteArrayLength = byteArrayLength / 2
+
+
+            '' send command plus byteArrayLength bytes for columns
 
 
 
             'End If
 
         End If
+
+        ' render visualizations
+
+        If cbVis1.Checked Then
+
+            BASS_SFX_PluginRender(hSFX, stream, hVisDC)
+
+            'Dim bmp As Bitmap = CType(pbMiniMe.Image, Bitmap)
+
+            'pbPixelArray.BackgroundImage = CType(copyRect(pbMiniMe, New RectangleF(0, 0, pbMiniMe.Width, pbMiniMe.Height)), Bitmap)
+            'pbPixelArray.Refresh()
+
+
+
+
+        End If
+
 
     End Sub
 
@@ -1841,7 +1952,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub cbPlay_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbPlay.CheckedChanged
+    Private Sub cbPlay_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbPlay.CheckedChanged, cbVis1.CheckedChanged
 
 
         If cbPlay.Checked Then
@@ -1856,6 +1967,161 @@ Public Class frmMain
 
     End Sub
 
+
+
+    Private Sub frmMain_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed
+
+        ReleaseDC(pbPixelArray.Handle, hVisDC)
+
+    End Sub
+
+    Private Sub sendFrameDelta()
+
+        frameDeltaTimer.Restart()
+
+        Dim frameDelta As New ArrayList
+        Dim colorPixel As String
+        Dim bytesPerFrame As Integer = 0
+
+        ' iterate through every pixel, 
+
+        For i = 0 To pixelArray.Width - 1
+
+            For j = 0 To pixelArray.Height - 1
+
+                Dim pixelNum As Integer = j * Val(txtMatrixCols.Text) + i
+                Dim pixelColor = pixelArray.GetPixel(i, j)
+
+                ' compare to pixel in last frame
+                If pixelColor <> lastFrame.GetPixel(i, j) Then
+
+                    ' pixel is different in this frame than the last
+                    ' add it to the arraylist
+
+                    colorPixel = pixelColor.R & "," & pixelColor.G & "," & pixelColor.B & "," & pixelNum
+
+                    frameDelta.Add(colorPixel)
+
+                End If
+
+            Next
+
+        Next
+
+        ' sorting by color minimizes the color change messages
+        frameDelta.Sort()
+
+        ' now send the appropriate drawpixels/color changes
+
+        ' iterate through the arraylist
+        For i = 0 To frameDelta.Count - 1
+
+            ' parse the items
+            colorPixel = frameDelta(i)
+
+            Dim pixelData() As String = colorPixel.Split(",")
+
+            If red <> pixelData(0) Then
+
+                ' red changed, send color change
+                red = pixelData(0)
+
+                Dim redByte(1) As Byte
+                redByte(0) = red
+
+                If SerialPort1.IsOpen Then
+
+                    SerialPort1.Write("r")
+                    SerialPort1.Write(redByte, 0, 1)
+
+                End If
+
+                bytesPerFrame += 2
+
+
+
+            End If
+
+            If green <> pixelData(1) Then
+
+                ' green changed, send color change
+                green = pixelData(1)
+
+                Dim greenByte(1) As Byte
+                greenByte(0) = red
+
+                If SerialPort1.IsOpen Then
+
+                    SerialPort1.Write("g")
+                    SerialPort1.Write(greenByte, 0, 1)
+
+                End If
+
+
+                bytesPerFrame += 2
+
+
+            End If
+
+            If blue <> pixelData(2) Then
+
+                ' blue changed, send color change
+                blue = pixelData(2)
+
+                Dim blueByte(1) As Byte
+                blueByte(0) = red
+
+                If SerialPort1.IsOpen Then
+
+                    SerialPort1.Write("b")
+                    SerialPort1.Write(blueByte, 0, 1)
+
+                End If
+
+                bytesPerFrame += 2
+
+            End If
+
+            ' color should be right, send pixel on
+            selectPixel(pixelData(3))
+
+            bytesPerFrame += 3
+
+            pixelOn()
+
+            bytesPerFrame += 1
+
+        Next
+
+        ' copy the current frame to lastFrame
+        lastFrame = pixelArray.Clone
+
+        ' clear frameDelta array
+        frameDelta.Clear()
+
+        'Dim frameRate As Single = frameDeltaTimer.ElapsedMilliseconds
+
+        'If bytesPerFrame > maxBytesPerFrame Then
+
+        '    maxBytesPerFrame = bytesPerFrame
+
+        '    lblMaxBytesPerFrame.Text = "Max Bytes Per Frame: " & maxBytesPerFrame
+
+        'End If
+        
+        
+        If movingAverageCount > 99 Then movingAverageCount = 0
+
+        movingAverageList(movingAverageCount) = bytesPerFrame
+
+        lblAvgBytesPerFrame.Text = "Avg Bytes Per Frame: " & movingAverageList.Average
+
+        lblBytesPerFrame.Text = "Bytes Per Frame: " & bytesPerFrame & " ms: " & frameDeltaTimer.ElapsedMilliseconds.ToString
+
+        movingAverageCount += 1
+        bytesPerFrame = 0
+
+    End Sub
 
 
 End Class

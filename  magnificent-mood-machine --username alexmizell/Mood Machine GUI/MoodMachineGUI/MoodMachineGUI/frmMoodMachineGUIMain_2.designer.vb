@@ -135,6 +135,10 @@ Partial Class frmMain
         Me.cbPlay = New System.Windows.Forms.CheckBox()
         Me.cbEnableSpectrum = New System.Windows.Forms.CheckBox()
         Me.cbRainbow = New System.Windows.Forms.CheckBox()
+        Me.cbVis1 = New System.Windows.Forms.CheckBox()
+        Me.pbMiniMe = New System.Windows.Forms.PictureBox()
+        Me.lblBytesPerFrame = New System.Windows.Forms.Label()
+        Me.lblAvgBytesPerFrame = New System.Windows.Forms.Label()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -157,6 +161,7 @@ Partial Class frmMain
         CType(Me.PictureBox10, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbRowOn, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbRowOff, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.pbMiniMe, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ColorDialog1
@@ -254,7 +259,7 @@ Partial Class frmMain
         'lblFreq
         '
         Me.lblFreq.AutoSize = True
-        Me.lblFreq.Location = New System.Drawing.Point(277, 380)
+        Me.lblFreq.Location = New System.Drawing.Point(294, 383)
         Me.lblFreq.Name = "lblFreq"
         Me.lblFreq.Size = New System.Drawing.Size(49, 13)
         Me.lblFreq.TabIndex = 11
@@ -344,7 +349,7 @@ Partial Class frmMain
         '
         'txtRowOn
         '
-        Me.txtRowOn.Location = New System.Drawing.Point(756, 373)
+        Me.txtRowOn.Location = New System.Drawing.Point(749, 373)
         Me.txtRowOn.Name = "txtRowOn"
         Me.txtRowOn.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOn.Size = New System.Drawing.Size(59, 20)
@@ -364,7 +369,7 @@ Partial Class frmMain
         'lblOffDelayMS
         '
         Me.lblOffDelayMS.AutoSize = True
-        Me.lblOffDelayMS.Location = New System.Drawing.Point(277, 407)
+        Me.lblOffDelayMS.Location = New System.Drawing.Point(294, 410)
         Me.lblOffDelayMS.Name = "lblOffDelayMS"
         Me.lblOffDelayMS.Size = New System.Drawing.Size(49, 13)
         Me.lblOffDelayMS.TabIndex = 11
@@ -372,7 +377,7 @@ Partial Class frmMain
         '
         'txtRowOff
         '
-        Me.txtRowOff.Location = New System.Drawing.Point(756, 404)
+        Me.txtRowOff.Location = New System.Drawing.Point(749, 404)
         Me.txtRowOff.Name = "txtRowOff"
         Me.txtRowOff.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOff.Size = New System.Drawing.Size(59, 20)
@@ -451,9 +456,10 @@ Partial Class frmMain
         '
         'pbPixelArray
         '
-        Me.pbPixelArray.Location = New System.Drawing.Point(0, 0)
+        Me.pbPixelArray.Location = New System.Drawing.Point(2, 2)
         Me.pbPixelArray.Name = "pbPixelArray"
-        Me.pbPixelArray.Size = New System.Drawing.Size(500, 303)
+        Me.pbPixelArray.Size = New System.Drawing.Size(500, 300)
+        Me.pbPixelArray.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
         Me.pbPixelArray.TabIndex = 0
         Me.pbPixelArray.TabStop = False
         '
@@ -1200,18 +1206,18 @@ Partial Class frmMain
         '
         'tbRowOn
         '
-        Me.tbRowOn.Location = New System.Drawing.Point(322, 370)
+        Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
         Me.tbRowOn.Maximum = 8000
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(428, 45)
+        Me.tbRowOn.Size = New System.Drawing.Size(413, 45)
         Me.tbRowOn.TabIndex = 51
         '
         'tbRowOff
         '
-        Me.tbRowOff.Location = New System.Drawing.Point(322, 401)
+        Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
         Me.tbRowOff.Maximum = 8000
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(428, 45)
+        Me.tbRowOff.Size = New System.Drawing.Size(413, 45)
         Me.tbRowOff.TabIndex = 51
         '
         'cbPlay
@@ -1247,13 +1253,54 @@ Partial Class frmMain
         Me.cbRainbow.Text = "    Rainbow   "
         Me.cbRainbow.UseVisualStyleBackColor = True
         '
+        'cbVis1
+        '
+        Me.cbVis1.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbVis1.AutoSize = True
+        Me.cbVis1.Location = New System.Drawing.Point(830, 220)
+        Me.cbVis1.Name = "cbVis1"
+        Me.cbVis1.Size = New System.Drawing.Size(82, 23)
+        Me.cbVis1.TabIndex = 52
+        Me.cbVis1.Text = "       Vis 1       "
+        Me.cbVis1.UseVisualStyleBackColor = True
+        '
+        'pbMiniMe
+        '
+        Me.pbMiniMe.Location = New System.Drawing.Point(515, 470)
+        Me.pbMiniMe.Name = "pbMiniMe"
+        Me.pbMiniMe.Size = New System.Drawing.Size(100, 50)
+        Me.pbMiniMe.TabIndex = 1
+        Me.pbMiniMe.TabStop = False
+        '
+        'lblBytesPerFrame
+        '
+        Me.lblBytesPerFrame.AutoSize = True
+        Me.lblBytesPerFrame.Location = New System.Drawing.Point(668, 492)
+        Me.lblBytesPerFrame.Name = "lblBytesPerFrame"
+        Me.lblBytesPerFrame.Size = New System.Drawing.Size(90, 13)
+        Me.lblBytesPerFrame.TabIndex = 53
+        Me.lblBytesPerFrame.Text = "Bytes Per Frame: "
+        '
+        'lblAvgBytesPerFrame
+        '
+        Me.lblAvgBytesPerFrame.AutoSize = True
+        Me.lblAvgBytesPerFrame.Location = New System.Drawing.Point(668, 516)
+        Me.lblAvgBytesPerFrame.Name = "lblAvgBytesPerFrame"
+        Me.lblAvgBytesPerFrame.Size = New System.Drawing.Size(109, 13)
+        Me.lblAvgBytesPerFrame.TabIndex = 54
+        Me.lblAvgBytesPerFrame.Text = "Avg Bytes Per Frame:"
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.lblAvgBytesPerFrame)
+        Me.Controls.Add(Me.lblBytesPerFrame)
+        Me.Controls.Add(Me.pbMiniMe)
         Me.Controls.Add(Me.cbEnableSpectrum)
+        Me.Controls.Add(Me.cbVis1)
         Me.Controls.Add(Me.cbPlay)
         Me.Controls.Add(Me.txtRowOff)
         Me.Controls.Add(Me.txtRowOn)
@@ -1315,6 +1362,7 @@ Partial Class frmMain
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabContainer.ResumeLayout(False)
         Me.tabBitMapView.ResumeLayout(False)
+        Me.tabBitMapView.PerformLayout()
         CType(Me.pbPixelArray, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabMatrixSetup.ResumeLayout(False)
         Me.tabMatrixSetup.PerformLayout()
@@ -1335,6 +1383,7 @@ Partial Class frmMain
         CType(Me.PictureBox10, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tbRowOn, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tbRowOff, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.pbMiniMe, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1451,5 +1500,9 @@ Partial Class frmMain
     Friend WithEvents cbPlay As System.Windows.Forms.CheckBox
     Friend WithEvents cbEnableSpectrum As System.Windows.Forms.CheckBox
     Friend WithEvents cbRainbow As System.Windows.Forms.CheckBox
+    Friend WithEvents cbVis1 As System.Windows.Forms.CheckBox
+    Friend WithEvents pbMiniMe As System.Windows.Forms.PictureBox
+    Friend WithEvents lblBytesPerFrame As System.Windows.Forms.Label
+    Friend WithEvents lblAvgBytesPerFrame As System.Windows.Forms.Label
 
 End Class
