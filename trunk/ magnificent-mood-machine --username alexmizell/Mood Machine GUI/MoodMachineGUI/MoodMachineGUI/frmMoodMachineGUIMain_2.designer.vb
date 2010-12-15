@@ -87,9 +87,6 @@ Partial Class frmMain
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.cbAA = New System.Windows.Forms.CheckBox()
-        Me.Label5 = New System.Windows.Forms.Label()
-        Me.pbSerialIn = New System.Windows.Forms.ProgressBar()
-        Me.pbSerialOut = New System.Windows.Forms.ProgressBar()
         Me.btnSendFrame = New System.Windows.Forms.Button()
         Me.pbSayIt = New System.Windows.Forms.PictureBox()
         Me.btnShiftLeft = New System.Windows.Forms.Button()
@@ -139,6 +136,9 @@ Partial Class frmMain
         Me.pbMiniMe = New System.Windows.Forms.PictureBox()
         Me.lblBytesPerFrame = New System.Windows.Forms.Label()
         Me.lblAvgBytesPerFrame = New System.Windows.Forms.Label()
+        Me.pbSerialOut = New System.Windows.Forms.ProgressBar()
+        Me.pbSerialIn = New System.Windows.Forms.ProgressBar()
+        Me.Label5 = New System.Windows.Forms.Label()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -215,7 +215,7 @@ Partial Class frmMain
         'Timer1
         '
         Me.Timer1.Enabled = True
-        Me.Timer1.Interval = 10
+        Me.Timer1.Interval = 5
         '
         'btnReset
         '
@@ -349,7 +349,7 @@ Partial Class frmMain
         '
         'txtRowOn
         '
-        Me.txtRowOn.Location = New System.Drawing.Point(749, 373)
+        Me.txtRowOn.Location = New System.Drawing.Point(685, 373)
         Me.txtRowOn.Name = "txtRowOn"
         Me.txtRowOn.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOn.Size = New System.Drawing.Size(59, 20)
@@ -377,7 +377,7 @@ Partial Class frmMain
         '
         'txtRowOff
         '
-        Me.txtRowOff.Location = New System.Drawing.Point(749, 404)
+        Me.txtRowOff.Location = New System.Drawing.Point(685, 404)
         Me.txtRowOff.Name = "txtRowOff"
         Me.txtRowOff.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOff.Size = New System.Drawing.Size(59, 20)
@@ -748,12 +748,7 @@ Partial Class frmMain
         '
         'tabJunk
         '
-        Me.tabJunk.Controls.Add(Me.Label7)
-        Me.tabJunk.Controls.Add(Me.Label6)
         Me.tabJunk.Controls.Add(Me.cbAA)
-        Me.tabJunk.Controls.Add(Me.Label5)
-        Me.tabJunk.Controls.Add(Me.pbSerialIn)
-        Me.tabJunk.Controls.Add(Me.pbSerialOut)
         Me.tabJunk.Controls.Add(Me.txtSerial)
         Me.tabJunk.Controls.Add(Me.tbRed)
         Me.tabJunk.Controls.Add(Me.lblR)
@@ -776,22 +771,20 @@ Partial Class frmMain
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(23, 67)
+        Me.Label7.Location = New System.Drawing.Point(774, 498)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(18, 13)
         Me.Label7.TabIndex = 27
         Me.Label7.Text = "O:"
-        Me.Label7.Visible = False
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(23, 38)
+        Me.Label6.Location = New System.Drawing.Point(774, 469)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(13, 13)
         Me.Label6.TabIndex = 28
         Me.Label6.Text = "I:"
-        Me.Label6.Visible = False
         '
         'cbAA
         '
@@ -803,34 +796,6 @@ Partial Class frmMain
         Me.cbAA.Text = "Antialiasing"
         Me.cbAA.UseVisualStyleBackColor = True
         Me.cbAA.Visible = False
-        '
-        'Label5
-        '
-        Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(91, 22)
-        Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(68, 13)
-        Me.Label5.TabIndex = 29
-        Me.Label5.Text = "Serial buffers"
-        Me.Label5.Visible = False
-        '
-        'pbSerialIn
-        '
-        Me.pbSerialIn.Location = New System.Drawing.Point(42, 38)
-        Me.pbSerialIn.Maximum = 4096
-        Me.pbSerialIn.Name = "pbSerialIn"
-        Me.pbSerialIn.Size = New System.Drawing.Size(178, 18)
-        Me.pbSerialIn.TabIndex = 25
-        Me.pbSerialIn.Visible = False
-        '
-        'pbSerialOut
-        '
-        Me.pbSerialOut.Location = New System.Drawing.Point(42, 62)
-        Me.pbSerialOut.Maximum = 4096
-        Me.pbSerialOut.Name = "pbSerialOut"
-        Me.pbSerialOut.Size = New System.Drawing.Size(179, 18)
-        Me.pbSerialOut.TabIndex = 26
-        Me.pbSerialOut.Visible = False
         '
         'btnSendFrame
         '
@@ -1209,7 +1174,7 @@ Partial Class frmMain
         Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
         Me.tbRowOn.Maximum = 8000
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(413, 45)
+        Me.tbRowOn.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOn.TabIndex = 51
         '
         'tbRowOff
@@ -1217,7 +1182,7 @@ Partial Class frmMain
         Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
         Me.tbRowOff.Maximum = 8000
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(413, 45)
+        Me.tbRowOff.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOff.TabIndex = 51
         '
         'cbPlay
@@ -1266,7 +1231,7 @@ Partial Class frmMain
         '
         'pbMiniMe
         '
-        Me.pbMiniMe.Location = New System.Drawing.Point(515, 470)
+        Me.pbMiniMe.Location = New System.Drawing.Point(422, 471)
         Me.pbMiniMe.Name = "pbMiniMe"
         Me.pbMiniMe.Size = New System.Drawing.Size(100, 50)
         Me.pbMiniMe.TabIndex = 1
@@ -1275,7 +1240,7 @@ Partial Class frmMain
         'lblBytesPerFrame
         '
         Me.lblBytesPerFrame.AutoSize = True
-        Me.lblBytesPerFrame.Location = New System.Drawing.Point(668, 492)
+        Me.lblBytesPerFrame.Location = New System.Drawing.Point(576, 471)
         Me.lblBytesPerFrame.Name = "lblBytesPerFrame"
         Me.lblBytesPerFrame.Size = New System.Drawing.Size(90, 13)
         Me.lblBytesPerFrame.TabIndex = 53
@@ -1284,11 +1249,36 @@ Partial Class frmMain
         'lblAvgBytesPerFrame
         '
         Me.lblAvgBytesPerFrame.AutoSize = True
-        Me.lblAvgBytesPerFrame.Location = New System.Drawing.Point(668, 516)
+        Me.lblAvgBytesPerFrame.Location = New System.Drawing.Point(576, 495)
         Me.lblAvgBytesPerFrame.Name = "lblAvgBytesPerFrame"
         Me.lblAvgBytesPerFrame.Size = New System.Drawing.Size(109, 13)
         Me.lblAvgBytesPerFrame.TabIndex = 54
         Me.lblAvgBytesPerFrame.Text = "Avg Bytes Per Frame:"
+        '
+        'pbSerialOut
+        '
+        Me.pbSerialOut.Location = New System.Drawing.Point(793, 493)
+        Me.pbSerialOut.Maximum = 4096
+        Me.pbSerialOut.Name = "pbSerialOut"
+        Me.pbSerialOut.Size = New System.Drawing.Size(179, 18)
+        Me.pbSerialOut.TabIndex = 26
+        '
+        'pbSerialIn
+        '
+        Me.pbSerialIn.Location = New System.Drawing.Point(793, 469)
+        Me.pbSerialIn.Maximum = 4096
+        Me.pbSerialIn.Name = "pbSerialIn"
+        Me.pbSerialIn.Size = New System.Drawing.Size(178, 18)
+        Me.pbSerialIn.TabIndex = 25
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(842, 453)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(68, 13)
+        Me.Label5.TabIndex = 29
+        Me.Label5.Text = "Serial buffers"
         '
         'frmMain
         '
@@ -1296,10 +1286,15 @@ Partial Class frmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.lblAvgBytesPerFrame)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.lblBytesPerFrame)
         Me.Controls.Add(Me.pbMiniMe)
+        Me.Controls.Add(Me.Label5)
+        Me.Controls.Add(Me.pbSerialIn)
         Me.Controls.Add(Me.cbEnableSpectrum)
+        Me.Controls.Add(Me.pbSerialOut)
         Me.Controls.Add(Me.cbVis1)
         Me.Controls.Add(Me.cbPlay)
         Me.Controls.Add(Me.txtRowOff)
@@ -1494,9 +1489,6 @@ Partial Class frmMain
     Friend WithEvents tabJunk As System.Windows.Forms.TabPage
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents Label6 As System.Windows.Forms.Label
-    Friend WithEvents Label5 As System.Windows.Forms.Label
-    Friend WithEvents pbSerialIn As System.Windows.Forms.ProgressBar
-    Friend WithEvents pbSerialOut As System.Windows.Forms.ProgressBar
     Friend WithEvents cbPlay As System.Windows.Forms.CheckBox
     Friend WithEvents cbEnableSpectrum As System.Windows.Forms.CheckBox
     Friend WithEvents cbRainbow As System.Windows.Forms.CheckBox
@@ -1504,5 +1496,8 @@ Partial Class frmMain
     Friend WithEvents pbMiniMe As System.Windows.Forms.PictureBox
     Friend WithEvents lblBytesPerFrame As System.Windows.Forms.Label
     Friend WithEvents lblAvgBytesPerFrame As System.Windows.Forms.Label
+    Friend WithEvents pbSerialOut As System.Windows.Forms.ProgressBar
+    Friend WithEvents pbSerialIn As System.Windows.Forms.ProgressBar
+    Friend WithEvents Label5 As System.Windows.Forms.Label
 
 End Class
