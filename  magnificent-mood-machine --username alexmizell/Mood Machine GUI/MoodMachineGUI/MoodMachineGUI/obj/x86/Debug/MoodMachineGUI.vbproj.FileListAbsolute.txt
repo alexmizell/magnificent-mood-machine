@@ -11,3 +11,16 @@ J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGU
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.pdb
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.dll
 J:\Mood Machine Project Files\Code Working Folder\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.exe
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.pdb
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.exe
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.pdb
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.dll
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\ResolveAssemblyReference.cache
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.frmMain.resources
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.Resources.resources
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.read.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.write.1.tlog

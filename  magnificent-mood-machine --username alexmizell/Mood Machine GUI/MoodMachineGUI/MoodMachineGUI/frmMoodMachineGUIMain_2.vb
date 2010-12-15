@@ -109,7 +109,7 @@ Public Class frmMain
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
 
-        'stopWatch1.Start()
+        ' stopWatch1.Start()
 
         SerialPort1.Open()
 
@@ -485,26 +485,93 @@ Public Class frmMain
 
             ' do this the right way - delta frames, sort the pixels to minimize color changes
 
-            sendFrameDelta()
+            'sendFrameDelta()
+
+            ' ----------------------------------------------------------------
+            ' NEW CODE ADDED TO SPEED UP SPECTRUM BARS
+
+            ' prepare the byte array
+            ' since each column is 15 tall, and since 4 bits can store 16 values, 
+            ' we can pack two of those 4-bit values per byte and send the entire array state in 26 bytes
+            ' BUT there can be no more than 15 pixels in a column for this to work
+
+            Dim byteIndex As Integer = 0
+            Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
 
 
 
-            '' prepare the byte array
-            '' since 4 bits can store 16 values, we pack two of those per byte to double the frame rate
+            ' if there's an odd number of columns then add 1 because we're sending columns in pairs
+            If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
 
-            'Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
+            byteArrayLength = byteArrayLength / 2
 
-            '' if there's an odd number of columns then add 1 because we're sending columns in pairs
-            'If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
+            Dim byteArray(byteArrayLength - 1) As Byte
 
-            'byteArrayLength = byteArrayLength / 2
+            byteArray.Initialize()
 
+            ' send command plus byteArrayLength bytes for columns
 
-            '' send command plus byteArrayLength bytes for columns
+            For i = 0 To Val(txtMatrixCols.Text) - 1
 
+                ' for each column, find the non-black pixel with the greatest y value
 
+                For j = 0 To Val(txtMatrixRows.Text) - 1
 
-            'End If
+                    Dim thisColor = pixelArray.GetPixel(i, j)
+
+                    If Not (thisColor = Drawing.Color.FromArgb(255, 0, 0, 0)) Then
+
+                        ' if i = even then pack highest 4 bits of byteArray(byteIndex)
+
+                        If i Mod 2 = 0 Then
+
+                            byteArray(byteIndex) = 16 - j
+                            byteArray(byteIndex) = byteArray(byteIndex) << 4
+
+                        Else
+
+                            ' if i = odd then pack the lowest 4 bits of byteArray(byteIndex)
+
+                            byteArray(byteIndex) = byteArray(byteIndex) Or (16 - j)
+                            byteIndex += 1
+
+                        End If
+
+                        Exit For
+
+                        'Else
+
+                        '    If i Mod 2 = 0 Then
+
+                        '        byteArray(byteIndex) = 0
+                        '        byteArray(byteIndex) = byteArray(byteIndex) << 4
+
+                        '    Else
+
+                        '        byteArray(byteIndex) = byteArray(byteIndex) Or j
+
+                        '        byteIndex += 1
+
+                        '    End If
+
+                    End If
+
+                Next
+
+            Next
+
+            ' stop here to debug
+
+            ' now send the byteArray
+
+            If SerialPort1.IsOpen Then
+
+                SerialPort1.Write("#")
+
+                SerialPort1.Write(byteArray, 0, byteArrayLength)
+
+            End If
+
 
         End If
 
