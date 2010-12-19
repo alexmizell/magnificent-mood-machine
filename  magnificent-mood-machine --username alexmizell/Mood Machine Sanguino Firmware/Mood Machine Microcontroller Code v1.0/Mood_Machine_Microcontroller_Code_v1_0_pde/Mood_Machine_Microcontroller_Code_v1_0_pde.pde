@@ -63,9 +63,7 @@ unsigned int colOffset = 0;
 unsigned int colArrayOffset = 0;
 unsigned int tlcChannelOffset = 0;
 unsigned int totalChannelOffset = 0;
-unsigned int whichTLCRow = 0;
-unsigned int whichTLCCol = 0;
-unsigned int whichTLC = 0;
+
 
 byte pixelArray[1200]; // maximum size supported for now:  16 TLCs * 5 rows * 5 columns * 3 colors = 1200 bytes for 400 RGBs
 
@@ -653,11 +651,11 @@ void serialInputHandler(){
 				
                                 if(debugMode){
 				
-					Serial.print("#: ");
-					Serial.print(byteNum, DEC);
-					Serial.print(", ");
-					Serial.print(incomingByte, DEC);
-					Serial.println();
+					//Serial.print("#: ");
+					//Serial.print(byteNum, DEC);
+					//Serial.print(", ");
+					//Serial.print(incomingByte, DEC);
+					//Serial.println();
 
 				}
 
@@ -687,10 +685,10 @@ void serialInputHandler(){
                                 
                                 if (debugMode){
                                 
-                                    //Serial.print("firstNibble: ");
-                                    //Serial.println(firstNibble, DEC);
-                                    //Serial.print("secondNibble: ");
-                                    //Serial.println(secondNibble, DEC);
+                                    Serial.print("firstNibble: ");
+                                    Serial.println(firstNibble, DEC);
+                                    Serial.print("secondNibble: ");
+                                    Serial.println(secondNibble, DEC);
                            
                                 }
                                 
@@ -700,48 +698,48 @@ void serialInputHandler(){
                                 
                                 for (int bgi = matrixRows - 1; bgi > firstNibble; bgi--){
                                 
-                                    pixelNum = xyToIndex(barGraphRow, bgi);
+                                    selectPixel(barGraphRow, bgi);
                                     
-                                    pixelArray[pixelNum * channelsPerLED] = red;
-                                    pixelArray[(pixelNum * channelsPerLED) + 1] = green;
-                                    pixelArray[(pixelNum * channelsPerLED) + 2] = blue;
+                                    pixelArray[pixel * channelsPerLED] = red;
+                                    pixelArray[(pixel * channelsPerLED) + 1] = green;
+                                    pixelArray[(pixel * channelsPerLED) + 2] = blue;
                                   
                                 }
                                 
                                 if (debugMode){
                                 
-                                    Serial.print("pixelNum,barGraphRow: ");
-                                    Serial.print(pixelNum, DEC);
-                                    Serial.print(", ");
-                                    Serial.println(barGraphRow, DEC);
+                                    //Serial.print("pixel,barGraphRow: ");
+                                    //Serial.print(pixel, DEC);
+                                    //Serial.print(", ");
+                                    //Serial.println(barGraphRow, DEC);
                                    
-                                   delay(slowDown);
+                                   //delay(slowDown);
                                    
                                 }
                                 
                                 // if the matrix has an odd number of columns and the we're on the last column, skip this
                                 // if (matrixColumns % 2 < 1 && barGraphRow + 1 <= matrixColumns - 1){
                                 
-                                if ((matrixColumns % 2 > 0) && (barGraphRow + 1 <= matrixColumns - 1)){ 
+                                if (barGraphRow + 1 <= matrixColumns - 1){ 
                                   
                                     for (int bgi = matrixRows - 1; bgi > secondNibble; bgi--){
                                 
-                                        pixelNum = xyToIndex(barGraphRow + 1, bgi);
+                                        selectPixel(barGraphRow + 1, bgi);
                                     
-                                        pixelArray[pixelNum * channelsPerLED] = red;
-                                        pixelArray[(pixelNum * channelsPerLED) + 1] = green;
-                                        pixelArray[(pixelNum * channelsPerLED) + 2] = blue;
+                                        pixelArray[pixel * channelsPerLED] = red;
+                                        pixelArray[(pixel * channelsPerLED) + 1] = green;
+                                        pixelArray[(pixel * channelsPerLED) + 2] = blue;
                                   
                                      }
                                      
                                      if (debugMode){
                                 
-                                        Serial.print("second pixelNum: ");
-                                        Serial.println(pixelNum, DEC);
-                                        Serial.print("second barGraphRow: ");
-                                        Serial.println(barGraphRow + 1, DEC);
+                                        //Serial.print("pixel: ");
+                                        //Serial.println(pixel, DEC);
+                                        //Serial.print("barGraphRow: ");
+                                        //Serial.println(barGraphRow + 1, DEC);
                                          
-                                        delay(slowDown); 
+                                        //delay(slowDown); 
                                          
                                      }
                                 
@@ -1202,22 +1200,42 @@ int availableMemory(){
   return size;
 }
 
-int xyToIndex(int x, int y){
+int selectPixel(int x, int y){
   
-  int pixelNum = (y * matrixColumns) + x;
+  pixel = (y * matrixColumns) + x;
+
+  unsigned int whichRow = pixel / matrixColumns;
+  unsigned int whichColumn = pixel % matrixColumns;
+  
+
+  unsigned int whichTLCRow = whichRow / numRows;
+  unsigned int whichTLCCol = whichColumn / numColumns;
+  
+  unsigned int whichTLC = (whichTLCRow * numTLCCols) + whichTLCCol;
+
+  unsigned int tlcOffset2 = whichTLC * ledsPerPanel;
+  
+  whichRow = whichRow - (whichTLCRow * numRows);
+  
+  //unsigned int anotherOffset = pixel - (whichRow * matrixColumns) + (whichTLCCol * numColumns);
+  
+  whichColumn = pixel % numColumns;
+  
+  unsigned int pixelOffset2 = (whichRow * numColumns) + whichColumn;
+  unsigned int pixel = tlcOffset2 + pixelOffset2;
 
   if (debugMode){
   
-     Serial.print("xyToIndex (x,y,index): ");
-     Serial.print(x, DEC);
-     Serial.print(", ");
-     Serial.print(y, DEC);
-     Serial.print(", ");
-     Serial.println(pixelNum);
+     //Serial.print("selectPixel(x,y,pixel): ");
+     //Serial.print(x, DEC);
+     //Serial.print(", ");
+     //Serial.print(y, DEC);
+     //Serial.print(", ");
+     //Serial.println(pixel);
   
   }
   
-  return pixelNum;
+  return pixel;
 
 }
 
