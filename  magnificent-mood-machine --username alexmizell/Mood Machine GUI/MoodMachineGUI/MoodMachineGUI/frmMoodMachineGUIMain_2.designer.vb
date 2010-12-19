@@ -81,10 +81,12 @@ Partial Class frmMain
         Me.txtNumTLCs = New System.Windows.Forms.TextBox()
         Me.txtNumChannels = New System.Windows.Forms.TextBox()
         Me.txtNumRows = New System.Windows.Forms.TextBox()
+        Me.tabJunk = New System.Windows.Forms.TabPage()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.txtSlowDown = New System.Windows.Forms.TextBox()
-        Me.tabJunk = New System.Windows.Forms.TabPage()
+        Me.Label10 = New System.Windows.Forms.Label()
         Me.cbAA = New System.Windows.Forms.CheckBox()
+        Me.cbDebugMode = New System.Windows.Forms.CheckBox()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.btnSendFrame = New System.Windows.Forms.Button()
@@ -94,7 +96,6 @@ Partial Class frmMain
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Button4 = New System.Windows.Forms.Button()
         Me.Label8 = New System.Windows.Forms.Label()
-        Me.cbDebugMode = New System.Windows.Forms.CheckBox()
         Me.udVerticalFontAdjust = New System.Windows.Forms.DomainUpDown()
         Me.Label11 = New System.Windows.Forms.Label()
         Me.btnDump = New System.Windows.Forms.Button()
@@ -139,6 +140,8 @@ Partial Class frmMain
         Me.pbSerialOut = New System.Windows.Forms.ProgressBar()
         Me.pbSerialIn = New System.Windows.Forms.ProgressBar()
         Me.Label5 = New System.Windows.Forms.Label()
+        Me.cbOnRange = New System.Windows.Forms.CheckBox()
+        Me.cbOffRange = New System.Windows.Forms.CheckBox()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -205,11 +208,11 @@ Partial Class frmMain
         '
         'txtSerial
         '
-        Me.txtSerial.Location = New System.Drawing.Point(20, 16)
+        Me.txtSerial.Location = New System.Drawing.Point(20, 36)
         Me.txtSerial.Multiline = True
         Me.txtSerial.Name = "txtSerial"
         Me.txtSerial.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.txtSerial.Size = New System.Drawing.Size(200, 274)
+        Me.txtSerial.Size = New System.Drawing.Size(200, 254)
         Me.txtSerial.TabIndex = 4
         '
         'Timer1
@@ -230,7 +233,7 @@ Partial Class frmMain
         '
         Me.lblR.AutoSize = True
         Me.lblR.ForeColor = System.Drawing.Color.Red
-        Me.lblR.Location = New System.Drawing.Point(233, 15)
+        Me.lblR.Location = New System.Drawing.Point(227, 48)
         Me.lblR.Name = "lblR"
         Me.lblR.Size = New System.Drawing.Size(15, 13)
         Me.lblR.TabIndex = 10
@@ -240,7 +243,7 @@ Partial Class frmMain
         '
         Me.lblG.AutoSize = True
         Me.lblG.ForeColor = System.Drawing.Color.Lime
-        Me.lblG.Location = New System.Drawing.Point(233, 55)
+        Me.lblG.Location = New System.Drawing.Point(227, 88)
         Me.lblG.Name = "lblG"
         Me.lblG.Size = New System.Drawing.Size(15, 13)
         Me.lblG.TabIndex = 10
@@ -250,7 +253,7 @@ Partial Class frmMain
         '
         Me.lblB.AutoSize = True
         Me.lblB.ForeColor = System.Drawing.Color.Blue
-        Me.lblB.Location = New System.Drawing.Point(234, 96)
+        Me.lblB.Location = New System.Drawing.Point(228, 129)
         Me.lblB.Name = "lblB"
         Me.lblB.Size = New System.Drawing.Size(14, 13)
         Me.lblB.TabIndex = 10
@@ -272,7 +275,7 @@ Partial Class frmMain
         '
         'hsSinFreqDiv
         '
-        Me.hsSinFreqDiv.Location = New System.Drawing.Point(239, 153)
+        Me.hsSinFreqDiv.Location = New System.Drawing.Point(233, 178)
         Me.hsSinFreqDiv.Maximum = 5000
         Me.hsSinFreqDiv.Minimum = 1
         Me.hsSinFreqDiv.Name = "hsSinFreqDiv"
@@ -283,7 +286,7 @@ Partial Class frmMain
         'lblSinFreq
         '
         Me.lblSinFreq.AutoSize = True
-        Me.lblSinFreq.Location = New System.Drawing.Point(401, 157)
+        Me.lblSinFreq.Location = New System.Drawing.Point(395, 182)
         Me.lblSinFreq.Name = "lblSinFreq"
         Me.lblSinFreq.Size = New System.Drawing.Size(101, 13)
         Me.lblSinFreq.TabIndex = 13
@@ -292,7 +295,7 @@ Partial Class frmMain
         'CheckBox1
         '
         Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Location = New System.Drawing.Point(449, 14)
+        Me.CheckBox1.Location = New System.Drawing.Point(443, 47)
         Me.CheckBox1.Name = "CheckBox1"
         Me.CheckBox1.Size = New System.Drawing.Size(47, 17)
         Me.CheckBox1.TabIndex = 14
@@ -302,7 +305,7 @@ Partial Class frmMain
         'CheckBox2
         '
         Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Location = New System.Drawing.Point(449, 55)
+        Me.CheckBox2.Location = New System.Drawing.Point(443, 88)
         Me.CheckBox2.Name = "CheckBox2"
         Me.CheckBox2.Size = New System.Drawing.Size(47, 17)
         Me.CheckBox2.TabIndex = 14
@@ -312,7 +315,7 @@ Partial Class frmMain
         'CheckBox3
         '
         Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Location = New System.Drawing.Point(449, 97)
+        Me.CheckBox3.Location = New System.Drawing.Point(443, 130)
         Me.CheckBox3.Name = "CheckBox3"
         Me.CheckBox3.Size = New System.Drawing.Size(47, 17)
         Me.CheckBox3.TabIndex = 14
@@ -322,28 +325,28 @@ Partial Class frmMain
         'tbRed
         '
         Me.tbRed.LargeChange = 1
-        Me.tbRed.Location = New System.Drawing.Point(254, 11)
+        Me.tbRed.Location = New System.Drawing.Point(248, 44)
         Me.tbRed.Maximum = 255
         Me.tbRed.Name = "tbRed"
-        Me.tbRed.Size = New System.Drawing.Size(193, 42)
+        Me.tbRed.Size = New System.Drawing.Size(193, 45)
         Me.tbRed.TabIndex = 15
         Me.tbRed.TickFrequency = 100
         '
         'tbGreen
         '
-        Me.tbGreen.Location = New System.Drawing.Point(254, 51)
+        Me.tbGreen.Location = New System.Drawing.Point(248, 84)
         Me.tbGreen.Maximum = 255
         Me.tbGreen.Name = "tbGreen"
-        Me.tbGreen.Size = New System.Drawing.Size(193, 42)
+        Me.tbGreen.Size = New System.Drawing.Size(193, 45)
         Me.tbGreen.TabIndex = 15
         Me.tbGreen.TickFrequency = 100
         '
         'tbBlue
         '
-        Me.tbBlue.Location = New System.Drawing.Point(254, 92)
+        Me.tbBlue.Location = New System.Drawing.Point(248, 125)
         Me.tbBlue.Maximum = 255
         Me.tbBlue.Name = "tbBlue"
-        Me.tbBlue.Size = New System.Drawing.Size(193, 42)
+        Me.tbBlue.Size = New System.Drawing.Size(193, 45)
         Me.tbBlue.TabIndex = 15
         Me.tbBlue.TickFrequency = 100
         '
@@ -354,7 +357,7 @@ Partial Class frmMain
         Me.txtRowOn.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOn.Size = New System.Drawing.Size(59, 20)
         Me.txtRowOn.TabIndex = 17
-        Me.txtRowOn.Text = "52"
+        Me.txtRowOn.Text = "41"
         Me.txtRowOn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'btnColorSolid
@@ -382,7 +385,7 @@ Partial Class frmMain
         Me.txtRowOff.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOff.Size = New System.Drawing.Size(59, 20)
         Me.txtRowOff.TabIndex = 17
-        Me.txtRowOff.Text = "50"
+        Me.txtRowOff.Text = "60"
         Me.txtRowOff.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'txtSayIt
@@ -489,8 +492,6 @@ Partial Class frmMain
         Me.tabMatrixSetup.Controls.Add(Me.txtNumTLCs)
         Me.tabMatrixSetup.Controls.Add(Me.txtNumChannels)
         Me.tabMatrixSetup.Controls.Add(Me.txtNumRows)
-        Me.tabMatrixSetup.Controls.Add(Me.Label9)
-        Me.tabMatrixSetup.Controls.Add(Me.txtSlowDown)
         Me.tabMatrixSetup.Location = New System.Drawing.Point(4, 22)
         Me.tabMatrixSetup.Name = "tabMatrixSetup"
         Me.tabMatrixSetup.Size = New System.Drawing.Size(502, 304)
@@ -540,7 +541,7 @@ Partial Class frmMain
         '
         'txtNumChannelsPerLED
         '
-        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(140, 123)
+        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(185, 128)
         Me.txtNumChannelsPerLED.Name = "txtNumChannelsPerLED"
         Me.txtNumChannelsPerLED.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannelsPerLED.TabIndex = 43
@@ -550,7 +551,7 @@ Partial Class frmMain
         'lblChannelsPerLED
         '
         Me.lblChannelsPerLED.AutoSize = True
-        Me.lblChannelsPerLED.Location = New System.Drawing.Point(37, 126)
+        Me.lblChannelsPerLED.Location = New System.Drawing.Point(82, 131)
         Me.lblChannelsPerLED.Name = "lblChannelsPerLED"
         Me.lblChannelsPerLED.Size = New System.Drawing.Size(97, 13)
         Me.lblChannelsPerLED.TabIndex = 36
@@ -560,7 +561,7 @@ Partial Class frmMain
         'lblNumColumns
         '
         Me.lblNumColumns.AutoSize = True
-        Me.lblNumColumns.Location = New System.Drawing.Point(59, 153)
+        Me.lblNumColumns.Location = New System.Drawing.Point(104, 158)
         Me.lblNumColumns.Name = "lblNumColumns"
         Me.lblNumColumns.Size = New System.Drawing.Size(75, 13)
         Me.lblNumColumns.TabIndex = 37
@@ -570,7 +571,7 @@ Partial Class frmMain
         'lblNumLEDs
         '
         Me.lblNumLEDs.AutoSize = True
-        Me.lblNumLEDs.Location = New System.Drawing.Point(226, 179)
+        Me.lblNumLEDs.Location = New System.Drawing.Point(271, 184)
         Me.lblNumLEDs.Name = "lblNumLEDs"
         Me.lblNumLEDs.Size = New System.Drawing.Size(61, 13)
         Me.lblNumLEDs.TabIndex = 34
@@ -580,7 +581,7 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(221, 126)
+        Me.Label4.Location = New System.Drawing.Point(266, 131)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(67, 13)
         Me.Label4.TabIndex = 35
@@ -590,7 +591,7 @@ Partial Class frmMain
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(208, 73)
+        Me.Label2.Location = New System.Drawing.Point(253, 78)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(80, 13)
         Me.Label2.TabIndex = 38
@@ -600,7 +601,7 @@ Partial Class frmMain
         'lblNumTLCs
         '
         Me.lblNumTLCs.AutoSize = True
-        Me.lblNumTLCs.Location = New System.Drawing.Point(72, 73)
+        Me.lblNumTLCs.Location = New System.Drawing.Point(117, 78)
         Me.lblNumTLCs.Name = "lblNumTLCs"
         Me.lblNumTLCs.Size = New System.Drawing.Size(60, 13)
         Me.lblNumTLCs.TabIndex = 41
@@ -610,7 +611,7 @@ Partial Class frmMain
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(228, 151)
+        Me.Label3.Location = New System.Drawing.Point(273, 156)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(57, 13)
         Me.Label3.TabIndex = 42
@@ -620,7 +621,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(214, 100)
+        Me.Label1.Location = New System.Drawing.Point(259, 105)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(73, 13)
         Me.Label1.TabIndex = 39
@@ -630,7 +631,7 @@ Partial Class frmMain
         'lblNumChannels
         '
         Me.lblNumChannels.AutoSize = True
-        Me.lblNumChannels.Location = New System.Drawing.Point(55, 100)
+        Me.lblNumChannels.Location = New System.Drawing.Point(100, 105)
         Me.lblNumChannels.Name = "lblNumChannels"
         Me.lblNumChannels.Size = New System.Drawing.Size(79, 13)
         Me.lblNumChannels.TabIndex = 40
@@ -640,7 +641,7 @@ Partial Class frmMain
         'lblNumRows
         '
         Me.lblNumRows.AutoSize = True
-        Me.lblNumRows.Location = New System.Drawing.Point(72, 180)
+        Me.lblNumRows.Location = New System.Drawing.Point(117, 185)
         Me.lblNumRows.Name = "lblNumRows"
         Me.lblNumRows.Size = New System.Drawing.Size(62, 13)
         Me.lblNumRows.TabIndex = 33
@@ -650,7 +651,7 @@ Partial Class frmMain
         'txtNumColumns
         '
         Me.txtNumColumns.Enabled = False
-        Me.txtNumColumns.Location = New System.Drawing.Point(140, 150)
+        Me.txtNumColumns.Location = New System.Drawing.Point(185, 155)
         Me.txtNumColumns.Name = "txtNumColumns"
         Me.txtNumColumns.Size = New System.Drawing.Size(46, 20)
         Me.txtNumColumns.TabIndex = 26
@@ -659,7 +660,7 @@ Partial Class frmMain
         'txtNumLEDs
         '
         Me.txtNumLEDs.Enabled = False
-        Me.txtNumLEDs.Location = New System.Drawing.Point(295, 176)
+        Me.txtNumLEDs.Location = New System.Drawing.Point(340, 181)
         Me.txtNumLEDs.Name = "txtNumLEDs"
         Me.txtNumLEDs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumLEDs.TabIndex = 27
@@ -668,7 +669,7 @@ Partial Class frmMain
         'txtMatrixRows
         '
         Me.txtMatrixRows.Enabled = False
-        Me.txtMatrixRows.Location = New System.Drawing.Point(295, 121)
+        Me.txtMatrixRows.Location = New System.Drawing.Point(340, 126)
         Me.txtMatrixRows.Name = "txtMatrixRows"
         Me.txtMatrixRows.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixRows.TabIndex = 24
@@ -676,7 +677,7 @@ Partial Class frmMain
         '
         'txtNumTLCRows
         '
-        Me.txtNumTLCRows.Location = New System.Drawing.Point(295, 70)
+        Me.txtNumTLCRows.Location = New System.Drawing.Point(340, 75)
         Me.txtNumTLCRows.Name = "txtNumTLCRows"
         Me.txtNumTLCRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCRows.TabIndex = 25
@@ -686,7 +687,7 @@ Partial Class frmMain
         'txtMatrixCols
         '
         Me.txtMatrixCols.Enabled = False
-        Me.txtMatrixCols.Location = New System.Drawing.Point(295, 148)
+        Me.txtMatrixCols.Location = New System.Drawing.Point(340, 153)
         Me.txtMatrixCols.Name = "txtMatrixCols"
         Me.txtMatrixCols.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixCols.TabIndex = 28
@@ -694,7 +695,7 @@ Partial Class frmMain
         '
         'txtNumTLCCols
         '
-        Me.txtNumTLCCols.Location = New System.Drawing.Point(295, 97)
+        Me.txtNumTLCCols.Location = New System.Drawing.Point(340, 102)
         Me.txtNumTLCCols.Name = "txtNumTLCCols"
         Me.txtNumTLCCols.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCCols.TabIndex = 31
@@ -704,7 +705,7 @@ Partial Class frmMain
         'txtNumTLCs
         '
         Me.txtNumTLCs.Enabled = False
-        Me.txtNumTLCs.Location = New System.Drawing.Point(140, 70)
+        Me.txtNumTLCs.Location = New System.Drawing.Point(185, 75)
         Me.txtNumTLCs.Name = "txtNumTLCs"
         Me.txtNumTLCs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCs.TabIndex = 32
@@ -712,7 +713,7 @@ Partial Class frmMain
         '
         'txtNumChannels
         '
-        Me.txtNumChannels.Location = New System.Drawing.Point(140, 97)
+        Me.txtNumChannels.Location = New System.Drawing.Point(185, 102)
         Me.txtNumChannels.Name = "txtNumChannels"
         Me.txtNumChannels.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannels.TabIndex = 29
@@ -721,33 +722,18 @@ Partial Class frmMain
         '
         'txtNumRows
         '
-        Me.txtNumRows.Location = New System.Drawing.Point(140, 177)
+        Me.txtNumRows.Location = New System.Drawing.Point(185, 182)
         Me.txtNumRows.Name = "txtNumRows"
         Me.txtNumRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumRows.TabIndex = 30
         Me.txtNumRows.Text = "5"
         Me.txtNumRows.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
-        'Label9
-        '
-        Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(384, 114)
-        Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(64, 13)
-        Me.Label9.TabIndex = 41
-        Me.Label9.Text = "Slow Down:"
-        '
-        'txtSlowDown
-        '
-        Me.txtSlowDown.Location = New System.Drawing.Point(380, 128)
-        Me.txtSlowDown.Name = "txtSlowDown"
-        Me.txtSlowDown.Size = New System.Drawing.Size(72, 20)
-        Me.txtSlowDown.TabIndex = 40
-        Me.txtSlowDown.Text = "50"
-        Me.txtSlowDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
-        '
         'tabJunk
         '
+        Me.tabJunk.Controls.Add(Me.Label9)
+        Me.tabJunk.Controls.Add(Me.txtSlowDown)
+        Me.tabJunk.Controls.Add(Me.Label10)
         Me.tabJunk.Controls.Add(Me.cbAA)
         Me.tabJunk.Controls.Add(Me.txtSerial)
         Me.tabJunk.Controls.Add(Me.tbRed)
@@ -761,6 +747,7 @@ Partial Class frmMain
         Me.tabJunk.Controls.Add(Me.tbBlue)
         Me.tabJunk.Controls.Add(Me.hsSinFreqDiv)
         Me.tabJunk.Controls.Add(Me.lblSinFreq)
+        Me.tabJunk.Controls.Add(Me.cbDebugMode)
         Me.tabJunk.Location = New System.Drawing.Point(4, 22)
         Me.tabJunk.Name = "tabJunk"
         Me.tabJunk.Size = New System.Drawing.Size(502, 304)
@@ -768,16 +755,54 @@ Partial Class frmMain
         Me.tabJunk.Text = "Junk"
         Me.tabJunk.UseVisualStyleBackColor = True
         '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(243, 249)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(64, 13)
+        Me.Label9.TabIndex = 56
+        Me.Label9.Text = "Slow Down:"
+        '
+        'txtSlowDown
+        '
+        Me.txtSlowDown.Location = New System.Drawing.Point(239, 266)
+        Me.txtSlowDown.Name = "txtSlowDown"
+        Me.txtSlowDown.Size = New System.Drawing.Size(72, 20)
+        Me.txtSlowDown.TabIndex = 55
+        Me.txtSlowDown.Text = "50"
+        Me.txtSlowDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(17, 15)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(93, 13)
+        Me.Label10.TabIndex = 16
+        Me.Label10.Text = "Debug Messages:"
+        '
         'cbAA
         '
         Me.cbAA.AutoSize = True
-        Me.cbAA.Location = New System.Drawing.Point(323, 262)
+        Me.cbAA.Location = New System.Drawing.Point(417, 284)
         Me.cbAA.Name = "cbAA"
         Me.cbAA.Size = New System.Drawing.Size(79, 17)
         Me.cbAA.TabIndex = 1
         Me.cbAA.Text = "Antialiasing"
         Me.cbAA.UseVisualStyleBackColor = True
         Me.cbAA.Visible = False
+        '
+        'cbDebugMode
+        '
+        Me.cbDebugMode.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbDebugMode.AutoSize = True
+        Me.cbDebugMode.Location = New System.Drawing.Point(237, 220)
+        Me.cbDebugMode.Name = "cbDebugMode"
+        Me.cbDebugMode.Size = New System.Drawing.Size(73, 23)
+        Me.cbDebugMode.TabIndex = 39
+        Me.cbDebugMode.Text = "     Debug   "
+        Me.cbDebugMode.UseVisualStyleBackColor = True
         '
         'Label7
         '
@@ -861,17 +886,6 @@ Partial Class frmMain
         Me.Label8.TabIndex = 38
         Me.Label8.Text = "Matrix Shift"
         '
-        'cbDebugMode
-        '
-        Me.cbDebugMode.Appearance = System.Windows.Forms.Appearance.Button
-        Me.cbDebugMode.AutoSize = True
-        Me.cbDebugMode.Location = New System.Drawing.Point(920, 62)
-        Me.cbDebugMode.Name = "cbDebugMode"
-        Me.cbDebugMode.Size = New System.Drawing.Size(73, 23)
-        Me.cbDebugMode.TabIndex = 39
-        Me.cbDebugMode.Text = "     Debug   "
-        Me.cbDebugMode.UseVisualStyleBackColor = True
-        '
         'udVerticalFontAdjust
         '
         Me.udVerticalFontAdjust.Items.Add("10")
@@ -934,25 +948,25 @@ Partial Class frmMain
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(35, 20)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
         'OpenToolStripMenuItem
         '
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.OpenToolStripMenuItem.Text = "Open Bitmap"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.SaveToolStripMenuItem.Text = "Save Bitmap"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'OpenFileDialog1
@@ -1174,7 +1188,7 @@ Partial Class frmMain
         Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
         Me.tbRowOn.Maximum = 8000
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(347, 42)
+        Me.tbRowOn.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOn.TabIndex = 51
         '
         'tbRowOff
@@ -1182,7 +1196,7 @@ Partial Class frmMain
         Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
         Me.tbRowOff.Maximum = 8000
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(347, 42)
+        Me.tbRowOff.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOff.TabIndex = 51
         '
         'cbPlay
@@ -1280,12 +1294,34 @@ Partial Class frmMain
         Me.Label5.TabIndex = 29
         Me.Label5.Text = "Serial buffers"
         '
+        'cbOnRange
+        '
+        Me.cbOnRange.AutoSize = True
+        Me.cbOnRange.Location = New System.Drawing.Point(751, 376)
+        Me.cbOnRange.Name = "cbOnRange"
+        Me.cbOnRange.Size = New System.Drawing.Size(76, 17)
+        Me.cbOnRange.TabIndex = 57
+        Me.cbOnRange.Text = "Ext Range"
+        Me.cbOnRange.UseVisualStyleBackColor = True
+        '
+        'cbOffRange
+        '
+        Me.cbOffRange.AutoSize = True
+        Me.cbOffRange.Location = New System.Drawing.Point(751, 406)
+        Me.cbOffRange.Name = "cbOffRange"
+        Me.cbOffRange.Size = New System.Drawing.Size(76, 17)
+        Me.cbOffRange.TabIndex = 57
+        Me.cbOffRange.Text = "Ext Range"
+        Me.cbOffRange.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.cbOffRange)
+        Me.Controls.Add(Me.cbOnRange)
         Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.lblAvgBytesPerFrame)
         Me.Controls.Add(Me.Label6)
@@ -1329,7 +1365,6 @@ Partial Class frmMain
         Me.Controls.Add(Me.btnDump)
         Me.Controls.Add(Me.Label11)
         Me.Controls.Add(Me.udVerticalFontAdjust)
-        Me.Controls.Add(Me.cbDebugMode)
         Me.Controls.Add(Me.Label8)
         Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.Button3)
@@ -1423,8 +1458,6 @@ Partial Class frmMain
     Friend WithEvents Button4 As System.Windows.Forms.Button
     Friend WithEvents Label8 As System.Windows.Forms.Label
     Friend WithEvents cbDebugMode As System.Windows.Forms.CheckBox
-    Friend WithEvents txtSlowDown As System.Windows.Forms.TextBox
-    Friend WithEvents Label9 As System.Windows.Forms.Label
     Friend WithEvents udVerticalFontAdjust As System.Windows.Forms.DomainUpDown
     Friend WithEvents Label11 As System.Windows.Forms.Label
     Friend WithEvents btnDump As System.Windows.Forms.Button
@@ -1499,5 +1532,10 @@ Partial Class frmMain
     Friend WithEvents pbSerialOut As System.Windows.Forms.ProgressBar
     Friend WithEvents pbSerialIn As System.Windows.Forms.ProgressBar
     Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents Label10 As System.Windows.Forms.Label
+    Friend WithEvents Label9 As System.Windows.Forms.Label
+    Friend WithEvents txtSlowDown As System.Windows.Forms.TextBox
+    Friend WithEvents cbOnRange As System.Windows.Forms.CheckBox
+    Friend WithEvents cbOffRange As System.Windows.Forms.CheckBox
 
 End Class
