@@ -239,7 +239,7 @@ Public Class frmMain
 
         ' create input stream
 
-        stream = Bass.BASS_StreamCreateFile("C:\Music\08 Harder Better Faster Stronger.wav", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
 
         ' play stream but pause it
@@ -311,19 +311,17 @@ Public Class frmMain
 
             Dim SerialInput As String = ""
 
-            If SerialPort1.IsOpen Then
-                While SerialPort1.BytesToRead > 0
+
+            While SerialPort1.BytesToRead > 0
 
 
-                    SerialInput = SerialInput & Chr(SerialPort1.ReadChar)
+                SerialInput = SerialInput & Chr(SerialPort1.ReadChar)
 
-                End While
+            End While
 
-                txtSerial.Text = txtSerial.Text & SerialInput.ToString
+            'txtSerial.Text = txtSerial.Text & SerialInput.ToString
 
-                txtSerial.AppendText(SerialInput)
-
-            End If
+            txtSerial.AppendText(SerialInput)
 
         End If
 
@@ -1629,7 +1627,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub txtSlowDown_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtSlowDown.TextChanged
+    Private Sub txtSlowDown_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
         Dim slowDown As String = Hex(Val(txtSlowDown.Text)).PadLeft(4, "0")
         Dim byteArray(4) As Byte
@@ -2185,5 +2183,34 @@ Public Class frmMain
 
     End Sub
 
+
+
+    Private Sub cbOnRange_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbOnRange.CheckedChanged
+
+        If cbOnRange.Checked Then
+
+            tbRowOn.Maximum = 8000
+
+        Else
+
+            tbRowOn.Maximum = 100
+
+        End If
+
+    End Sub
+
+    Private Sub cbOffRange_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbOffRange.CheckedChanged
+
+        If cbOnRange.Checked Then
+
+            tbRowOn.Maximum = 8000
+
+        Else
+
+            tbRowOn.Maximum = 100
+
+        End If
+
+    End Sub
 
 End Class

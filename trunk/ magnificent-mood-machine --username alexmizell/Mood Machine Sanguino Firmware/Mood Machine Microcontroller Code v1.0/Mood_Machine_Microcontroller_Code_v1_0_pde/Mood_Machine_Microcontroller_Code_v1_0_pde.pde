@@ -74,7 +74,8 @@ byte green = 0;
 byte blue = 0;
 unsigned int pixel = 0;
 
-unsigned long onDelay = 61;
+// inital on/off timings - these are loaded if the mcu resets
+unsigned long onDelay = 41;
 unsigned long offDelay = 60; 
 
 byte incomingByte; //  for incoming serial data
@@ -721,7 +722,7 @@ void serialInputHandler(){
                                 // if the matrix has an odd number of columns and the we're on the last column, skip this
                                 // if (matrixColumns % 2 < 1 && barGraphRow + 1 <= matrixColumns - 1){
                                 
-                                if (!((matrixColumns % 2 > 0) && (barGraphRow + 1 <= matrixColumns - 1))){ 
+                                if ((matrixColumns % 2 > 0) && (barGraphRow + 1 <= matrixColumns - 1)){ 
                                   
                                     for (int bgi = matrixRows - 1; bgi > secondNibble; bgi--){
                                 
