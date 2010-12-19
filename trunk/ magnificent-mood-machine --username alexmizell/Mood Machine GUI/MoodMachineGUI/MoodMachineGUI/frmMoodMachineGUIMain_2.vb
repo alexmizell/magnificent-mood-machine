@@ -227,8 +227,13 @@ Public Class frmMain
         red = TextBox1.BackColor.R
         green = TextBox1.BackColor.G
         blue = TextBox1.BackColor.B
-        sendColor()
 
+        ' for spectrum analyzer
+        color1 = Color.FromArgb(255, red, green, blue)
+        color2 = Color.FromArgb(255, red, green, blue)
+
+
+        sendColor()
 
         updateColorText()
         isDrag = False
@@ -239,7 +244,10 @@ Public Class frmMain
 
         ' create input stream
 
+        ' for desktop
         stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        ' for laptop
+        'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
 
         ' play stream but pause it
@@ -292,7 +300,11 @@ Public Class frmMain
      ByVal e As System.EventArgs) Handles btnPickColor.Click, TextBox1.DoubleClick
 
         If ColorDialog1.ShowDialog() = DialogResult.OK Then
+
             TextBox1.BackColor = ColorDialog1.Color
+            color1 = ColorDialog1.Color
+            color2 = ColorDialog1.Color
+
         End If
 
         updateColorFaders()
@@ -1140,7 +1152,9 @@ Public Class frmMain
         End If
     End Sub
 
-    Private Sub selectPixel(ByVal pixel As Integer)
+    Private Sub selectPixel(ByVal x As Integer, ByVal y As Integer)
+
+        Dim pixel As Integer = y * Val(txtMatrixCols.Text) + x
 
         Dim numTLCCols As Integer = Val(txtNumTLCCols.Text)
         Dim numTLCRows As Integer = Val(txtNumTLCRows.Text)
@@ -1152,9 +1166,6 @@ Public Class frmMain
 
         Dim numLEDsPerPanel = numRows * numColumns
 
-
-
-
         Dim whichRow As Integer = Int(pixel / matrixColumns)
         Dim whichColumn As Integer = pixel Mod matrixColumns
 
@@ -1164,7 +1175,6 @@ Public Class frmMain
         'lblPxl.Text = "Pixel#: " & pixel
         'lblI.Text = "I: " & whichTLCCol
         'lblJ.Text = "J: " & whichTLCRow
-
 
         Dim tlc As Integer = (whichTLCRow * numTLCCols) + whichTLCCol
         'lblTLC.Text = "TLC#: " & tlc
@@ -1184,25 +1194,11 @@ Public Class frmMain
         Dim pixelOffset = (whichRow * numColumns) + whichColumn
         Dim totalOffset = tlcOffset + pixelOffset
 
-        'lblArrayIndex.Text = "pixelArray Index: " & tlcOffset + pixelOffset
+        lblSelectedPixel.Text = "Selected pixel: " & totalOffset
 
-        'MessageBox.Show("TLC offset: " & tlcOffset & " Pixel Offset: " & pixelOffset & " pixel address: " & tlcOffset + pixelOffset)
-
-
-        'Dim hexPixel As String = Hex(totalOffset).PadLeft(2, "0")
         Dim byteArray(2) As Byte
 
         byteArray = BitConverter.GetBytes(totalOffset)
-
-
-        'For i = 0 To 1
-
-        '    'byteArray(i) = Integer.Parse(hexPixel(i), Globalization.NumberStyles.HexNumber)
-        '    byteArray = BitConverter.GetBytes(totalOffset)
-
-
-
-        'Next
 
         If SerialPort1.IsOpen Then
 
@@ -1479,10 +1475,8 @@ Public Class frmMain
 
             ' send pixel on to the array
             ' not that easy here either
-            Dim pixel As Integer = y * Val(txtMatrixCols.Text) + x
 
-
-            selectPixel(pixel)
+            selectPixel(x, y)
 
             If color <> lastColor Then
 
@@ -2049,7 +2043,7 @@ Public Class frmMain
 
             For j = 0 To pixelArray.Height - 1
 
-                Dim pixelNum As Integer = j * Val(txtMatrixCols.Text) + i
+                'Dim pixelNum As Integer = j * Val(txtMatrixCols.Text) + i
                 Dim pixelColor = pixelArray.GetPixel(i, j)
 
                 ' compare to pixel in last frame
@@ -2058,7 +2052,7 @@ Public Class frmMain
                     ' pixel is different in this frame than the last
                     ' add it to the arraylist
 
-                    colorPixel = pixelColor.R & "," & pixelColor.G & "," & pixelColor.B & "," & pixelNum
+                    colorPixel = pixelColor.R & "," & pixelColor.G & "," & pixelColor.B & "," & i & "," & j
 
                     frameDelta.Add(colorPixel)
 
@@ -2143,7 +2137,7 @@ Public Class frmMain
             End If
 
             ' color should be right, send pixel on
-            selectPixel(pixelData(3))
+            selectPixel(pixelData(3), pixelData(4))
 
             bytesPerFrame += 3
 
@@ -2213,4 +2207,5 @@ Public Class frmMain
 
     End Sub
 
+ 
 End Class

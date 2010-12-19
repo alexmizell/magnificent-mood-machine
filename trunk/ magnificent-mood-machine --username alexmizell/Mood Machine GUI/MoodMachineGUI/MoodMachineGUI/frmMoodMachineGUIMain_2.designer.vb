@@ -142,6 +142,7 @@ Partial Class frmMain
         Me.Label5 = New System.Windows.Forms.Label()
         Me.cbOnRange = New System.Windows.Forms.CheckBox()
         Me.cbOffRange = New System.Windows.Forms.CheckBox()
+        Me.lblSelectedPixel = New System.Windows.Forms.Label()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -218,7 +219,7 @@ Partial Class frmMain
         'Timer1
         '
         Me.Timer1.Enabled = True
-        Me.Timer1.Interval = 10
+        Me.Timer1.Interval = 20
         '
         'btnReset
         '
@@ -1314,12 +1315,22 @@ Partial Class frmMain
         Me.cbOffRange.Text = "Ext Range"
         Me.cbOffRange.UseVisualStyleBackColor = True
         '
+        'lblSelectedPixel
+        '
+        Me.lblSelectedPixel.AutoSize = True
+        Me.lblSelectedPixel.Location = New System.Drawing.Point(129, 76)
+        Me.lblSelectedPixel.Name = "lblSelectedPixel"
+        Me.lblSelectedPixel.Size = New System.Drawing.Size(80, 13)
+        Me.lblSelectedPixel.TabIndex = 1
+        Me.lblSelectedPixel.Text = "Selected Pixel: "
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.lblSelectedPixel)
         Me.Controls.Add(Me.cbOffRange)
         Me.Controls.Add(Me.cbOnRange)
         Me.Controls.Add(Me.Label7)
@@ -1537,5 +1548,6 @@ Partial Class frmMain
     Friend WithEvents txtSlowDown As System.Windows.Forms.TextBox
     Friend WithEvents cbOnRange As System.Windows.Forms.CheckBox
     Friend WithEvents cbOffRange As System.Windows.Forms.CheckBox
+    Friend WithEvents lblSelectedPixel As System.Windows.Forms.Label
 
 End Class
