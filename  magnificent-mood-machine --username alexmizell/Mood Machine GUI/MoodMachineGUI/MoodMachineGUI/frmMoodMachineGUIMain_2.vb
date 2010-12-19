@@ -88,7 +88,7 @@ Public Class frmMain
 
     Dim stream As Integer
     Dim color1 As Color = Color.Blue
-    Dim color2 As Color = Color.Red
+    Dim color2 As Color = Color.Blue
     Dim bgColor As Color = Color.Black
 
     Dim rectangle As Rectangle
@@ -113,20 +113,16 @@ Public Class frmMain
 
         SerialPort1.Open()
 
-        ' too-simple test with no timeout 
-        ' for determining whether we're connected to the MCU
-        ' slams the CPU, bad code, bad!
+        'too-simple test with no timeout 
+        'for determining whether we're connected to the MCU
+        'slams the CPU, bad code, bad!
 
         SerialPort1.Write("t") ' Send reset
 
         While SerialPort1.BytesToRead < 1
         End While
 
-
-
         System.Threading.Thread.Sleep(100)
-
-
 
         txtRowOnDelayMS_TextChanged(sender, e)
         txtOffDelayMs_TextChanged(sender, e)
@@ -243,7 +239,7 @@ Public Class frmMain
 
         ' create input stream
 
-        stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Girl Talk\All Day\04 Jump on Stage.wav", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        stream = Bass.BASS_StreamCreateFile("C:\Music\08 Harder Better Faster Stronger.wav", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
 
         ' play stream but pause it
@@ -305,31 +301,31 @@ Public Class frmMain
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
 
-        'If SerialPort1.IsOpen Then
+        If SerialPort1.IsOpen Then
 
 
-        '    pbSerialIn.Value = SerialPort1.BytesToRead
-        '    pbSerialOut.Value = SerialPort1.BytesToWrite
-        '    pbSerialIn.Update()
-        '    pbSerialOut.Update()
+            pbSerialIn.Value = SerialPort1.BytesToRead
+            pbSerialOut.Value = SerialPort1.BytesToWrite
+            pbSerialIn.Update()
+            pbSerialOut.Update()
 
-        '    Dim SerialInput As String = ""
+            Dim SerialInput As String = ""
 
-        '    If SerialPort1.IsOpen Then
-        '        While SerialPort1.BytesToRead > 0
+            If SerialPort1.IsOpen Then
+                While SerialPort1.BytesToRead > 0
 
 
-        '            SerialInput = SerialInput & Chr(SerialPort1.ReadChar)
+                    SerialInput = SerialInput & Chr(SerialPort1.ReadChar)
 
-        '        End While
+                End While
 
-        '        'txtSerial.Text = txtSerial.Text & SerialInput.ToString
+                txtSerial.Text = txtSerial.Text & SerialInput.ToString
 
-        '        'txtSerial.AppendText(SerialInput)
+                txtSerial.AppendText(SerialInput)
 
-        '    End If
+            End If
 
-        'End If
+        End If
 
         If cbRainbow.Checked Then
 
@@ -567,7 +563,6 @@ Public Class frmMain
             If SerialPort1.IsOpen Then
 
                 SerialPort1.Write("#")
-
                 SerialPort1.Write(byteArray, 0, byteArrayLength)
 
             End If
