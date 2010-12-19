@@ -24,3 +24,15 @@ J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodM
 J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.Resources.resources
 J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.read.1.tlog
 J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.exe
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.xml
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.pdb
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.exe
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.pdb
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\MoodMachineGUI.xml
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\Bass.Net.xml
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.frmMain.resources
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.Resources.resources
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.write.1.tlog

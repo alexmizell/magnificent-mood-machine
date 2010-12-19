@@ -37,6 +37,7 @@ unsigned int numColumns = numChannels / channelsPerLED; // 15 channels in use by
 unsigned int numLEDs = numTLCRows * numRows * numColumns * numTLCCols; // total number of LEDs across all panels
 unsigned int ledsPerPanel = numLEDs / numTLCs; // number of LEDs on a single panel
 unsigned int matrixColumns = numTLCCols * numColumns; // number of columns across entire matrix
+unsigned int matrixRows = numTLCRows * numRows;
 
 // variables for flipping the display
 boolean flipHorizontal = false;
@@ -83,7 +84,6 @@ byte inputBuffer[16]={0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0};  // large
 unsigned int byteNum = 0;  //  for counting incoming bytes
 
 unsigned int barGraphArrayLength = matrixColumns;
-int bgi;
 int barGraphRow;
 int pixelNum;
 int firstNibble;
@@ -135,9 +135,9 @@ void matrixUpdate(){
 		}
   
 		if(debugMode){
-			Serial.print("Start row loop: ");
-			Serial.println(row);
-			delay(slowDown);
+			//Serial.print("Start row loop: ");
+			//Serial.println(row);
+			//delay(slowDown);
 		}
   
 		// TLC row loop  -- we have to load data for every TLC before advancing the row - they all drive one unique row
@@ -152,9 +152,9 @@ void matrixUpdate(){
 			}
       
 			if(debugMode){
-				Serial.print("TLC row loop: ");
-				Serial.println(tlcRow);
-				delay(slowDown);
+				//Serial.print("TLC row loop: ");
+				//Serial.println(tlcRow);
+				//delay(slowDown);
 			}
 		  
 			// TLC column loop
@@ -169,9 +169,9 @@ void matrixUpdate(){
 				}
           
 				if(debugMode){
-					Serial.print("TLC col loop: ");
-					Serial.println(tlcCol);
-					delay(slowDown);
+					//Serial.print("TLC col loop: ");
+					//Serial.println(tlcCol);
+					//delay(slowDown);
 				}
 			
 				//  calculate the pixelArray offset by consulting the tlcMap array
@@ -184,9 +184,9 @@ void matrixUpdate(){
 				arrayTlcOffset = currentArrayTLC * numRows * numColumns;
             
 				if(debugMode){
-					Serial.print("tlcOffset: ");
-					Serial.println(tlcOffset);
-					delay(slowDown);
+					//Serial.print("tlcOffset: ");
+					//Serial.println(tlcOffset);
+					//delay(slowDown);
 				}
 				
 
@@ -195,9 +195,9 @@ void matrixUpdate(){
 				for (int col = numColumns - 1; col >= 0; col--) { // iterate backwards through columns
 				
 					if(debugMode){
-						Serial.print("col loop: ");
-						Serial.println(col);
-						delay(slowDown);
+						//Serial.print("col loop: ");
+						//Serial.println(col);
+						//delay(slowDown);
 					}
                
 					if (flipVertical == true){
@@ -220,8 +220,8 @@ void matrixUpdate(){
 					if(debugMode == true){
 
 						//Serial.println("----------------------------");
-						Serial.print("Tlc.set: ");
-						Serial.println(totalChannelOffset, DEC);
+						//Serial.print("Tlc.set: ");
+						//Serial.println(totalChannelOffset, DEC);
 						//Serial.print(", ");
 						//Serial.println(pixelArray[totalByteOffset + colorMap[1]], DEC);
 						//Serial.print("tlcRow: ");
@@ -246,7 +246,7 @@ void matrixUpdate(){
 						//Serial.println(totalByteOffset, DEC);
 						//Serial.println("----------------------------");
 
-						delay(slowDown);
+						//delay(slowDown);
 						
 					}
 					
@@ -267,8 +267,8 @@ void matrixUpdate(){
 		Tlc.update();
 		
 		if(debugMode){
-			Serial.println("Tlc.update()");
-			delay(slowDown);
+			//Serial.println("Tlc.update()");
+			//delay(slowDown);
 		}
 		
 		// select the current row with the 74LS138
@@ -277,8 +277,8 @@ void matrixUpdate(){
 		
 		if(debugMode){
 		
-			Serial.println("row selected, offDelay started");
-			delay(slowDown);
+			//Serial.println("row selected, offDelay started");
+			//delay(slowDown);
 		
 		}
 		
@@ -298,8 +298,8 @@ void matrixUpdate(){
 		
 		if(debugMode){
 		
-			Serial.println("switch on row");
-			delay(slowDown);
+			//Serial.println("switch on row");
+			//delay(slowDown);
 		
 		}
 		
@@ -650,17 +650,54 @@ void serialInputHandler(){
 
             case byte('#'): //  receive bar graph data
 				
+                                if(debugMode){
+				
+					Serial.print("#: ");
+					Serial.print(byteNum, DEC);
+					Serial.print(", ");
+					Serial.print(incomingByte, DEC);
+					Serial.println();
+
+				}
+
+                                // blank the matrix before drawing the bars
+                                if(byteNum == 0){
+                                
+                                    int tempRed = red;
+                                    int tempGreen = green;
+                                    int tempBlue = blue;
+                                    
+                                    red = 0;
+                                    green = 0;
+                                    blue = 0;
+                                    
+                                    colorSolid();
+                                    
+                                    red = tempRed;
+                                    green = tempGreen;
+                                    blue = tempBlue;
+                                
+                                }
+                                
 				// unpack the 2 nibbles
                                 
                                 firstNibble = incomingByte >> 4;  // shift out the low nibble
                                 secondNibble = incomingByte & 15; // mask the high nibble
                                 
+                                if (debugMode){
+                                
+                                    //Serial.print("firstNibble: ");
+                                    //Serial.println(firstNibble, DEC);
+                                    //Serial.print("secondNibble: ");
+                                    //Serial.println(secondNibble, DEC);
+                           
+                                }
+                                
                                 // loop to draw nibble 0 then 1
                                 
                                 barGraphRow = byteNum * 2;
-                                bgi;
                                 
-                                for (bgi = 0; bgi == firstNibble; bgi++){
+                                for (int bgi = matrixRows - 1; bgi > firstNibble; bgi--){
                                 
                                     pixelNum = xyToIndex(barGraphRow, bgi);
                                     
@@ -670,10 +707,23 @@ void serialInputHandler(){
                                   
                                 }
                                 
-                                // if the matrix has an odd number of columns and the we're on the last column, skip this
-                                if (matrixColumns % 2 < 1 && barGraphRow + 1 <= matrixColumns - 1){
+                                if (debugMode){
                                 
-                                    for (bgi = 0; bgi == secondNibble; bgi++){
+                                    Serial.print("pixelNum,barGraphRow: ");
+                                    Serial.print(pixelNum, DEC);
+                                    Serial.print(", ");
+                                    Serial.println(barGraphRow, DEC);
+                                   
+                                   delay(slowDown);
+                                   
+                                }
+                                
+                                // if the matrix has an odd number of columns and the we're on the last column, skip this
+                                // if (matrixColumns % 2 < 1 && barGraphRow + 1 <= matrixColumns - 1){
+                                
+                                if (!((matrixColumns % 2 > 0) && (barGraphRow + 1 <= matrixColumns - 1))){ 
+                                  
+                                    for (int bgi = matrixRows - 1; bgi > secondNibble; bgi--){
                                 
                                         pixelNum = xyToIndex(barGraphRow + 1, bgi);
                                     
@@ -682,18 +732,19 @@ void serialInputHandler(){
                                         pixelArray[(pixelNum * channelsPerLED) + 2] = blue;
                                   
                                      }
+                                     
+                                     if (debugMode){
+                                
+                                        Serial.print("second pixelNum: ");
+                                        Serial.println(pixelNum, DEC);
+                                        Serial.print("second barGraphRow: ");
+                                        Serial.println(barGraphRow + 1, DEC);
+                                         
+                                        delay(slowDown); 
+                                         
+                                     }
                                 
                                 }
-                                                                
-				if(debugMode){
-				
-					Serial.print("#: ");
-					Serial.print(byteNum, DEC);
-					Serial.print(", ");
-					Serial.print(incomingByte, DEC);
-					Serial.println();
-
-				}
              
 				byteNum++;
              
@@ -707,7 +758,7 @@ void serialInputHandler(){
              
             case byte('s'): //  's'et a parameter, followed by a second char indicating the param to be set, then the data
                  
-				 //  's' commands are two-tiered, so the next byte in the buffer specifies which 's'et command we are running
+		//  's' commands are two-tiered, so the next byte in the buffer specifies which 's'et command we are running
                 switch(incomingByte){
                  
                     case('r'):  // setting the numRows variable
@@ -728,6 +779,7 @@ void serialInputHandler(){
 							// recalculate dependent variables
 							numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
 							ledsPerPanel = numLEDs / numTLCs;
+                                                        matrixRows = numTLCRows * numRows;
 							
 						}
 					 
@@ -841,6 +893,7 @@ void serialInputHandler(){
 						numTLCs = numTLCRows * numTLCCols;  // recalculate dependents
 						numLEDs = numTLCRows * numRows * numColumns * numTLCCols;
 						#define NUM_TLCS = numTLCs;
+                                                matrixRows = numTLCRows * numRows;
                      
 						}
 						
@@ -1149,8 +1202,19 @@ int availableMemory(){
 }
 
 int xyToIndex(int x, int y){
-
+  
   int pixelNum = (y * matrixColumns) + x;
+
+  if (debugMode){
+  
+     Serial.print("xyToIndex (x,y,index): ");
+     Serial.print(x, DEC);
+     Serial.print(", ");
+     Serial.print(y, DEC);
+     Serial.print(", ");
+     Serial.println(pixelNum);
+  
+  }
   
   return pixelNum;
 
