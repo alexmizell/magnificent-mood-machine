@@ -245,9 +245,9 @@ Public Class frmMain
         ' create input stream
 
         ' for desktop
-        stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
-        ' for laptop
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        ' for laptop
+        stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
 
         ' play stream but pause it
@@ -325,7 +325,6 @@ Public Class frmMain
 
 
             While SerialPort1.BytesToRead > 0
-
 
                 SerialInput = SerialInput & Chr(SerialPort1.ReadChar)
 
@@ -498,7 +497,7 @@ Public Class frmMain
 
             ' prepare the byte array
             ' since each column is 15 tall, and since 4 bits can store 16 values, 
-            ' we can pack two of those 4-bit values per byte and send the entire array state in 26 bytes
+            ' we can pack two of those 4-bit values per byte and send the entire array state in 13 bytes
             ' BUT there can be no more than 15 pixels in a column for this to work
 
             Dim byteIndex As Integer = 0
@@ -531,15 +530,27 @@ Public Class frmMain
 
                         If i Mod 2 = 0 Then
 
-                            byteArray(byteIndex) = 16 - j
+                            byteArray(byteIndex) = j '<< 4
                             byteArray(byteIndex) = byteArray(byteIndex) << 4
+
+                            If cbDebugMode.Checked Then
+
+                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
+
+                            End If
 
                         Else
 
                             ' if i = odd then pack the lowest 4 bits of byteArray(byteIndex)
 
-                            byteArray(byteIndex) = byteArray(byteIndex) Or (16 - j)
+                            byteArray(byteIndex) = byteArray(byteIndex) Or j
                             byteIndex += 1
+
+                            If cbDebugMode.Checked Then
+
+                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
+
+                            End If
 
                         End If
 
@@ -1470,7 +1481,7 @@ Public Class frmMain
 
             ' update the pixelArray bitmap
             pixelArray.SetPixel(x, y, color)
-            pbPixelArray.Refresh()
+            'pbPixelArray.Refresh()
             'pbPixelArray.Refresh()
 
             ' send pixel on to the array
@@ -2195,17 +2206,20 @@ Public Class frmMain
 
     Private Sub cbOffRange_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbOffRange.CheckedChanged
 
-        If cbOnRange.Checked Then
+        If cbOffRange.Checked Then
 
-            tbRowOn.Maximum = 8000
+            tbRowOff.Maximum = 8000
 
         Else
 
-            tbRowOn.Maximum = 100
+            tbRowOff.Maximum = 100
 
         End If
 
     End Sub
 
- 
+
+    Private Sub txtNumTLCRows_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNumTLCRows.TextChanged
+
+    End Sub
 End Class
