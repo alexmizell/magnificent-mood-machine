@@ -219,7 +219,7 @@ Partial Class frmMain
         'Timer1
         '
         Me.Timer1.Enabled = True
-        Me.Timer1.Interval = 20
+        Me.Timer1.Interval = 1000
         '
         'btnReset
         '
@@ -329,7 +329,7 @@ Partial Class frmMain
         Me.tbRed.Location = New System.Drawing.Point(248, 44)
         Me.tbRed.Maximum = 255
         Me.tbRed.Name = "tbRed"
-        Me.tbRed.Size = New System.Drawing.Size(193, 45)
+        Me.tbRed.Size = New System.Drawing.Size(193, 42)
         Me.tbRed.TabIndex = 15
         Me.tbRed.TickFrequency = 100
         '
@@ -338,7 +338,7 @@ Partial Class frmMain
         Me.tbGreen.Location = New System.Drawing.Point(248, 84)
         Me.tbGreen.Maximum = 255
         Me.tbGreen.Name = "tbGreen"
-        Me.tbGreen.Size = New System.Drawing.Size(193, 45)
+        Me.tbGreen.Size = New System.Drawing.Size(193, 42)
         Me.tbGreen.TabIndex = 15
         Me.tbGreen.TickFrequency = 100
         '
@@ -347,7 +347,7 @@ Partial Class frmMain
         Me.tbBlue.Location = New System.Drawing.Point(248, 125)
         Me.tbBlue.Maximum = 255
         Me.tbBlue.Name = "tbBlue"
-        Me.tbBlue.Size = New System.Drawing.Size(193, 45)
+        Me.tbBlue.Size = New System.Drawing.Size(193, 42)
         Me.tbBlue.TabIndex = 15
         Me.tbBlue.TickFrequency = 100
         '
@@ -358,7 +358,7 @@ Partial Class frmMain
         Me.txtRowOn.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtRowOn.Size = New System.Drawing.Size(59, 20)
         Me.txtRowOn.TabIndex = 17
-        Me.txtRowOn.Text = "41"
+        Me.txtRowOn.Text = "43"
         Me.txtRowOn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'btnColorSolid
@@ -949,25 +949,25 @@ Partial Class frmMain
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(35, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
         'OpenToolStripMenuItem
         '
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.OpenToolStripMenuItem.Text = "Open Bitmap"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.SaveToolStripMenuItem.Text = "Save Bitmap"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'OpenFileDialog1
@@ -1187,17 +1187,17 @@ Partial Class frmMain
         'tbRowOn
         '
         Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
-        Me.tbRowOn.Maximum = 8000
+        Me.tbRowOn.Maximum = 100
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(347, 45)
+        Me.tbRowOn.Size = New System.Drawing.Size(347, 42)
         Me.tbRowOn.TabIndex = 51
         '
         'tbRowOff
         '
         Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
-        Me.tbRowOff.Maximum = 8000
+        Me.tbRowOff.Maximum = 100
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(347, 45)
+        Me.tbRowOff.Size = New System.Drawing.Size(347, 42)
         Me.tbRowOff.TabIndex = 51
         '
         'cbPlay

@@ -14,7 +14,8 @@ boolean debugMode = false;
 int slowDown = 50;
 
 // mapping arrays!
-int tlcMap[16] = {14, 9, 8, 3, 2, 13, 10, 7, 4, 1, 12, 11, 6, 5, 0, 0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
+//int tlcMap[16] = {9,8,3,2,10,7,4,1,11,6,5,0,0,0}; // create the tlcMap array, initialize with 3 rows x 4 columns, controller on bottom right
+int tlcMap[16] = {14,9,8,3,2,13,10,7,4,1,12,11,6,5,0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
 int colorMap[3] = {2, 1, 0}; // this can map any of the three color channels to any other, in this case: blue to red, green to green, red to blue.  can adjust for different wiring schemes.
 
 // This pin connects to the 74LS138 decoder chip's enable input
@@ -133,11 +134,11 @@ void matrixUpdate(){
 			transformedRow = row; // do not reverse row numbers
 		}
   
-		if(debugMode){
+		//if(debugMode){
 			//Serial.print("Start row loop: ");
 			//Serial.println(row);
 			//delay(slowDown);
-		}
+		//}
   
 		// TLC row loop  -- we have to load data for every TLC before advancing the row - they all drive one unique row
     
@@ -150,11 +151,11 @@ void matrixUpdate(){
 				transformedTLCRow = tlcRow; // do not reverse tlcRow numbers
 			}
       
-			if(debugMode){
+			//if(debugMode){
 				//Serial.print("TLC row loop: ");
 				//Serial.println(tlcRow);
 				//delay(slowDown);
-			}
+			//}
 		  
 			// TLC column loop
 
@@ -167,11 +168,11 @@ void matrixUpdate(){
 					transformedTLCCol = tlcCol; // do not reverse tlcCols
 				}
           
-				if(debugMode){
+				//if(debugMode){
 					//Serial.print("TLC col loop: ");
 					//Serial.println(tlcCol);
 					//delay(slowDown);
-				}
+				//}
 			
 				//  calculate the pixelArray offset by consulting the tlcMap array
             	//  these variables are used to map to TLC channels
@@ -182,22 +183,22 @@ void matrixUpdate(){
 				currentArrayTLC = (tlcRow * numTLCCols) + tlcCol;
 				arrayTlcOffset = currentArrayTLC * numRows * numColumns;
             
-				if(debugMode){
+				//if(debugMode){
 					//Serial.print("tlcOffset: ");
 					//Serial.println(tlcOffset);
 					//delay(slowDown);
-				}
+				//}
 				
 
 				// Column loop
         
 				for (int col = numColumns - 1; col >= 0; col--) { // iterate backwards through columns
 				
-					if(debugMode){
+					//if(debugMode){
 						//Serial.print("col loop: ");
 						//Serial.println(col);
 						//delay(slowDown);
-					}
+					//}
                
 					if (flipVertical == true){
 						transformedCol = numColumns - 1 - col; // reverse the cols
@@ -216,7 +217,7 @@ void matrixUpdate(){
 					Tlc.set(totalChannelOffset + 1, pixelArray[totalByteOffset + colorMap[1]] * 16);
 					Tlc.set(totalChannelOffset + 2, pixelArray[totalByteOffset + colorMap[2]] * 16);
 
-					if(debugMode == true){
+					//if(debugMode == true){
 
 						//Serial.println("----------------------------");
 						//Serial.print("Tlc.set: ");
@@ -247,7 +248,7 @@ void matrixUpdate(){
 
 						//delay(slowDown);
 						
-					}
+					//}
 					
           
 				// the columns for one TLC is loaded, advance to next TLC in the row
@@ -265,21 +266,21 @@ void matrixUpdate(){
 		// shift all of the data to the chips
 		Tlc.update();
 		
-		if(debugMode){
+		//if(debugMode){
 			//Serial.println("Tlc.update()");
 			//delay(slowDown);
-		}
+		//}
 		
 		// select the current row with the 74LS138
 		//PORTC = row; // for 328P
 		PORTA = row;  // for 644p
 		
-		if(debugMode){
+		//if(debugMode){
 		
 			//Serial.println("row selected, offDelay started");
 			//delay(slowDown);
 		
-		}
+		//}
 		
 		for(int i = 0; i <= offDelay; i++){  //  <= ensures that the serial handler is called at least once for every matrix refresh
 		
@@ -295,12 +296,12 @@ void matrixUpdate(){
 
 		digitalWrite(logicEnable, LOW);  // switch on the row
 		
-		if(debugMode){
+		//if(debugMode){
 		
 			//Serial.println("switch on row");
 			//delay(slowDown);
 		
-		}
+		//}
 		
 		// This delay should be at least as long as the offDelay to allow the LEDs to get some PWM cycles in before moving on to the 
 		// next row.  The ratio of off/on time will affect the overall LED brightness and amount of visible flicker.
@@ -659,7 +660,7 @@ void serialInputHandler(){
 
 				}
 
-                                // blank the matrix before drawing the bars
+                                /* blank the matrix before drawing the bars
                                 if(byteNum == 0){
                                 
                                     int tempRed = red;
@@ -676,21 +677,25 @@ void serialInputHandler(){
                                     green = tempGreen;
                                     blue = tempBlue;
                                 
-                                }
+                                } */
                                 
 				// unpack the 2 nibbles
                                 
                                 firstNibble = incomingByte >> 4;  // shift out the low nibble
                                 secondNibble = incomingByte & 15; // mask the high nibble
                                 
-                                if (debugMode){
+                                /* if (debugMode){
                                 
-                                    Serial.print("firstNibble: ");
+                                    Serial.print("BG RCVD: ");
+                                    Serial.print(byteNum * 2);
+                                    Serial.print(", ");
                                     Serial.println(firstNibble, DEC);
-                                    Serial.print("secondNibble: ");
+                                    Serial.print("BG RCVD: ");
+                                    Serial.print(byteNum * 2 + 1);
+                                    Serial.print(", ");
                                     Serial.println(secondNibble, DEC);
                            
-                                }
+                                } */
                                 
                                 // loop to draw nibble 0 then 1
                                 
@@ -703,6 +708,16 @@ void serialInputHandler(){
                                     pixelArray[pixel * channelsPerLED] = red;
                                     pixelArray[(pixel * channelsPerLED) + 1] = green;
                                     pixelArray[(pixel * channelsPerLED) + 2] = blue;
+                                  
+                                }
+                                
+                                for (int bgi = firstNibble; bgi >= 0; bgi--){
+                                
+                                    selectPixel(barGraphRow, bgi);
+                                    
+                                    pixelArray[pixel * channelsPerLED] = 0;
+                                    pixelArray[(pixel * channelsPerLED) + 1] = 0;
+                                    pixelArray[(pixel * channelsPerLED) + 2] = 0;
                                   
                                 }
                                 
@@ -732,7 +747,17 @@ void serialInputHandler(){
                                   
                                      }
                                      
-                                     if (debugMode){
+                                    for (int bgi = secondNibble; bgi >= 0; bgi--){
+                                
+                                        selectPixel(barGraphRow + 1, bgi);
+                                    
+                                        pixelArray[pixel * channelsPerLED] = 0;
+                                        pixelArray[(pixel * channelsPerLED) + 1] = 0;
+                                      pixelArray[(pixel * channelsPerLED) + 2] = 0;
+                                  
+                                    }  
+                                     
+                                    if (debugMode){
                                 
                                         //Serial.print("pixel: ");
                                         //Serial.println(pixel, DEC);
@@ -741,7 +766,7 @@ void serialInputHandler(){
                                          
                                         //delay(slowDown); 
                                          
-                                     }
+                                    }
                                 
                                 }
              
@@ -1226,12 +1251,12 @@ int selectPixel(int x, int y){
 
   if (debugMode){
   
-     //Serial.print("selectPixel(x,y,pixel): ");
-     //Serial.print(x, DEC);
-     //Serial.print(", ");
-     //Serial.print(y, DEC);
-     //Serial.print(", ");
-     //Serial.println(pixel);
+     Serial.print("selectPixel(x,y,pixel): ");
+     Serial.print(x, DEC);
+     Serial.print(", ");
+     Serial.print(y, DEC);
+     Serial.print(", ");
+     Serial.println(pixel);
   
   }
   
