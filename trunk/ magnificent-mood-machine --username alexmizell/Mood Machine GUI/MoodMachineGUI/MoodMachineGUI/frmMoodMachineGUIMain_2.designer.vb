@@ -143,6 +143,7 @@ Partial Class frmMain
         Me.cbOnRange = New System.Windows.Forms.CheckBox()
         Me.cbOffRange = New System.Windows.Forms.CheckBox()
         Me.lblSelectedPixel = New System.Windows.Forms.Label()
+        Me.timerSpectrum = New System.Windows.Forms.Timer(Me.components)
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -219,7 +220,7 @@ Partial Class frmMain
         'Timer1
         '
         Me.Timer1.Enabled = True
-        Me.Timer1.Interval = 1000
+        Me.Timer1.Interval = 60
         '
         'btnReset
         '
@@ -1324,6 +1325,10 @@ Partial Class frmMain
         Me.lblSelectedPixel.TabIndex = 1
         Me.lblSelectedPixel.Text = "Selected Pixel: "
         '
+        'timerSpectrum
+        '
+        Me.timerSpectrum.Enabled = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1549,5 +1554,6 @@ Partial Class frmMain
     Friend WithEvents cbOnRange As System.Windows.Forms.CheckBox
     Friend WithEvents cbOffRange As System.Windows.Forms.CheckBox
     Friend WithEvents lblSelectedPixel As System.Windows.Forms.Label
+    Friend WithEvents timerSpectrum As System.Windows.Forms.Timer
 
 End Class
