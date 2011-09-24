@@ -4,7 +4,7 @@ Imports Un4seen.Bass.Misc.Visuals
 Imports System.Drawing
 Imports System.Runtime.InteropServices
 Imports System.Collections
-
+Imports MoodMachineGUI.xRay.Toolkit.Utilities
 
 
 Public Class frmMain
@@ -247,7 +247,42 @@ Public Class frmMain
         ' for desktop
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
         ' for laptop
+        'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Flevans\27 Devils\05.Mad Perks.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+
         stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+
+
+        ''  SECRET SAUCE TO MAKE A BASS STREAM FROM AN INPUT
+        ''  UNFORTUNATELY ITS IN C#...  hopefully it can be adapted easily
+
+        '        HSTREAM handle = NULL;
+
+        '// This gets called every time there is new data from the recording
+        'BOOL CALLBACK MyRecordingWriter(HRECORD handle, void *buf, DWORD len, void *user)
+        '{
+        '    if (handle != NULL)
+        '    {
+        '        BASS_StreamPutData(handle, buf, len); // We put the recorded data into the play stream
+        '    }
+        '    return TRUE; // continue recording
+        '}
+
+        'BASS_RecordInit(-1); // Choose input device here (-1 default)
+        'BASS_RecordStart(44100, 1, 0, &MyRecordingWriter, NULL); // Start recording here (2nd arg = 1 = mono)
+
+        'BASS_Init(-1, 44100, 0, 0, NULL);  // Choose output device (-1 default)
+        'handle = BASS_StreamCreate(44100, 1, 0, STREAMPROC_PUSH, NULL); // Create the stream that plays the stuff
+
+
+
+
+
+
+
+
+
+
+
 
 
         ' play stream but pause it
@@ -479,9 +514,18 @@ Public Class frmMain
 
             drawPixel(x, y, color)
 
+            pbPixelArray.Refresh()
+
+
         End If
 
-        
+        If cbRainbow2.Checked Then
+
+            tbHue.Value = tbHue.Value + 10
+
+            If tbHue.Value = 1000 Then tbHue.Value = 0
+
+        End If
 
         ' render visualizations
 
@@ -2116,6 +2160,8 @@ Public Class frmMain
 
         If cbEnableSpectrum.Checked Then
 
+            color1 = TextBox1.BackColor
+
             myVisuals.CreateSpectrum(stream, pixelArrayG, rectangle, color1, color2, bgColor, False, True, True)
             pbPixelArray.Refresh()
 
@@ -2223,6 +2269,21 @@ Public Class frmMain
 
 
         End If
+
+    End Sub
+
+    Private Sub tbHue_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tbHue.Scroll, tbHue.ValueChanged
+
+        Dim currentColor = TextBox1.BackColor
+
+        'TextBox1.BackColor = RGBHSL.ModifyHue(currentColor, CDbl(tbHue.Value) / 1000)
+
+        TextBox1.BackColor = RGBHSL.SetHue(TextBox1.BackColor, CDbl(tbHue.Value) / 1000)
+
+        lblHueValue.Text = CStr(CDbl(tbHue.Value) / 1000)
+
+        TextBox1.Refresh()
+
 
     End Sub
 
