@@ -481,115 +481,7 @@ Public Class frmMain
 
         End If
 
-        If cbEnableSpectrum.Checked Then
-
-            myVisuals.CreateSpectrum(stream, pixelArrayG, rectangle, color1, color2, bgColor, False, True, True)
-            pbPixelArray.Refresh()
-
-            'If SerialPort1.IsOpen Then
-
-            ' do this the right way - delta frames, sort the pixels to minimize color changes
-
-            'sendFrameDelta()
-
-            ' ----------------------------------------------------------------
-            ' NEW CODE ADDED TO SPEED UP SPECTRUM BARS
-
-            ' prepare the byte array
-            ' since each column is 15 tall, and since 4 bits can store 16 values, 
-            ' we can pack two of those 4-bit values per byte and send the entire array state in 13 bytes
-            ' BUT there can be no more than 15 pixels in a column for this to work
-
-            Dim byteIndex As Integer = 0
-            Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
-
-
-
-            ' if there's an odd number of columns then add 1 because we're sending columns in pairs
-            If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
-
-            byteArrayLength = byteArrayLength / 2
-
-            Dim byteArray(byteArrayLength - 1) As Byte
-
-            byteArray.Initialize()
-
-            ' send command plus byteArrayLength bytes for columns
-
-            For i = 0 To Val(txtMatrixCols.Text) - 1
-
-                ' for each column, find the non-black pixel with the greatest y value
-
-                For j = 0 To Val(txtMatrixRows.Text) - 1
-
-                    Dim thisColor = pixelArray.GetPixel(i, j)
-
-                    If Not (thisColor = Drawing.Color.FromArgb(255, 0, 0, 0)) Then
-
-                        ' if i = even then pack highest 4 bits of byteArray(byteIndex)
-
-                        If i Mod 2 = 0 Then
-
-                            byteArray(byteIndex) = j '<< 4
-                            byteArray(byteIndex) = byteArray(byteIndex) << 4
-
-                            If cbDebugMode.Checked Then
-
-                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
-
-                            End If
-
-                        Else
-
-                            ' if i = odd then pack the lowest 4 bits of byteArray(byteIndex)
-
-                            byteArray(byteIndex) = byteArray(byteIndex) Or j
-                            byteIndex += 1
-
-                            If cbDebugMode.Checked Then
-
-                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
-
-                            End If
-
-                        End If
-
-                        Exit For
-
-                        'Else
-
-                        '    If i Mod 2 = 0 Then
-
-                        '        byteArray(byteIndex) = 0
-                        '        byteArray(byteIndex) = byteArray(byteIndex) << 4
-
-                        '    Else
-
-                        '        byteArray(byteIndex) = byteArray(byteIndex) Or j
-
-                        '        byteIndex += 1
-
-                        '    End If
-
-                    End If
-
-                Next
-
-            Next
-
-            ' stop here to debug
-
-            ' now send the byteArray
-
-            If SerialPort1.IsOpen Then
-
-                SerialPort1.Write("#")
-                SerialPort1.Write(byteArray, 0, byteArrayLength)
-
-            End If
-
-
-        End If
+        
 
         ' render visualizations
 
@@ -935,7 +827,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub txtNumRows_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub txtNumRows_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNumRows.TextChanged, txtNumColumns.TextChanged
 
         Dim numRows As Byte = 0
         Dim matrixRows As Integer = 0
@@ -980,7 +872,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub txtNumChannels_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub txtNumChannels_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNumChannels.TextChanged
 
         Dim numChannels As Byte = 0
 
@@ -1035,7 +927,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub txtNumTLCs_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Private Sub txtNumTLCs_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNumTLCRows.TextChanged, txtNumTLCCols.TextChanged
 
         Dim newTLCs As Integer
 
@@ -1078,7 +970,7 @@ Public Class frmMain
 
     Private Sub updateNumLEDs()
 
-        If txtMatrixCols.Text <> "" And txtNumColumns.Text <> "" Then
+        If txtMatrixCols.Text <> "" And txtMatrixRows.Text <> "" And txtNumColumns.Text <> "" Then
 
             pixelArray = New Bitmap(Val(txtMatrixCols.Text), Val(txtMatrixRows.Text), Imaging.PixelFormat.Format24bppRgb)
             'pixelArrayG = Graphics.FromImage(pixelArray)
@@ -1323,7 +1215,7 @@ Public Class frmMain
 
             messageBitmapG.DrawString(txtSayIt.Text, scrollingFont, solidBrush, 0, verticalFontAdjust)
 
-            pbSayIt.Width = messageBitmapG.MeasureString(txtSayIt.Text, scrollingFont).Width + 10
+            pbSayIt.Width = messageBitmapG.MeasureString(txtSayIt.Text, scrollingFont).Width + 20
             pbSayIt.Height = messageBitmapG.MeasureString(txtSayIt.Text, scrollingFont).Height
 
 
@@ -1402,7 +1294,7 @@ Public Class frmMain
 
                 ' pixelArrayG.DrawImage(messageBitmap, column * -1, 0, messageBitmap.Width, messageBitmap.Height)
 
-
+                pbPixelArray.Refresh()
 
             Next
 
@@ -2219,7 +2111,119 @@ Public Class frmMain
     End Sub
 
 
-    Private Sub txtNumTLCRows_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtNumTLCRows.TextChanged
+
+    Private Sub timerSpectrum_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles timerSpectrum.Tick
+
+        If cbEnableSpectrum.Checked Then
+
+            myVisuals.CreateSpectrum(stream, pixelArrayG, rectangle, color1, color2, bgColor, False, True, True)
+            pbPixelArray.Refresh()
+
+            'If SerialPort1.IsOpen Then
+
+            ' do this the right way - delta frames, sort the pixels to minimize color changes
+
+            'sendFrameDelta()
+
+            ' ----------------------------------------------------------------
+            ' NEW CODE ADDED TO SPEED UP SPECTRUM BARS
+
+            ' prepare the byte array
+            ' since each column is 15 tall, and since 4 bits can store 16 values, 
+            ' we can pack two of those 4-bit values per byte and send the entire array state in 13 bytes
+            ' BUT there can be no more than 15 pixels in a column for this to work
+
+            Dim byteIndex As Integer = 0
+            Dim byteArrayLength As Integer = Val(txtMatrixCols.Text)
+
+
+
+            ' if there's an odd number of columns then add 1 because we're sending columns in pairs
+            If Not (byteArrayLength Mod 2 = 0) Then byteArrayLength += 1
+
+            byteArrayLength = byteArrayLength / 2
+
+            Dim byteArray(byteArrayLength - 1) As Byte
+
+            byteArray.Initialize()
+
+            ' send command plus byteArrayLength bytes for columns
+
+            For i = 0 To Val(txtMatrixCols.Text) - 1
+
+                ' for each column, find the non-black pixel with the greatest y value
+
+                For j = 0 To Val(txtMatrixRows.Text) - 1
+
+                    Dim thisColor = pixelArray.GetPixel(i, j)
+
+                    If Not (thisColor = Drawing.Color.FromArgb(255, 0, 0, 0)) Then
+
+                        ' if i = even then pack highest 4 bits of byteArray(byteIndex)
+
+                        If i Mod 2 = 0 Then
+
+                            byteArray(byteIndex) = j '<< 4
+                            byteArray(byteIndex) = byteArray(byteIndex) << 4
+
+                            If cbDebugMode.Checked Then
+
+                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
+
+                            End If
+
+                        Else
+
+                            ' if i = odd then pack the lowest 4 bits of byteArray(byteIndex)
+
+                            byteArray(byteIndex) = byteArray(byteIndex) Or j
+                            byteIndex += 1
+
+                            If cbDebugMode.Checked Then
+
+                                txtSerial.AppendText("BG SENT:  " & i & ", " & j & vbCrLf)
+
+                            End If
+
+                        End If
+
+                        Exit For
+
+                        'Else
+
+                        '    If i Mod 2 = 0 Then
+
+                        '        byteArray(byteIndex) = 0
+                        '        byteArray(byteIndex) = byteArray(byteIndex) << 4
+
+                        '    Else
+
+                        '        byteArray(byteIndex) = byteArray(byteIndex) Or j
+
+                        '        byteIndex += 1
+
+                        '    End If
+
+                    End If
+
+                Next
+
+            Next
+
+            ' stop here to debug
+
+            ' now send the byteArray
+
+            If SerialPort1.IsOpen Then
+
+                SerialPort1.Write("#")
+                SerialPort1.Write(byteArray, 0, byteArrayLength)
+
+            End If
+
+
+        End If
 
     End Sub
+
 End Class
