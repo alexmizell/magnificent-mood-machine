@@ -14,9 +14,11 @@ boolean debugMode = false;
 int slowDown = 50;
 
 // mapping arrays!
-//int tlcMap[16] = {9,8,3,2,10,7,4,1,11,6,5,0,0,0}; // create the tlcMap array, initialize with 3 rows x 4 columns, controller on bottom right
-int tlcMap[16] = {14,9,8,3,2,13,10,7,4,1,12,11,6,5,0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
+int tlcMap[16] = {9,8,3,2,10,7,4,1,11,6,5,0,0,0}; // create the tlcMap array, initialize with 3 rows x 4 columns, controller on bottom right
+//int tlcMap[16] = {14,9,8,3,2,13,10,7,4,1,12,11,6,5,0}; // create the tlcMap array, initialize with 3 rows x 5 columns, controller on bottom right
 int colorMap[3] = {2, 1, 0}; // this can map any of the three color channels to any other, in this case: blue to red, green to green, red to blue.  can adjust for different wiring schemes.
+unsigned int xyToPixelArrayLookup[400];  //  this speeds up the process of figuring a pixelArray index given an x,y 
+
 
 // This pin connects to the 74LS138 decoder chip's enable input
 int logicEnable = 2;
@@ -28,7 +30,7 @@ int rowSelectC = 29;
 
 // these environment variables set up the matrix geometry
 int numTLCRows = 3;   // number of rows of TLC panels
-int numTLCCols = 5;   // number of columns of TLC panels
+int numTLCCols = 4;   // number of columns of TLC panels
 int numTLCs = numTLCRows * numTLCCols;  // total number of TLCs chained together
 
 unsigned int numRows = 5;  // number of rows driven by a single TLC
@@ -91,7 +93,7 @@ int firstNibble;
 int secondNibble;
 
 void setup(){
- 
+  
 // initialize the pins as outputs:
 pinMode(rowSelectA, OUTPUT);
 pinMode(rowSelectB, OUTPUT);
@@ -118,7 +120,32 @@ if (!(barGraphArrayLength % 2 == 0)){ // if matrixColumns is an odd number
 barGraphArrayLength = barGraphArrayLength / 2; // figure bytes from nibbles
 
 Serial.begin(57600);
+
+// build the xyToPixelArrayLookup table
+byteNum = 0;
+
+Serial.println("Building pixelArray lookup table...");
+
+for(int j = 0; j < matrixRows; j++){
+
+   for(int i = 0; i < matrixColumns; i++){
+   
+   pixel = selectPixel(i,j);
+   xyToPixelArrayLookup[byteNum] = pixel;
+   
+   /* Serial.print(byteNum, DEC);
+   Serial.print(", ");
+   Serial.println(pixel, DEC); */
+
+   byteNum++;
+   
+   }
+  
+ }
+
+Serial.println();
 Serial.println("Ready.");
+
 
 }
 
@@ -691,9 +718,9 @@ void serialInputHandler(){
                                 
                                 for (int bgi = matrixRows - 1; bgi > firstNibble; bgi--){
                                 
-                                    selectPixel(barGraphRow, bgi);
+                                    lookupPixel(barGraphRow, bgi);
                                     
-                                    if (debugMode){
+                                    /* if (debugMode){
                                 
                                         Serial.print("x, y, pixel, blue: ");
                                         Serial.print(barGraphRow, DEC);
@@ -706,19 +733,21 @@ void serialInputHandler(){
                                    
                                         delay(slowDown);
                                    
-                                        }
+                                        } */
                                     
-                                    pixelArray[pixel * channelsPerLED] = red;
-                                    pixelArray[(pixel * channelsPerLED) + 1] = green;
-                                    pixelArray[(pixel * channelsPerLED) + 2] = blue;
+                                    pixel = pixel * channelsPerLED;
+                                    
+                                    pixelArray[pixel] = red;
+                                    pixelArray[pixel + 1] = green;
+                                    pixelArray[pixel + 2] = blue;
                                   
                                 }
                                 
                                 for (int bgi = firstNibble; bgi >= 0; bgi--){
                                 
-                                    selectPixel(barGraphRow, bgi);
+                                    lookupPixel(barGraphRow, bgi);
                                     
-                                    if (debugMode){
+                                    /* if (debugMode){
                                 
                                         Serial.print("x, y, pixel, blue: ");
                                         Serial.print(barGraphRow, DEC);
@@ -731,11 +760,13 @@ void serialInputHandler(){
                                         
                                         delay(slowDown);
                                    
-                                        }
+                                        } */
                                     
-                                    pixelArray[pixel * channelsPerLED] = 0;
-                                    pixelArray[(pixel * channelsPerLED) + 1] = 0;
-                                    pixelArray[(pixel * channelsPerLED) + 2] = 0;
+                                    pixel = pixel * channelsPerLED;
+                                    
+                                    pixelArray[pixel] = 0;
+                                    pixelArray[pixel + 1] = 0;
+                                    pixelArray[pixel + 2] = 0;
                                   
                                 }
                                 
@@ -757,9 +788,9 @@ void serialInputHandler(){
                                   
                                     for (int bgi = matrixRows - 1; bgi > secondNibble; bgi--){
                                 
-                                        selectPixel(barGraphRow + 1, bgi);
+                                        lookupPixel(barGraphRow + 1, bgi);
                                         
-                                        if (debugMode){
+                                        /* if (debugMode){
                                 
                                         Serial.print("x, y, pixel, blue: ");
                                         Serial.print(barGraphRow, DEC);
@@ -772,19 +803,21 @@ void serialInputHandler(){
                                    
                                         delay(slowDown);
                                    
-                                        }
+                                        } */
                                     
-                                        pixelArray[pixel * channelsPerLED] = red;
-                                        pixelArray[(pixel * channelsPerLED) + 1] = green;
-                                        pixelArray[(pixel * channelsPerLED) + 2] = blue;
+                                        pixel = pixel * channelsPerLED;
+                                    
+                                        pixelArray[pixel] = red;
+                                        pixelArray[pixel + 1] = green;
+                                        pixelArray[pixel + 2] = blue;
                                   
-                                     }
+                                        }
                                      
                                     for (int bgi = secondNibble; bgi >= 0; bgi--){  // why the +4??
                                 
-                                        selectPixel(barGraphRow + 1, bgi);
+                                        lookupPixel(barGraphRow + 1, bgi);
                                         
-                                        if (debugMode){
+                                        /* if (debugMode){
                                 
                                         Serial.print("x, y, pixel, blue: ");
                                         Serial.print(barGraphRow, DEC);
@@ -797,13 +830,15 @@ void serialInputHandler(){
                                    
                                         delay(slowDown);
                                    
-                                        }
+                                        } */
                                     
-                                        pixelArray[pixel * channelsPerLED] = 0;
-                                        pixelArray[(pixel * channelsPerLED) + 1] = 0;
-                                        pixelArray[(pixel * channelsPerLED) + 2] = 0;
+                                        pixel = pixel * channelsPerLED;
+                                    
+                                        pixelArray[pixel] = 0;
+                                        pixelArray[pixel + 1] = 0;
+                                        pixelArray[pixel + 2] = 0;
                                   
-                                    }  
+                                        }  
                                      
                                     /* if (debugMode){
                                 
@@ -1315,4 +1350,23 @@ int selectPixel(int x, int y){
 
 }
 
+int lookupPixel(int x, int y){
+  
+  pixel = (y * matrixColumns) + x;
+  pixel = xyToPixelArrayLookup[pixel];
+
+  /* if (debugMode){
+  
+     Serial.print("selectPixel(x,y,pixel): ");
+     Serial.print(x, DEC);
+     Serial.print(", ");
+     Serial.print(y, DEC);
+     Serial.print(", ");
+     Serial.println(pixel);
+  
+  } */
+  
+  return pixel;
+
+}
 

@@ -335,7 +335,7 @@ Partial Class frmMain
         Me.tbRed.Location = New System.Drawing.Point(248, 44)
         Me.tbRed.Maximum = 255
         Me.tbRed.Name = "tbRed"
-        Me.tbRed.Size = New System.Drawing.Size(193, 45)
+        Me.tbRed.Size = New System.Drawing.Size(193, 42)
         Me.tbRed.TabIndex = 15
         Me.tbRed.TickFrequency = 100
         '
@@ -344,7 +344,7 @@ Partial Class frmMain
         Me.tbGreen.Location = New System.Drawing.Point(248, 84)
         Me.tbGreen.Maximum = 255
         Me.tbGreen.Name = "tbGreen"
-        Me.tbGreen.Size = New System.Drawing.Size(193, 45)
+        Me.tbGreen.Size = New System.Drawing.Size(193, 42)
         Me.tbGreen.TabIndex = 15
         Me.tbGreen.TickFrequency = 100
         '
@@ -353,7 +353,7 @@ Partial Class frmMain
         Me.tbBlue.Location = New System.Drawing.Point(248, 125)
         Me.tbBlue.Maximum = 255
         Me.tbBlue.Name = "tbBlue"
-        Me.tbBlue.Size = New System.Drawing.Size(193, 45)
+        Me.tbBlue.Size = New System.Drawing.Size(193, 42)
         Me.tbBlue.TabIndex = 15
         Me.tbBlue.TickFrequency = 100
         '
@@ -706,7 +706,7 @@ Partial Class frmMain
         Me.txtNumTLCCols.Name = "txtNumTLCCols"
         Me.txtNumTLCCols.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCCols.TabIndex = 31
-        Me.txtNumTLCCols.Text = "5"
+        Me.txtNumTLCCols.Text = "4"
         Me.txtNumTLCCols.TextAlign = System.Windows.Forms.HorizontalAlignment.Center
         '
         'txtNumTLCs
@@ -955,25 +955,25 @@ Partial Class frmMain
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(35, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
         'OpenToolStripMenuItem
         '
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.OpenToolStripMenuItem.Text = "Open Bitmap"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.SaveToolStripMenuItem.Text = "Save Bitmap"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'OpenFileDialog1
@@ -1195,7 +1195,7 @@ Partial Class frmMain
         Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
         Me.tbRowOn.Maximum = 100
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(347, 45)
+        Me.tbRowOn.Size = New System.Drawing.Size(347, 42)
         Me.tbRowOn.TabIndex = 51
         '
         'tbRowOff
@@ -1203,7 +1203,7 @@ Partial Class frmMain
         Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
         Me.tbRowOff.Maximum = 100
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(347, 45)
+        Me.tbRowOff.Size = New System.Drawing.Size(347, 42)
         Me.tbRowOff.TabIndex = 51
         '
         'cbPlay
@@ -1333,14 +1333,14 @@ Partial Class frmMain
         'timerSpectrum
         '
         Me.timerSpectrum.Enabled = True
-        Me.timerSpectrum.Interval = 20
+        Me.timerSpectrum.Interval = 40
         '
         'tbHue
         '
         Me.tbHue.Location = New System.Drawing.Point(110, 95)
         Me.tbHue.Maximum = 1000
         Me.tbHue.Name = "tbHue"
-        Me.tbHue.Size = New System.Drawing.Size(119, 45)
+        Me.tbHue.Size = New System.Drawing.Size(119, 42)
         Me.tbHue.TabIndex = 1
         '
         'Label23

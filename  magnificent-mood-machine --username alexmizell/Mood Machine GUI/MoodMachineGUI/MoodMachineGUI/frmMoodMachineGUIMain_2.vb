@@ -248,8 +248,9 @@ Public Class frmMain
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
         ' for laptop
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Flevans\27 Devils\05.Mad Perks.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        stream = Bass.BASS_StreamCreateFile("K:\Nujazz and DnB Mix\DJ Alex Mizell - JazzyDnB Mix test mixdown 05.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
-        stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        'stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
 
         ''  SECRET SAUCE TO MAKE A BASS STREAM FROM AN INPUT
@@ -521,7 +522,7 @@ Public Class frmMain
 
         If cbRainbow2.Checked Then
 
-            tbHue.Value = tbHue.Value + 10
+            tbHue.Value = tbHue.Value + 5
 
             If tbHue.Value = 1000 Then tbHue.Value = 0
 
@@ -2283,6 +2284,12 @@ Public Class frmMain
         lblHueValue.Text = CStr(CDbl(tbHue.Value) / 1000)
 
         TextBox1.Refresh()
+
+        red = TextBox1.BackColor.R
+        green = TextBox1.BackColor.G
+        blue = TextBox1.BackColor.B
+
+        sendColor()
 
 
     End Sub
