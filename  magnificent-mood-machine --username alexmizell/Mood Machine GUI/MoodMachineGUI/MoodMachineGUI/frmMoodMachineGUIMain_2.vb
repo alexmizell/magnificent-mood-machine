@@ -1,5 +1,6 @@
 ﻿Imports System.Math
 Imports Un4seen.Bass
+Imports Un4seen.BassAsio
 Imports Un4seen.Bass.Misc.Visuals
 Imports System.Drawing
 Imports System.Runtime.InteropServices
@@ -88,6 +89,7 @@ Public Class frmMain
 
     Dim stream As Integer
     Dim lineInputHandle As Integer = 0
+    Dim asioInputHandle As Integer = 0
 
     Dim color1 As Color = Color.Blue
     Dim color2 As Color = Color.Blue
@@ -112,23 +114,24 @@ Public Class frmMain
     Dim rndcolor As Integer
 
 
-    Private lineInputProc As RECORDPROC
+    'Private lineInputProc As RECORDPROC
+    Private asioInputProc As ASIOPROC
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
 
         ' stopWatch1.Start()
 
-        'SerialPort1.Open()
+        SerialPort1.Open()
 
-        ''too-simple test with no timeout 
-        ''for determining whether we're connected to the MCU
-        ''slams the CPU, bad code, bad!
+        'too-simple test with no timeout 
+        'for determining whether we're connected to the MCU
+        'slams the CPU, bad code, bad!
 
-        'SerialPort1.Write("t") ' Send reset
+        SerialPort1.Write("t") ' Send reset
 
-        'While SerialPort1.BytesToRead < 1
-        'End While
+        While SerialPort1.BytesToRead < 1
+        End While
 
         System.Threading.Thread.Sleep(100)
 
@@ -248,37 +251,19 @@ Public Class frmMain
 
         ' init BASS API for audio processing
 
-        'Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 100)
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_REC_BUFFER, 10)
 
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_BUFFER, 5)
+        'Dim minimumbuffer As Integer = bassInfo.minbuf
 
-        Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero)
+        'Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 150)
 
-        Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
+        'Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_REC_BUFFER, 10)
 
-        Dim currentLatency As Integer = bassInfo.latency
-        'Dim minimumLatency As Integer = 
-
-        lblBassLatency.Text = "Bass.Net latency:  " & currentLatency.ToString & " ms"
-
-        ' build input list
-        Dim inputList() As String = Bass.BASS_RecordGetInputNames
-
-        Dim numDevices As Integer = Bass.BASS_RecordGetDeviceCount
-
-        For i As Integer = 0 To numDevices - 1
-
-            Dim name As String = Bass.BASS_RecordGetDeviceInfo(i).name
-            comboInputSelect.Items.Add(name)
-            
-        Next i
-
-        comboInputSelect.SelectedIndex = 0
+        'Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_BUFFER, 5)
 
 
         ' init recording input for
-        Bass.BASS_RecordInit(-1)
+        'Bass.BASS_RecordInit(-1)
+
 
         'For Each input As String In inputList
 
@@ -319,23 +304,80 @@ Public Class frmMain
 
         'Dim lineInputHandlerPtr = Marshal.GetFunctionPointerForDelegate(lineInputHandlerRef)
 
-        lineInputProc = New RECORDPROC(AddressOf lineInputHandler)
+        Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)
+
+        BassAsio.BASS_ASIO_Init(2, BASSASIOInit.BASS_ASIO_DEFAULT)
+
+        'Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
+        Dim bassAsioChannelInfo As New BASS_ASIO_CHANNELINFO
+
+        'Dim numDevices As Integer = BassAsio.BASS_ASIO_GetDeviceCount
+
+        For i As Integer = 0 To BassAsio.BASS_ASIO_GetDeviceCount - 1
+
+            Dim name As String = BassAsio.BASS_ASIO_GetDeviceInfo(i).name
+            comboInputSelect.Items.Add(i.ToString & " " & name)
+
+        Next i
+
+        comboInputSelect.SelectedIndex = 2
+
+        Dim j As Integer = 0
+
+        While BassAsio.BASS_ASIO_ChannelGetInfo(True, j, bassAsioChannelInfo)
+
+            cbChannels.Items.Add("IN" & j.ToString & " " & bassAsioChannelInfo.name & " " & BassAsio.BASS_ASIO_ChannelGetFormat(True, j).ToString)
+
+            j = j + 1
+
+        End While
+
+        j = 0
+
+        While BassAsio.BASS_ASIO_ChannelGetInfo(False, j, bassAsioChannelInfo)
+
+            cbChannels.Items.Add("OUT" & j.ToString & " " & bassAsioChannelInfo.name)
+
+            j = j + 1
+
+        End While
+
+        cbChannels.SelectedIndex = 6
+
+        'lineInputProc = New RECORDPROC(AddressOf lineInputHandler)
+
+        lineInputHandle = Bass.BASS_StreamCreate(44100, 1, BASSFlag.BASS_SAMPLE_FLOAT, BASSStreamProc.STREAMPROC_PUSH)
+
+        asioInputProc = New ASIOPROC(AddressOf asioInputHandler)
 
 
+        BassAsio.BASS_ASIO_ChannelSetFormat(True, 6, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT)
+        'BassAsio.BASS_ASIO_ChannelSetFormat(True, 1, BASSASIOFormat.BASS_ASIO_FORMAT_32BIT)
+        BassAsio.BASS_ASIO_ChannelSetRate(True, 6, 44100)
+        'BassAsio.BASS_ASIO_ChannelSetRate(True, 1, 44100)
+
+        BassAsio.BASS_ASIO_ChannelEnable(True, 6, asioInputProc, IntPtr.Zero)
+        'BassAsio.BASS_ASIO_ChannelEnable(True, 1, asioInputProc, New IntPtr(lineInputHandle))
+        'BassAsio.BASS_ASIO_ChannelJoin(False, 7, 6)
+
+        BassAsio.BASS_ASIO_Start(0)
+
+        'Dim outputLatency As Single = BassAsio.BASS_ASIO_GetLatency(True) / 44100
+        'lblBassLatency.Text = "Bass.Net latency:  " & outputLatency.ToString & " ms"
 
         'Dim lineInputDelegate = Marshal.GetDelegateForFunctionPointer
 
-        lineInputHandle = Bass.BASS_StreamCreate(44100, 2, 0, BASSStreamProc.STREAMPROC_PUSH)
+        'asioInputHandle = BassAsio.
 
-        Dim recordingHandle As Integer = Bass.BASS_RecordStart(44100, 2, 0, lineInputProc, IntPtr.Zero)
+        'Dim recordingHandle As Integer = Bass.BASS_RecordStart(44100, 2, 0, lineInputProc, IntPtr.Zero)
+
 
         'System.Threading.Thread.Sleep(100)
 
-        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_VOL, 0)
-        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_NOBUFFER, True)
+        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_VOL, 0.1)
+        'Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_NOBUFFER, True)
 
-
-        Bass.BASS_ChannelPlay(lineInputHandle, False)
+        Bass.BASS_ChannelPlay(lineInputHandle, True)
 
 
         'stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
@@ -374,8 +416,8 @@ Public Class frmMain
 
         ' for spectrum analyzer
         rectangle = New Rectangle(0, 0, pixelArray.Width + 1, pixelArray.Height)
-        myVisuals.MaxFrequencySpectrum = 350
-        myVisuals.ScaleFactorSqr = 4
+        myVisuals.MaxFrequencySpectrum = 300
+        myVisuals.ScaleFactorSqr = 6
 
         ' for bass_sfx visualisations
 
@@ -426,6 +468,15 @@ Public Class frmMain
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+
+        'Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
+
+        'Dim currentLatency As Integer = bassInfo.latency
+        ''Dim minimumLatency As Integer = 
+
+        'lblBassLatency.Text = "Bass.Net latency:  " & BassAsio.BASS_ASIO_GetLatency(True) & " samples"
+
+        'lblChannelPosition.Text = "Bass.Net Channel Position:  " & Bass.BASS_ChannelGetPosition(lineInputHandle).ToString
 
         If SerialPort1.IsOpen Then
 
@@ -2472,19 +2523,37 @@ Public Class frmMain
     Private Function lineInputHandler(ByVal recordingHandle As Integer, ByVal recBuffer As IntPtr, ByVal recLength As Integer, ByVal user As IntPtr)
 
 
-        Bass.BASS_StreamPutData(lineInputHandle, recBuffer, recLength)
+        'Bass.BASS_StreamPutData(lineInputHandle, recBuffer, recLength)
 
         Return (True)
 
     End Function
 
+    Private Function asioInputHandler(ByVal input As Boolean, ByVal channel As Integer, ByVal buffer As IntPtr, ByVal length As Integer, ByVal user As IntPtr)
 
-    Private Sub comboInputSelect_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles comboInputSelect.SelectedIndexChanged
+        If input Then
 
-        Bass.BASS_RecordSetDevice(comboInputSelect.SelectedIndex)
+            Bass.BASS_StreamPutData(lineInputHandle, buffer, length)
+
+        End If
+
+        'Dim bassAsioChannelInfo As New BASS_ASIO_CHANNELINFO
+
+
+
+        'Return Bass.BASS_ChannelGetData(user.ToInt32(), buffer, length)
+
+        Return (0)
+
+    End Function
+
+    Private Sub comboInputSelect_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles comboInputSelect.SelectedIndexChanged, cbChannels.SelectedIndexChanged
+
+        'Bass.BASS_RecordSetDevice(comboInputSelect.SelectedIndex)
 
         'MessageBox.Show(comboInputSelect.SelectedIndex)
 
+        'BassAsio.BASS_ASIO_SetDevice(comboInputSelect.SelectedIndex)
 
 
 
