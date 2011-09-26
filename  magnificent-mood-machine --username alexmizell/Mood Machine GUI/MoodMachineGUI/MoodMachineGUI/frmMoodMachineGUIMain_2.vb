@@ -306,7 +306,7 @@ Public Class frmMain
 
         Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)
 
-        BassAsio.BASS_ASIO_Init(2, BASSASIOInit.BASS_ASIO_DEFAULT)
+        BassAsio.BASS_ASIO_Init(0, BASSASIOInit.BASS_ASIO_DEFAULT)
 
         'Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
         Dim bassAsioChannelInfo As New BASS_ASIO_CHANNELINFO
@@ -320,7 +320,7 @@ Public Class frmMain
 
         Next i
 
-        comboInputSelect.SelectedIndex = 2
+        comboInputSelect.SelectedIndex = 0
 
         Dim j As Integer = 0
 
@@ -342,7 +342,7 @@ Public Class frmMain
 
         End While
 
-        cbChannels.SelectedIndex = 6
+        cbChannels.SelectedIndex = 0
 
         'lineInputProc = New RECORDPROC(AddressOf lineInputHandler)
 
@@ -351,12 +351,12 @@ Public Class frmMain
         asioInputProc = New ASIOPROC(AddressOf asioInputHandler)
 
 
-        BassAsio.BASS_ASIO_ChannelSetFormat(True, 6, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT)
+        BassAsio.BASS_ASIO_ChannelSetFormat(True, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT)
         'BassAsio.BASS_ASIO_ChannelSetFormat(True, 1, BASSASIOFormat.BASS_ASIO_FORMAT_32BIT)
-        BassAsio.BASS_ASIO_ChannelSetRate(True, 6, 44100)
+        BassAsio.BASS_ASIO_ChannelSetRate(True, 0, 44100)
         'BassAsio.BASS_ASIO_ChannelSetRate(True, 1, 44100)
 
-        BassAsio.BASS_ASIO_ChannelEnable(True, 6, asioInputProc, IntPtr.Zero)
+        BassAsio.BASS_ASIO_ChannelEnable(True, 0, asioInputProc, IntPtr.Zero)
         'BassAsio.BASS_ASIO_ChannelEnable(True, 1, asioInputProc, New IntPtr(lineInputHandle))
         'BassAsio.BASS_ASIO_ChannelJoin(False, 7, 6)
 
