@@ -154,6 +154,8 @@ Partial Class frmMain
         Me.cbLineInput = New System.Windows.Forms.CheckBox()
         Me.comboInputSelect = New System.Windows.Forms.ComboBox()
         Me.lblBassLatency = New System.Windows.Forms.Label()
+        Me.cbChannels = New System.Windows.Forms.ComboBox()
+        Me.lblChannelPosition = New System.Windows.Forms.Label()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -483,7 +485,9 @@ Partial Class frmMain
         '
         Me.tabMatrixSetup.Controls.Add(Me.cbFlipTLCHorizontal)
         Me.tabMatrixSetup.Controls.Add(Me.cbFlipTLCVertical)
+        Me.tabMatrixSetup.Controls.Add(Me.cbChannels)
         Me.tabMatrixSetup.Controls.Add(Me.chkFlipHorizontal)
+        Me.tabMatrixSetup.Controls.Add(Me.comboInputSelect)
         Me.tabMatrixSetup.Controls.Add(Me.chkFlipVertical)
         Me.tabMatrixSetup.Controls.Add(Me.txtNumChannelsPerLED)
         Me.tabMatrixSetup.Controls.Add(Me.lblChannelsPerLED)
@@ -554,7 +558,7 @@ Partial Class frmMain
         '
         'txtNumChannelsPerLED
         '
-        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(185, 128)
+        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(183, 111)
         Me.txtNumChannelsPerLED.Name = "txtNumChannelsPerLED"
         Me.txtNumChannelsPerLED.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannelsPerLED.TabIndex = 43
@@ -564,7 +568,7 @@ Partial Class frmMain
         'lblChannelsPerLED
         '
         Me.lblChannelsPerLED.AutoSize = True
-        Me.lblChannelsPerLED.Location = New System.Drawing.Point(82, 131)
+        Me.lblChannelsPerLED.Location = New System.Drawing.Point(80, 114)
         Me.lblChannelsPerLED.Name = "lblChannelsPerLED"
         Me.lblChannelsPerLED.Size = New System.Drawing.Size(97, 13)
         Me.lblChannelsPerLED.TabIndex = 36
@@ -574,7 +578,7 @@ Partial Class frmMain
         'lblNumColumns
         '
         Me.lblNumColumns.AutoSize = True
-        Me.lblNumColumns.Location = New System.Drawing.Point(104, 158)
+        Me.lblNumColumns.Location = New System.Drawing.Point(102, 141)
         Me.lblNumColumns.Name = "lblNumColumns"
         Me.lblNumColumns.Size = New System.Drawing.Size(75, 13)
         Me.lblNumColumns.TabIndex = 37
@@ -584,7 +588,7 @@ Partial Class frmMain
         'lblNumLEDs
         '
         Me.lblNumLEDs.AutoSize = True
-        Me.lblNumLEDs.Location = New System.Drawing.Point(271, 184)
+        Me.lblNumLEDs.Location = New System.Drawing.Point(269, 167)
         Me.lblNumLEDs.Name = "lblNumLEDs"
         Me.lblNumLEDs.Size = New System.Drawing.Size(61, 13)
         Me.lblNumLEDs.TabIndex = 34
@@ -594,7 +598,7 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(266, 131)
+        Me.Label4.Location = New System.Drawing.Point(264, 114)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(67, 13)
         Me.Label4.TabIndex = 35
@@ -604,7 +608,7 @@ Partial Class frmMain
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(253, 78)
+        Me.Label2.Location = New System.Drawing.Point(251, 61)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(80, 13)
         Me.Label2.TabIndex = 38
@@ -614,7 +618,7 @@ Partial Class frmMain
         'lblNumTLCs
         '
         Me.lblNumTLCs.AutoSize = True
-        Me.lblNumTLCs.Location = New System.Drawing.Point(117, 78)
+        Me.lblNumTLCs.Location = New System.Drawing.Point(115, 61)
         Me.lblNumTLCs.Name = "lblNumTLCs"
         Me.lblNumTLCs.Size = New System.Drawing.Size(60, 13)
         Me.lblNumTLCs.TabIndex = 41
@@ -624,7 +628,7 @@ Partial Class frmMain
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(273, 156)
+        Me.Label3.Location = New System.Drawing.Point(271, 139)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(57, 13)
         Me.Label3.TabIndex = 42
@@ -634,7 +638,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(259, 105)
+        Me.Label1.Location = New System.Drawing.Point(257, 88)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(73, 13)
         Me.Label1.TabIndex = 39
@@ -644,7 +648,7 @@ Partial Class frmMain
         'lblNumChannels
         '
         Me.lblNumChannels.AutoSize = True
-        Me.lblNumChannels.Location = New System.Drawing.Point(100, 105)
+        Me.lblNumChannels.Location = New System.Drawing.Point(98, 88)
         Me.lblNumChannels.Name = "lblNumChannels"
         Me.lblNumChannels.Size = New System.Drawing.Size(79, 13)
         Me.lblNumChannels.TabIndex = 40
@@ -654,7 +658,7 @@ Partial Class frmMain
         'lblNumRows
         '
         Me.lblNumRows.AutoSize = True
-        Me.lblNumRows.Location = New System.Drawing.Point(117, 185)
+        Me.lblNumRows.Location = New System.Drawing.Point(115, 168)
         Me.lblNumRows.Name = "lblNumRows"
         Me.lblNumRows.Size = New System.Drawing.Size(62, 13)
         Me.lblNumRows.TabIndex = 33
@@ -664,7 +668,7 @@ Partial Class frmMain
         'txtNumColumns
         '
         Me.txtNumColumns.Enabled = False
-        Me.txtNumColumns.Location = New System.Drawing.Point(185, 155)
+        Me.txtNumColumns.Location = New System.Drawing.Point(183, 138)
         Me.txtNumColumns.Name = "txtNumColumns"
         Me.txtNumColumns.Size = New System.Drawing.Size(46, 20)
         Me.txtNumColumns.TabIndex = 26
@@ -673,7 +677,7 @@ Partial Class frmMain
         'txtNumLEDs
         '
         Me.txtNumLEDs.Enabled = False
-        Me.txtNumLEDs.Location = New System.Drawing.Point(340, 181)
+        Me.txtNumLEDs.Location = New System.Drawing.Point(338, 164)
         Me.txtNumLEDs.Name = "txtNumLEDs"
         Me.txtNumLEDs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumLEDs.TabIndex = 27
@@ -682,7 +686,7 @@ Partial Class frmMain
         'txtMatrixRows
         '
         Me.txtMatrixRows.Enabled = False
-        Me.txtMatrixRows.Location = New System.Drawing.Point(340, 126)
+        Me.txtMatrixRows.Location = New System.Drawing.Point(338, 109)
         Me.txtMatrixRows.Name = "txtMatrixRows"
         Me.txtMatrixRows.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixRows.TabIndex = 24
@@ -690,7 +694,7 @@ Partial Class frmMain
         '
         'txtNumTLCRows
         '
-        Me.txtNumTLCRows.Location = New System.Drawing.Point(340, 75)
+        Me.txtNumTLCRows.Location = New System.Drawing.Point(338, 58)
         Me.txtNumTLCRows.Name = "txtNumTLCRows"
         Me.txtNumTLCRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCRows.TabIndex = 25
@@ -700,7 +704,7 @@ Partial Class frmMain
         'txtMatrixCols
         '
         Me.txtMatrixCols.Enabled = False
-        Me.txtMatrixCols.Location = New System.Drawing.Point(340, 153)
+        Me.txtMatrixCols.Location = New System.Drawing.Point(338, 136)
         Me.txtMatrixCols.Name = "txtMatrixCols"
         Me.txtMatrixCols.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixCols.TabIndex = 28
@@ -708,7 +712,7 @@ Partial Class frmMain
         '
         'txtNumTLCCols
         '
-        Me.txtNumTLCCols.Location = New System.Drawing.Point(340, 102)
+        Me.txtNumTLCCols.Location = New System.Drawing.Point(338, 85)
         Me.txtNumTLCCols.Name = "txtNumTLCCols"
         Me.txtNumTLCCols.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCCols.TabIndex = 31
@@ -718,7 +722,7 @@ Partial Class frmMain
         'txtNumTLCs
         '
         Me.txtNumTLCs.Enabled = False
-        Me.txtNumTLCs.Location = New System.Drawing.Point(185, 75)
+        Me.txtNumTLCs.Location = New System.Drawing.Point(183, 58)
         Me.txtNumTLCs.Name = "txtNumTLCs"
         Me.txtNumTLCs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCs.TabIndex = 32
@@ -726,7 +730,7 @@ Partial Class frmMain
         '
         'txtNumChannels
         '
-        Me.txtNumChannels.Location = New System.Drawing.Point(185, 102)
+        Me.txtNumChannels.Location = New System.Drawing.Point(183, 85)
         Me.txtNumChannels.Name = "txtNumChannels"
         Me.txtNumChannels.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannels.TabIndex = 29
@@ -735,7 +739,7 @@ Partial Class frmMain
         '
         'txtNumRows
         '
-        Me.txtNumRows.Location = New System.Drawing.Point(185, 182)
+        Me.txtNumRows.Location = New System.Drawing.Point(183, 165)
         Me.txtNumRows.Name = "txtNumRows"
         Me.txtNumRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumRows.TabIndex = 30
@@ -1260,7 +1264,7 @@ Partial Class frmMain
         '
         'pbMiniMe
         '
-        Me.pbMiniMe.Location = New System.Drawing.Point(422, 471)
+        Me.pbMiniMe.Location = New System.Drawing.Point(908, 513)
         Me.pbMiniMe.Name = "pbMiniMe"
         Me.pbMiniMe.Size = New System.Drawing.Size(100, 50)
         Me.pbMiniMe.TabIndex = 1
@@ -1269,20 +1273,22 @@ Partial Class frmMain
         'lblBytesPerFrame
         '
         Me.lblBytesPerFrame.AutoSize = True
-        Me.lblBytesPerFrame.Location = New System.Drawing.Point(576, 471)
+        Me.lblBytesPerFrame.Location = New System.Drawing.Point(397, 459)
         Me.lblBytesPerFrame.Name = "lblBytesPerFrame"
         Me.lblBytesPerFrame.Size = New System.Drawing.Size(90, 13)
         Me.lblBytesPerFrame.TabIndex = 53
         Me.lblBytesPerFrame.Text = "Bytes Per Frame: "
+        Me.lblBytesPerFrame.Visible = False
         '
         'lblAvgBytesPerFrame
         '
         Me.lblAvgBytesPerFrame.AutoSize = True
-        Me.lblAvgBytesPerFrame.Location = New System.Drawing.Point(576, 495)
+        Me.lblAvgBytesPerFrame.Location = New System.Drawing.Point(397, 483)
         Me.lblAvgBytesPerFrame.Name = "lblAvgBytesPerFrame"
         Me.lblAvgBytesPerFrame.Size = New System.Drawing.Size(109, 13)
         Me.lblAvgBytesPerFrame.TabIndex = 54
         Me.lblAvgBytesPerFrame.Text = "Avg Bytes Per Frame:"
+        Me.lblAvgBytesPerFrame.Visible = False
         '
         'pbSerialOut
         '
@@ -1427,19 +1433,38 @@ Partial Class frmMain
         'comboInputSelect
         '
         Me.comboInputSelect.FormattingEnabled = True
-        Me.comboInputSelect.Location = New System.Drawing.Point(837, 346)
+        Me.comboInputSelect.Location = New System.Drawing.Point(139, 192)
         Me.comboInputSelect.Name = "comboInputSelect"
-        Me.comboInputSelect.Size = New System.Drawing.Size(159, 21)
+        Me.comboInputSelect.Size = New System.Drawing.Size(231, 21)
         Me.comboInputSelect.TabIndex = 61
         '
         'lblBassLatency
         '
         Me.lblBassLatency.AutoSize = True
-        Me.lblBassLatency.Location = New System.Drawing.Point(576, 518)
+        Me.lblBassLatency.Location = New System.Drawing.Point(397, 506)
         Me.lblBassLatency.Name = "lblBassLatency"
         Me.lblBassLatency.Size = New System.Drawing.Size(118, 13)
         Me.lblBassLatency.TabIndex = 62
         Me.lblBassLatency.Text = "Bass.Net latency:  0 ms"
+        Me.lblBassLatency.Visible = False
+        '
+        'cbChannels
+        '
+        Me.cbChannels.FormattingEnabled = True
+        Me.cbChannels.Location = New System.Drawing.Point(139, 217)
+        Me.cbChannels.Name = "cbChannels"
+        Me.cbChannels.Size = New System.Drawing.Size(231, 21)
+        Me.cbChannels.TabIndex = 61
+        '
+        'lblChannelPosition
+        '
+        Me.lblChannelPosition.AutoSize = True
+        Me.lblChannelPosition.Location = New System.Drawing.Point(397, 528)
+        Me.lblChannelPosition.Name = "lblChannelPosition"
+        Me.lblChannelPosition.Size = New System.Drawing.Size(147, 13)
+        Me.lblChannelPosition.TabIndex = 62
+        Me.lblChannelPosition.Text = "Bass.Net Channel Position:  0"
+        Me.lblChannelPosition.Visible = False
         '
         'frmMain
         '
@@ -1447,8 +1472,8 @@ Partial Class frmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.lblChannelPosition)
         Me.Controls.Add(Me.lblBassLatency)
-        Me.Controls.Add(Me.comboInputSelect)
         Me.Controls.Add(Me.tbHueSpeed)
         Me.Controls.Add(Me.lblHueValue)
         Me.Controls.Add(Me.Label24)
@@ -1690,5 +1715,7 @@ Partial Class frmMain
     Friend WithEvents cbLineInput As System.Windows.Forms.CheckBox
     Friend WithEvents comboInputSelect As System.Windows.Forms.ComboBox
     Friend WithEvents lblBassLatency As System.Windows.Forms.Label
+    Friend WithEvents cbChannels As System.Windows.Forms.ComboBox
+    Friend WithEvents lblChannelPosition As System.Windows.Forms.Label
 
 End Class
