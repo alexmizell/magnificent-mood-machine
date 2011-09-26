@@ -87,6 +87,8 @@ Public Class frmMain
     Dim isDrag As Boolean
 
     Dim stream As Integer
+    Dim lineInputHandle As Integer = 0
+
     Dim color1 As Color = Color.Blue
     Dim color2 As Color = Color.Blue
     Dim bgColor As Color = Color.Black
@@ -100,27 +102,33 @@ Public Class frmMain
     Dim movingAverageList As List(Of Integer)
     Dim movingAverageCount As Integer
 
+    Dim bassRecordingFlag As Boolean = False
+    Dim recBuffer As New IntPtr
+    Dim recLength As New Integer
+    Dim recHandle As New Integer
+    Dim user As New IntPtr
+    Dim rnd As New Random
+    Dim color As Color
+    Dim rndcolor As Integer
 
 
-
-
-
+    Private lineInputProc As RECORDPROC
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
 
         ' stopWatch1.Start()
 
-        SerialPort1.Open()
+        'SerialPort1.Open()
 
-        'too-simple test with no timeout 
-        'for determining whether we're connected to the MCU
-        'slams the CPU, bad code, bad!
+        ''too-simple test with no timeout 
+        ''for determining whether we're connected to the MCU
+        ''slams the CPU, bad code, bad!
 
-        SerialPort1.Write("t") ' Send reset
+        'SerialPort1.Write("t") ' Send reset
 
-        While SerialPort1.BytesToRead < 1
-        End While
+        'While SerialPort1.BytesToRead < 1
+        'End While
 
         System.Threading.Thread.Sleep(100)
 
@@ -240,7 +248,44 @@ Public Class frmMain
 
         ' init BASS API for audio processing
 
-        Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)
+        'Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, 100)
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_REC_BUFFER, 10)
+
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_BUFFER, 5)
+
+        Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero)
+
+        Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
+
+        Dim currentLatency As Integer = bassInfo.latency
+        'Dim minimumLatency As Integer = 
+
+        lblBassLatency.Text = "Bass.Net latency:  " & currentLatency.ToString & " ms"
+
+        ' build input list
+        Dim inputList() As String = Bass.BASS_RecordGetInputNames
+
+        Dim numDevices As Integer = Bass.BASS_RecordGetDeviceCount
+
+        For i As Integer = 0 To numDevices - 1
+
+            Dim name As String = Bass.BASS_RecordGetDeviceInfo(i).name
+            comboInputSelect.Items.Add(name)
+            
+        Next i
+
+        comboInputSelect.SelectedIndex = 0
+
+
+        ' init recording input for
+        Bass.BASS_RecordInit(-1)
+
+        'For Each input As String In inputList
+
+        '    comboInputSelect.Items.Add(input)
+        '    comboInputSelect.SelectedItem = input
+
+        'Next
 
         ' create input stream
 
@@ -248,7 +293,50 @@ Public Class frmMain
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Proff\Anjunadeep Autumn Collection 01\Tell - Original Mix.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
         ' for laptop
         'stream = Bass.BASS_StreamCreateFile("J:\Music Archive\Flevans\27 Devils\05.Mad Perks.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
-        stream = Bass.BASS_StreamCreateFile("K:\Nujazz and DnB Mix\DJ Alex Mizell - JazzyDnB Mix test mixdown 05.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+        'stream = Bass.BASS_StreamCreateFile("E:\Nujazz and DnB Mix\DJ Alex Mizell - JazzyDnB Mix test mixdown 05.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
+
+        ' attempting to keep GC from eating my delegate
+        'Dim lineInputHandlerRef As lineInputCallback
+        'lineInputHandlerRef = AddressOf lineInputHandler
+
+
+        '    ********* MOAR SECRET SAUCE *********************
+        '      ' declare it as a member, to keep a reference
+        '      Private _myRecProc As RECORDPROC
+
+        '  Private Sub StartRecording()
+        '      ' create a callback delegate
+        '      _myRecProc = New RECORDPROC(AddressOf MyRecoring)
+        '      ' expose the delegate to unmanaged BASS  
+        '      rechandle = Bass.BASS_RecordStart(44100, 2, BASSRecord.BASS_DEFAULT, _myRecProc, IntPtr.Zero)
+        '  End Sub
+
+        '  Private Function MyRecoring(ByVal handle As Integer, ByVal buffer As IntPtr,
+        '                              ByVal length As Integer, ByVal user As IntPtr) As Boolean
+        '      ' this code will be invoked by unmanaged BASS
+        '...
+        '  End Function
+
+        'Dim lineInputHandlerPtr = Marshal.GetFunctionPointerForDelegate(lineInputHandlerRef)
+
+        lineInputProc = New RECORDPROC(AddressOf lineInputHandler)
+
+
+
+        'Dim lineInputDelegate = Marshal.GetDelegateForFunctionPointer
+
+        lineInputHandle = Bass.BASS_StreamCreate(44100, 2, 0, BASSStreamProc.STREAMPROC_PUSH)
+
+        Dim recordingHandle As Integer = Bass.BASS_RecordStart(44100, 2, 0, lineInputProc, IntPtr.Zero)
+
+        'System.Threading.Thread.Sleep(100)
+
+        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_VOL, 0)
+        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_NOBUFFER, True)
+
+
+        Bass.BASS_ChannelPlay(lineInputHandle, False)
+
 
         'stream = Bass.BASS_StreamCreateFile("C:\Music\Unbelievable.mp3", 0, 0, BASSFlag.BASS_SAMPLE_FLOAT)
 
@@ -274,29 +362,19 @@ Public Class frmMain
         'BASS_Init(-1, 44100, 0, 0, NULL);  // Choose output device (-1 default)
         'handle = BASS_StreamCreate(44100, 1, 0, STREAMPROC_PUSH, NULL); // Create the stream that plays the stuff
 
-
-
-
-
-
-
-
-
-
-
-
-
         ' play stream but pause it
 
-        Bass.BASS_ChannelPlay(stream, False)
-        Bass.BASS_Pause()
+        'Bass.BASS_ChannelPlay(stream, False)
+
+
+        'Bass.BASS_Pause()
 
         ' create visuals object
         myVisuals = New Un4seen.Bass.Misc.Visuals
 
         ' for spectrum analyzer
         rectangle = New Rectangle(0, 0, pixelArray.Width + 1, pixelArray.Height)
-        myVisuals.MaxFrequencySpectrum = 400
+        myVisuals.MaxFrequencySpectrum = 350
         myVisuals.ScaleFactorSqr = 4
 
         ' for bass_sfx visualisations
@@ -305,7 +383,7 @@ Public Class frmMain
 
         BASS_SFX_Init(System.Diagnostics.Process.GetCurrentProcess().Handle, Me.Handle)
 
-        BASS_SFX_PluginSetStream(hSFX, stream)
+        BASS_SFX_PluginSetStream(hSFX, lineInputHandle)
 
         pbMiniMe.Height = pixelArray.Height
         pbMiniMe.Width = pixelArray.Width
@@ -320,11 +398,11 @@ Public Class frmMain
         frameDeltaTimer = New Stopwatch
         movingAverageList = New List(Of Integer)
 
-        For i = 0 To 99
+        'For i = 0 To 99
 
-            movingAverageList.Add(0)
+        '    movingAverageList.Add(0)
 
-        Next
+        'Next
 
         movingAverageCount = 0
 
@@ -333,7 +411,7 @@ Public Class frmMain
 
     Private Sub btnPickColor_Click(ByVal sender As  _
         System.Object, _
-     ByVal e As System.EventArgs) Handles btnPickColor.Click, TextBox1.DoubleClick
+     ByVal e As System.EventArgs) Handles btnPickColor.Click, TextBox1.DoubleClick, TextBox1.Click
 
         If ColorDialog1.ShowDialog() = DialogResult.OK Then
 
@@ -445,9 +523,7 @@ Public Class frmMain
         End If
 
 
-        Dim rnd As New Random
-        Dim color As Color
-        Dim rndcolor As Integer
+
 
         If cbRandom.Checked Then
 
@@ -522,9 +598,13 @@ Public Class frmMain
 
         If cbRainbow2.Checked Then
 
-            tbHue.Value = tbHue.Value + 5
+            Dim hue As Single = tbHue.Value
 
-            If tbHue.Value = 1000 Then tbHue.Value = 0
+            If hue + (tbHueSpeed.Value * 0.045) >= 8192 Then hue = tbHue.Value - 8192
+
+            tbHue.Value = hue + (tbHueSpeed.Value * 0.045)
+
+
 
         End If
 
@@ -532,7 +612,12 @@ Public Class frmMain
 
         If cbVis1.Checked Then
 
-            BASS_SFX_PluginRender(hSFX, stream, hVisDC)
+
+
+            BASS_SFX_PluginRender(hSFX, lineInputHandle, hVisDC)
+
+
+
 
             'Dim bmp As Bitmap = CType(pbMiniMe.Image, Bitmap)
 
@@ -670,7 +755,7 @@ Public Class frmMain
 
         rectangle = New Rectangle(topLeft, bottomRight)
 
-        solidBrush.Color = Color.FromArgb(red, green, blue)
+        solidBrush.Color = color.FromArgb(red, green, blue)
 
         pixelArrayG.FillRectangle(solidBrush, rectangle)
         pbPixelArray.Refresh()
@@ -724,7 +809,7 @@ Public Class frmMain
 
     Private Sub updateTextBox()
 
-        TextBox1.BackColor = Color.FromArgb(Int(red), Int(green), Int(blue))
+        TextBox1.BackColor = color.FromArgb(Int(red), Int(green), Int(blue))
 
         If CheckBox1.Checked Or CheckBox2.Checked Or CheckBox3.Checked Then
             colorSolid()
@@ -1371,7 +1456,7 @@ Public Class frmMain
 
 
         txtFontName.Font = scrollingFont
-        txtFontName.ForeColor = Color.FromArgb(red, green, blue)
+        txtFontName.ForeColor = color.FromArgb(red, green, blue)
         txtFontName.Text = scrollingFont.Name
 
         txtSayIt.Font = scrollingFont
@@ -1721,11 +1806,11 @@ Public Class frmMain
 
                 If Int(rnd.Next(10)) < 3 Then
 
-                    drawPixel(tlcCols, tlcrows, Color.White)
+                    drawPixel(tlcCols, tlcrows, color.White)
 
                 Else
 
-                    drawPixel(tlcCols, tlcrows, Color.Black)
+                    drawPixel(tlcCols, tlcrows, color.Black)
 
                 End If
 
@@ -1760,6 +1845,7 @@ Public Class frmMain
 
     Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
 
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox1.BackColor
 
         red = color.R
@@ -1768,10 +1854,18 @@ Public Class frmMain
 
         colorSolid()
 
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
+
     End Sub
 
     Private Sub PictureBox2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox2.Click
 
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox2.BackColor
 
         red = color.R
@@ -1780,9 +1874,17 @@ Public Class frmMain
 
         colorSolid()
 
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox3.BackColor
 
         red = color.R
@@ -1790,9 +1892,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox4.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox4.BackColor
 
         red = color.R
@@ -1800,9 +1911,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox5.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox5.BackColor
 
         red = color.R
@@ -1810,9 +1930,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox6.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox6.BackColor
 
         red = color.R
@@ -1820,9 +1949,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox7.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox7.BackColor
 
         red = color.R
@@ -1830,9 +1968,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox8.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox8.BackColor
 
         red = color.R
@@ -1840,9 +1987,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox9_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox9.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox9.BackColor
 
         red = color.R
@@ -1850,9 +2006,18 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
     Private Sub PictureBox10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox10.Click
+
+        Dim initialColor As Color = TextBox1.BackColor
         Dim color = PictureBox10.BackColor
 
         red = color.R
@@ -1860,6 +2025,13 @@ Public Class frmMain
         blue = color.B
 
         colorSolid()
+
+        red = initialColor.R
+        green = initialColor.G
+        blue = initialColor.B
+
+        sendColor()
+
     End Sub
 
 
@@ -1895,6 +2067,7 @@ Public Class frmMain
                 Strobe()
 
         End Select
+
     End Sub
 
 
@@ -2110,8 +2283,8 @@ Public Class frmMain
         '    lblMaxBytesPerFrame.Text = "Max Bytes Per Frame: " & maxBytesPerFrame
 
         'End If
-        
-        
+
+
         If movingAverageCount > 99 Then movingAverageCount = 0
 
         movingAverageList(movingAverageCount) = bytesPerFrame
@@ -2162,8 +2335,9 @@ Public Class frmMain
         If cbEnableSpectrum.Checked Then
 
             color1 = TextBox1.BackColor
+            color2 = color1
 
-            myVisuals.CreateSpectrum(stream, pixelArrayG, rectangle, color1, color2, bgColor, False, True, True)
+            myVisuals.CreateSpectrum(lineInputHandle, pixelArrayG, rectangle, color1, color2, bgColor, False, True, True)
             pbPixelArray.Refresh()
 
             'If SerialPort1.IsOpen Then
@@ -2279,9 +2453,9 @@ Public Class frmMain
 
         'TextBox1.BackColor = RGBHSL.ModifyHue(currentColor, CDbl(tbHue.Value) / 1000)
 
-        TextBox1.BackColor = RGBHSL.SetHue(TextBox1.BackColor, CDbl(tbHue.Value) / 1000)
+        TextBox1.BackColor = RGBHSL.SetHue(TextBox1.BackColor, CDbl(tbHue.Value) / 8192)
 
-        lblHueValue.Text = CStr(CDbl(tbHue.Value) / 1000)
+        'lblHueValue.Text = CStr(CDbl(tbHue.Value) / 8192)
 
         TextBox1.Refresh()
 
@@ -2294,4 +2468,29 @@ Public Class frmMain
 
     End Sub
 
+
+    Private Function lineInputHandler(ByVal recordingHandle As Integer, ByVal recBuffer As IntPtr, ByVal recLength As Integer, ByVal user As IntPtr)
+
+
+        Bass.BASS_StreamPutData(lineInputHandle, recBuffer, recLength)
+
+        Return (True)
+
+    End Function
+
+
+    Private Sub comboInputSelect_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles comboInputSelect.SelectedIndexChanged
+
+        Bass.BASS_RecordSetDevice(comboInputSelect.SelectedIndex)
+
+        'MessageBox.Show(comboInputSelect.SelectedIndex)
+
+
+
+
+    End Sub
+
 End Class
+
+
+

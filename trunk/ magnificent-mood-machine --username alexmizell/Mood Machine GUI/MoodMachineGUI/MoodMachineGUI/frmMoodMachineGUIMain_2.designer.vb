@@ -148,6 +148,12 @@ Partial Class frmMain
         Me.Label23 = New System.Windows.Forms.Label()
         Me.lblHueValue = New System.Windows.Forms.Label()
         Me.cbRainbow2 = New System.Windows.Forms.CheckBox()
+        Me.tbHueSpeed = New System.Windows.Forms.TrackBar()
+        Me.Label24 = New System.Windows.Forms.Label()
+        Me.cbRainbowWave = New System.Windows.Forms.CheckBox()
+        Me.cbLineInput = New System.Windows.Forms.CheckBox()
+        Me.comboInputSelect = New System.Windows.Forms.ComboBox()
+        Me.lblBassLatency = New System.Windows.Forms.Label()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -172,6 +178,7 @@ Partial Class frmMain
         CType(Me.tbRowOff, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbMiniMe, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbHue, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.tbHueSpeed, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'ColorDialog1
@@ -186,7 +193,7 @@ Partial Class frmMain
         '
         'TextBox1
         '
-        Me.TextBox1.BackColor = System.Drawing.Color.DarkTurquoise
+        Me.TextBox1.BackColor = System.Drawing.Color.Aqua
         Me.TextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.TextBox1.Cursor = System.Windows.Forms.Cursors.Default
         Me.TextBox1.ForeColor = System.Drawing.Color.Aqua
@@ -277,7 +284,6 @@ Partial Class frmMain
         '
         'timerSinGenerator
         '
-        Me.timerSinGenerator.Enabled = True
         Me.timerSinGenerator.Interval = 2
         '
         'hsSinFreqDiv
@@ -335,7 +341,7 @@ Partial Class frmMain
         Me.tbRed.Location = New System.Drawing.Point(248, 44)
         Me.tbRed.Maximum = 255
         Me.tbRed.Name = "tbRed"
-        Me.tbRed.Size = New System.Drawing.Size(193, 42)
+        Me.tbRed.Size = New System.Drawing.Size(193, 45)
         Me.tbRed.TabIndex = 15
         Me.tbRed.TickFrequency = 100
         '
@@ -344,7 +350,7 @@ Partial Class frmMain
         Me.tbGreen.Location = New System.Drawing.Point(248, 84)
         Me.tbGreen.Maximum = 255
         Me.tbGreen.Name = "tbGreen"
-        Me.tbGreen.Size = New System.Drawing.Size(193, 42)
+        Me.tbGreen.Size = New System.Drawing.Size(193, 45)
         Me.tbGreen.TabIndex = 15
         Me.tbGreen.TickFrequency = 100
         '
@@ -353,7 +359,7 @@ Partial Class frmMain
         Me.tbBlue.Location = New System.Drawing.Point(248, 125)
         Me.tbBlue.Maximum = 255
         Me.tbBlue.Name = "tbBlue"
-        Me.tbBlue.Size = New System.Drawing.Size(193, 42)
+        Me.tbBlue.Size = New System.Drawing.Size(193, 45)
         Me.tbBlue.TabIndex = 15
         Me.tbBlue.TickFrequency = 100
         '
@@ -955,25 +961,25 @@ Partial Class frmMain
         '
         Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.SaveToolStripMenuItem, Me.ExitToolStripMenuItem})
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(35, 20)
+        Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 20)
         Me.FileToolStripMenuItem.Text = "File"
         '
         'OpenToolStripMenuItem
         '
         Me.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
-        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.OpenToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.OpenToolStripMenuItem.Text = "Open Bitmap"
         '
         'SaveToolStripMenuItem
         '
         Me.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
-        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.SaveToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.SaveToolStripMenuItem.Text = "Save Bitmap"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(135, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(144, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'OpenFileDialog1
@@ -1183,7 +1189,7 @@ Partial Class frmMain
         '
         Me.cbRandom.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRandom.AutoSize = True
-        Me.cbRandom.Location = New System.Drawing.Point(830, 158)
+        Me.cbRandom.Location = New System.Drawing.Point(831, 127)
         Me.cbRandom.Name = "cbRandom"
         Me.cbRandom.Size = New System.Drawing.Size(83, 23)
         Me.cbRandom.TabIndex = 50
@@ -1195,22 +1201,24 @@ Partial Class frmMain
         Me.tbRowOn.Location = New System.Drawing.Point(339, 373)
         Me.tbRowOn.Maximum = 100
         Me.tbRowOn.Name = "tbRowOn"
-        Me.tbRowOn.Size = New System.Drawing.Size(347, 42)
+        Me.tbRowOn.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOn.TabIndex = 51
+        Me.tbRowOn.TickFrequency = 20
         '
         'tbRowOff
         '
         Me.tbRowOff.Location = New System.Drawing.Point(339, 404)
         Me.tbRowOff.Maximum = 100
         Me.tbRowOff.Name = "tbRowOff"
-        Me.tbRowOff.Size = New System.Drawing.Size(347, 42)
+        Me.tbRowOff.Size = New System.Drawing.Size(347, 45)
         Me.tbRowOff.TabIndex = 51
+        Me.tbRowOff.TickFrequency = 20
         '
         'cbPlay
         '
         Me.cbPlay.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbPlay.AutoSize = True
-        Me.cbPlay.Location = New System.Drawing.Point(830, 190)
+        Me.cbPlay.Location = New System.Drawing.Point(833, 156)
         Me.cbPlay.Name = "cbPlay"
         Me.cbPlay.Size = New System.Drawing.Size(80, 23)
         Me.cbPlay.TabIndex = 52
@@ -1221,7 +1229,7 @@ Partial Class frmMain
         '
         Me.cbEnableSpectrum.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbEnableSpectrum.AutoSize = True
-        Me.cbEnableSpectrum.Location = New System.Drawing.Point(919, 190)
+        Me.cbEnableSpectrum.Location = New System.Drawing.Point(920, 156)
         Me.cbEnableSpectrum.Name = "cbEnableSpectrum"
         Me.cbEnableSpectrum.Size = New System.Drawing.Size(74, 23)
         Me.cbEnableSpectrum.TabIndex = 52
@@ -1232,18 +1240,18 @@ Partial Class frmMain
         '
         Me.cbRainbow.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRainbow.AutoSize = True
-        Me.cbRainbow.Location = New System.Drawing.Point(830, 127)
+        Me.cbRainbow.Location = New System.Drawing.Point(834, 279)
         Me.cbRainbow.Name = "cbRainbow"
-        Me.cbRainbow.Size = New System.Drawing.Size(83, 23)
+        Me.cbRainbow.Size = New System.Drawing.Size(90, 23)
         Me.cbRainbow.TabIndex = 50
-        Me.cbRainbow.Text = "    Rainbow1  "
+        Me.cbRainbow.Text = "Rainbow Solids"
         Me.cbRainbow.UseVisualStyleBackColor = True
         '
         'cbVis1
         '
         Me.cbVis1.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbVis1.AutoSize = True
-        Me.cbVis1.Location = New System.Drawing.Point(830, 220)
+        Me.cbVis1.Location = New System.Drawing.Point(833, 188)
         Me.cbVis1.Name = "cbVis1"
         Me.cbVis1.Size = New System.Drawing.Size(82, 23)
         Me.cbVis1.TabIndex = 52
@@ -1333,15 +1341,16 @@ Partial Class frmMain
         'timerSpectrum
         '
         Me.timerSpectrum.Enabled = True
-        Me.timerSpectrum.Interval = 40
+        Me.timerSpectrum.Interval = 50
         '
         'tbHue
         '
         Me.tbHue.Location = New System.Drawing.Point(110, 95)
-        Me.tbHue.Maximum = 1000
+        Me.tbHue.Maximum = 8192
         Me.tbHue.Name = "tbHue"
-        Me.tbHue.Size = New System.Drawing.Size(119, 42)
+        Me.tbHue.Size = New System.Drawing.Size(119, 45)
         Me.tbHue.TabIndex = 1
+        Me.tbHue.TickFrequency = 1024
         '
         'Label23
         '
@@ -1360,17 +1369,77 @@ Partial Class frmMain
         Me.lblHueValue.Size = New System.Drawing.Size(13, 13)
         Me.lblHueValue.TabIndex = 59
         Me.lblHueValue.Text = "0"
+        Me.lblHueValue.Visible = False
         '
         'cbRainbow2
         '
         Me.cbRainbow2.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRainbow2.AutoSize = True
-        Me.cbRainbow2.Location = New System.Drawing.Point(830, 258)
+        Me.cbRainbow2.Location = New System.Drawing.Point(833, 220)
         Me.cbRainbow2.Name = "cbRainbow2"
-        Me.cbRainbow2.Size = New System.Drawing.Size(83, 23)
+        Me.cbRainbow2.Size = New System.Drawing.Size(85, 23)
         Me.cbRainbow2.TabIndex = 50
-        Me.cbRainbow2.Text = "    Rainbow2  "
+        Me.cbRainbow2.Text = "    Hue Shift    "
         Me.cbRainbow2.UseVisualStyleBackColor = True
+        '
+        'tbHueSpeed
+        '
+        Me.tbHueSpeed.Location = New System.Drawing.Point(247, 90)
+        Me.tbHueSpeed.Maximum = 8192
+        Me.tbHueSpeed.Name = "tbHueSpeed"
+        Me.tbHueSpeed.Orientation = System.Windows.Forms.Orientation.Vertical
+        Me.tbHueSpeed.Size = New System.Drawing.Size(45, 211)
+        Me.tbHueSpeed.TabIndex = 60
+        Me.tbHueSpeed.TickFrequency = 1024
+        Me.tbHueSpeed.Value = 200
+        '
+        'Label24
+        '
+        Me.Label24.AutoSize = True
+        Me.Label24.Location = New System.Drawing.Point(244, 304)
+        Me.Label24.Name = "Label24"
+        Me.Label24.Size = New System.Drawing.Size(38, 13)
+        Me.Label24.TabIndex = 58
+        Me.Label24.Text = "Speed"
+        '
+        'cbRainbowWave
+        '
+        Me.cbRainbowWave.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbRainbowWave.AutoSize = True
+        Me.cbRainbowWave.Location = New System.Drawing.Point(833, 249)
+        Me.cbRainbowWave.Name = "cbRainbowWave"
+        Me.cbRainbowWave.Size = New System.Drawing.Size(91, 23)
+        Me.cbRainbowWave.TabIndex = 50
+        Me.cbRainbowWave.Text = "Rainbow Wave"
+        Me.cbRainbowWave.UseVisualStyleBackColor = True
+        '
+        'cbLineInput
+        '
+        Me.cbLineInput.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbLineInput.AutoSize = True
+        Me.cbLineInput.Location = New System.Drawing.Point(834, 308)
+        Me.cbLineInput.Name = "cbLineInput"
+        Me.cbLineInput.Size = New System.Drawing.Size(88, 23)
+        Me.cbLineInput.TabIndex = 50
+        Me.cbLineInput.Text = "    Line Input    "
+        Me.cbLineInput.UseVisualStyleBackColor = True
+        '
+        'comboInputSelect
+        '
+        Me.comboInputSelect.FormattingEnabled = True
+        Me.comboInputSelect.Location = New System.Drawing.Point(837, 346)
+        Me.comboInputSelect.Name = "comboInputSelect"
+        Me.comboInputSelect.Size = New System.Drawing.Size(159, 21)
+        Me.comboInputSelect.TabIndex = 61
+        '
+        'lblBassLatency
+        '
+        Me.lblBassLatency.AutoSize = True
+        Me.lblBassLatency.Location = New System.Drawing.Point(576, 518)
+        Me.lblBassLatency.Name = "lblBassLatency"
+        Me.lblBassLatency.Size = New System.Drawing.Size(118, 13)
+        Me.lblBassLatency.TabIndex = 62
+        Me.lblBassLatency.Text = "Bass.Net latency:  0 ms"
         '
         'frmMain
         '
@@ -1378,7 +1447,11 @@ Partial Class frmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.ControlDark
         Me.ClientSize = New System.Drawing.Size(1008, 562)
+        Me.Controls.Add(Me.lblBassLatency)
+        Me.Controls.Add(Me.comboInputSelect)
+        Me.Controls.Add(Me.tbHueSpeed)
         Me.Controls.Add(Me.lblHueValue)
+        Me.Controls.Add(Me.Label24)
         Me.Controls.Add(Me.Label23)
         Me.Controls.Add(Me.tbHue)
         Me.Controls.Add(Me.lblSelectedPixel)
@@ -1400,7 +1473,9 @@ Partial Class frmMain
         Me.Controls.Add(Me.tabContainer)
         Me.Controls.Add(Me.tbRowOff)
         Me.Controls.Add(Me.tbRowOn)
+        Me.Controls.Add(Me.cbRainbowWave)
         Me.Controls.Add(Me.cbRainbow2)
+        Me.Controls.Add(Me.cbLineInput)
         Me.Controls.Add(Me.cbRainbow)
         Me.Controls.Add(Me.cbRandom)
         Me.Controls.Add(Me.PictureBox10)
@@ -1447,6 +1522,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.btnPickColor)
         Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.MenuStrip1)
+        Me.KeyPreview = True
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Name = "frmMain"
         Me.Text = "The Magnificent Mood Machine Controller v1.0 by Alex Mizell"
@@ -1478,6 +1554,7 @@ Partial Class frmMain
         CType(Me.tbRowOff, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.pbMiniMe, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tbHue, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tbHueSpeed, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1607,5 +1684,11 @@ Partial Class frmMain
     Friend WithEvents Label23 As System.Windows.Forms.Label
     Friend WithEvents lblHueValue As System.Windows.Forms.Label
     Friend WithEvents cbRainbow2 As System.Windows.Forms.CheckBox
+    Friend WithEvents tbHueSpeed As System.Windows.Forms.TrackBar
+    Friend WithEvents Label24 As System.Windows.Forms.Label
+    Friend WithEvents cbRainbowWave As System.Windows.Forms.CheckBox
+    Friend WithEvents cbLineInput As System.Windows.Forms.CheckBox
+    Friend WithEvents comboInputSelect As System.Windows.Forms.ComboBox
+    Friend WithEvents lblBassLatency As System.Windows.Forms.Label
 
 End Class
