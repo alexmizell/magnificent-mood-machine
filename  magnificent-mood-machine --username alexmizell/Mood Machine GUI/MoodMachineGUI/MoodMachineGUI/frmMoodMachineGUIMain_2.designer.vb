@@ -163,6 +163,7 @@ Partial Class frmMain
         Me.btnFortune = New System.Windows.Forms.Button()
         Me.cbScrollRight = New System.Windows.Forms.CheckBox()
         Me.cbstars = New System.Windows.Forms.CheckBox()
+        Me.cbGameOfLife = New System.Windows.Forms.CheckBox()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -1365,7 +1366,6 @@ Partial Class frmMain
         Me.lblBytesPerFrame.Size = New System.Drawing.Size(90, 13)
         Me.lblBytesPerFrame.TabIndex = 53
         Me.lblBytesPerFrame.Text = "Bytes Per Frame: "
-        Me.lblBytesPerFrame.Visible = False
         '
         'lblAvgBytesPerFrame
         '
@@ -1375,7 +1375,6 @@ Partial Class frmMain
         Me.lblAvgBytesPerFrame.Size = New System.Drawing.Size(109, 13)
         Me.lblAvgBytesPerFrame.TabIndex = 54
         Me.lblAvgBytesPerFrame.Text = "Avg Bytes Per Frame:"
-        Me.lblAvgBytesPerFrame.Visible = False
         '
         'pbSerialOut
         '
@@ -1556,6 +1555,17 @@ Partial Class frmMain
         Me.cbstars.Text = "       Stars       "
         Me.cbstars.UseVisualStyleBackColor = True
         '
+        'cbGameOfLife
+        '
+        Me.cbGameOfLife.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbGameOfLife.AutoSize = True
+        Me.cbGameOfLife.Location = New System.Drawing.Point(834, 339)
+        Me.cbGameOfLife.Name = "cbGameOfLife"
+        Me.cbGameOfLife.Size = New System.Drawing.Size(85, 23)
+        Me.cbGameOfLife.TabIndex = 50
+        Me.cbGameOfLife.Text = " Game Of Life "
+        Me.cbGameOfLife.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1587,6 +1597,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.tabContainer)
         Me.Controls.Add(Me.tbRowOff)
         Me.Controls.Add(Me.tbRowOn)
+        Me.Controls.Add(Me.cbGameOfLife)
         Me.Controls.Add(Me.cbstars)
         Me.Controls.Add(Me.cbScrollRight)
         Me.Controls.Add(Me.cbRainbowWave)
@@ -1817,5 +1828,6 @@ Partial Class frmMain
     Friend WithEvents Label28 As System.Windows.Forms.Label
     Friend WithEvents cbScrollRight As System.Windows.Forms.CheckBox
     Friend WithEvents cbstars As System.Windows.Forms.CheckBox
+    Friend WithEvents cbGameOfLife As System.Windows.Forms.CheckBox
 
 End Class

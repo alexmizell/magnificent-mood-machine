@@ -1,0 +1,14 @@
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\MoodMachineGUI.exe
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\MoodMachineGUI.pdb
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\MoodMachineGUI.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\Bass.Net.dll
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\Bass.Net.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\ResolveAssemblyReference.cache
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\MoodMachineGUI.frmMain.resources
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\MoodMachineGUI.Resources.resources
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\GenerateResource.read.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\GenerateResource.write.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\MoodMachineGUI.exe
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\MoodMachineGUI.xml
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Release\MoodMachineGUI.pdb
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Release\fortunes.txt
