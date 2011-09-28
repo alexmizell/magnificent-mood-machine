@@ -36,3 +36,4 @@ C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Ma
 C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\MoodMachineGUI.Resources.resources
 C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.read.1.tlog
 C:\Documents and Settings\alex\Desktop\Mood Machine Working Code\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\obj\x86\Debug\GenerateResource.write.1.tlog
+J:\Mood Machine Project Files\Code Working Folder\current\Mood Machine GUI\MoodMachineGUI\MoodMachineGUI\bin\Debug\fortunes.txt

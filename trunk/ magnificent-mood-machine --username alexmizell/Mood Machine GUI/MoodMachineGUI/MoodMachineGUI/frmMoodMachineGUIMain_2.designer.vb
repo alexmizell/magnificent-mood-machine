@@ -57,9 +57,17 @@ Partial Class frmMain
         Me.tabBitMapView = New System.Windows.Forms.TabPage()
         Me.pbPixelArray = New System.Windows.Forms.PictureBox()
         Me.tabMatrixSetup = New System.Windows.Forms.TabPage()
+        Me.Label28 = New System.Windows.Forms.Label()
+        Me.Label26 = New System.Windows.Forms.Label()
+        Me.Label27 = New System.Windows.Forms.Label()
+        Me.tbSpectrumAnalyzerCutoff = New System.Windows.Forms.TrackBar()
+        Me.Label25 = New System.Windows.Forms.Label()
+        Me.tbSpectrumAnalyzerSens = New System.Windows.Forms.TrackBar()
         Me.cbFlipTLCHorizontal = New System.Windows.Forms.CheckBox()
         Me.cbFlipTLCVertical = New System.Windows.Forms.CheckBox()
+        Me.cbChannels = New System.Windows.Forms.ComboBox()
         Me.chkFlipHorizontal = New System.Windows.Forms.CheckBox()
+        Me.comboInputSelect = New System.Windows.Forms.ComboBox()
         Me.chkFlipVertical = New System.Windows.Forms.CheckBox()
         Me.txtNumChannelsPerLED = New System.Windows.Forms.TextBox()
         Me.lblChannelsPerLED = New System.Windows.Forms.Label()
@@ -130,7 +138,6 @@ Partial Class frmMain
         Me.cbRandom = New System.Windows.Forms.CheckBox()
         Me.tbRowOn = New System.Windows.Forms.TrackBar()
         Me.tbRowOff = New System.Windows.Forms.TrackBar()
-        Me.cbPlay = New System.Windows.Forms.CheckBox()
         Me.cbEnableSpectrum = New System.Windows.Forms.CheckBox()
         Me.cbRainbow = New System.Windows.Forms.CheckBox()
         Me.cbVis1 = New System.Windows.Forms.CheckBox()
@@ -151,11 +158,11 @@ Partial Class frmMain
         Me.tbHueSpeed = New System.Windows.Forms.TrackBar()
         Me.Label24 = New System.Windows.Forms.Label()
         Me.cbRainbowWave = New System.Windows.Forms.CheckBox()
-        Me.cbLineInput = New System.Windows.Forms.CheckBox()
-        Me.comboInputSelect = New System.Windows.Forms.ComboBox()
         Me.lblBassLatency = New System.Windows.Forms.Label()
-        Me.cbChannels = New System.Windows.Forms.ComboBox()
         Me.lblChannelPosition = New System.Windows.Forms.Label()
+        Me.btnFortune = New System.Windows.Forms.Button()
+        Me.cbScrollRight = New System.Windows.Forms.CheckBox()
+        Me.cbstars = New System.Windows.Forms.CheckBox()
         CType(Me.tbRed, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbGreen, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbBlue, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -163,6 +170,8 @@ Partial Class frmMain
         Me.tabBitMapView.SuspendLayout()
         CType(Me.pbPixelArray, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tabMatrixSetup.SuspendLayout()
+        CType(Me.tbSpectrumAnalyzerCutoff, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.tbSpectrumAnalyzerSens, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tabJunk.SuspendLayout()
         CType(Me.pbSayIt, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.MenuStrip1.SuspendLayout()
@@ -238,7 +247,7 @@ Partial Class frmMain
         '
         'btnReset
         '
-        Me.btnReset.Location = New System.Drawing.Point(920, 95)
+        Me.btnReset.Location = New System.Drawing.Point(919, 62)
         Me.btnReset.Name = "btnReset"
         Me.btnReset.Size = New System.Drawing.Size(73, 23)
         Me.btnReset.TabIndex = 7
@@ -254,6 +263,7 @@ Partial Class frmMain
         Me.lblR.Size = New System.Drawing.Size(15, 13)
         Me.lblR.TabIndex = 10
         Me.lblR.Text = "R"
+        Me.lblR.Visible = False
         '
         'lblG
         '
@@ -264,6 +274,7 @@ Partial Class frmMain
         Me.lblG.Size = New System.Drawing.Size(15, 13)
         Me.lblG.TabIndex = 10
         Me.lblG.Text = "G"
+        Me.lblG.Visible = False
         '
         'lblB
         '
@@ -274,6 +285,7 @@ Partial Class frmMain
         Me.lblB.Size = New System.Drawing.Size(14, 13)
         Me.lblB.TabIndex = 10
         Me.lblB.Text = "B"
+        Me.lblB.Visible = False
         '
         'lblFreq
         '
@@ -297,6 +309,7 @@ Partial Class frmMain
         Me.hsSinFreqDiv.Size = New System.Drawing.Size(153, 19)
         Me.hsSinFreqDiv.TabIndex = 12
         Me.hsSinFreqDiv.Value = 2000
+        Me.hsSinFreqDiv.Visible = False
         '
         'lblSinFreq
         '
@@ -306,6 +319,7 @@ Partial Class frmMain
         Me.lblSinFreq.Size = New System.Drawing.Size(101, 13)
         Me.lblSinFreq.TabIndex = 13
         Me.lblSinFreq.Text = "Sin1 Freq Div: 2000"
+        Me.lblSinFreq.Visible = False
         '
         'CheckBox1
         '
@@ -316,6 +330,7 @@ Partial Class frmMain
         Me.CheckBox1.TabIndex = 14
         Me.CheckBox1.Text = "Sin1"
         Me.CheckBox1.UseVisualStyleBackColor = True
+        Me.CheckBox1.Visible = False
         '
         'CheckBox2
         '
@@ -326,6 +341,7 @@ Partial Class frmMain
         Me.CheckBox2.TabIndex = 14
         Me.CheckBox2.Text = "Sin1"
         Me.CheckBox2.UseVisualStyleBackColor = True
+        Me.CheckBox2.Visible = False
         '
         'CheckBox3
         '
@@ -336,6 +352,7 @@ Partial Class frmMain
         Me.CheckBox3.TabIndex = 14
         Me.CheckBox3.Text = "Sin1"
         Me.CheckBox3.UseVisualStyleBackColor = True
+        Me.CheckBox3.Visible = False
         '
         'tbRed
         '
@@ -346,6 +363,7 @@ Partial Class frmMain
         Me.tbRed.Size = New System.Drawing.Size(193, 45)
         Me.tbRed.TabIndex = 15
         Me.tbRed.TickFrequency = 100
+        Me.tbRed.Visible = False
         '
         'tbGreen
         '
@@ -355,6 +373,7 @@ Partial Class frmMain
         Me.tbGreen.Size = New System.Drawing.Size(193, 45)
         Me.tbGreen.TabIndex = 15
         Me.tbGreen.TickFrequency = 100
+        Me.tbGreen.Visible = False
         '
         'tbBlue
         '
@@ -364,6 +383,7 @@ Partial Class frmMain
         Me.tbBlue.Size = New System.Drawing.Size(193, 45)
         Me.tbBlue.TabIndex = 15
         Me.tbBlue.TickFrequency = 100
+        Me.tbBlue.Visible = False
         '
         'txtRowOn
         '
@@ -474,7 +494,7 @@ Partial Class frmMain
         '
         'pbPixelArray
         '
-        Me.pbPixelArray.Location = New System.Drawing.Point(2, 2)
+        Me.pbPixelArray.Location = New System.Drawing.Point(1, 3)
         Me.pbPixelArray.Name = "pbPixelArray"
         Me.pbPixelArray.Size = New System.Drawing.Size(500, 300)
         Me.pbPixelArray.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
@@ -483,6 +503,12 @@ Partial Class frmMain
         '
         'tabMatrixSetup
         '
+        Me.tabMatrixSetup.Controls.Add(Me.Label28)
+        Me.tabMatrixSetup.Controls.Add(Me.Label26)
+        Me.tabMatrixSetup.Controls.Add(Me.Label27)
+        Me.tabMatrixSetup.Controls.Add(Me.tbSpectrumAnalyzerCutoff)
+        Me.tabMatrixSetup.Controls.Add(Me.Label25)
+        Me.tabMatrixSetup.Controls.Add(Me.tbSpectrumAnalyzerSens)
         Me.tabMatrixSetup.Controls.Add(Me.cbFlipTLCHorizontal)
         Me.tabMatrixSetup.Controls.Add(Me.cbFlipTLCVertical)
         Me.tabMatrixSetup.Controls.Add(Me.cbChannels)
@@ -516,6 +542,62 @@ Partial Class frmMain
         Me.tabMatrixSetup.Text = "Matrix setup"
         Me.tabMatrixSetup.UseVisualStyleBackColor = True
         '
+        'Label28
+        '
+        Me.Label28.AutoSize = True
+        Me.Label28.Location = New System.Drawing.Point(332, 80)
+        Me.Label28.Name = "Label28"
+        Me.Label28.Size = New System.Drawing.Size(150, 13)
+        Me.Label28.TabIndex = 64
+        Me.Label28.Text = "Spectrum Analyzer Freq Cutoff"
+        '
+        'Label26
+        '
+        Me.Label26.AutoSize = True
+        Me.Label26.Location = New System.Drawing.Point(17, 193)
+        Me.Label26.Name = "Label26"
+        Me.Label26.Size = New System.Drawing.Size(104, 13)
+        Me.Label26.TabIndex = 62
+        Me.Label26.Text = "ASIO Input Channel:"
+        '
+        'Label27
+        '
+        Me.Label27.AutoSize = True
+        Me.Label27.Location = New System.Drawing.Point(332, 17)
+        Me.Label27.Name = "Label27"
+        Me.Label27.Size = New System.Drawing.Size(145, 13)
+        Me.Label27.TabIndex = 64
+        Me.Label27.Text = "Spectrum Analyzer Sensitivity"
+        '
+        'tbSpectrumAnalyzerCutoff
+        '
+        Me.tbSpectrumAnalyzerCutoff.Location = New System.Drawing.Point(330, 103)
+        Me.tbSpectrumAnalyzerCutoff.Maximum = 2000
+        Me.tbSpectrumAnalyzerCutoff.Minimum = 25
+        Me.tbSpectrumAnalyzerCutoff.Name = "tbSpectrumAnalyzerCutoff"
+        Me.tbSpectrumAnalyzerCutoff.Size = New System.Drawing.Size(147, 45)
+        Me.tbSpectrumAnalyzerCutoff.TabIndex = 63
+        Me.tbSpectrumAnalyzerCutoff.TickFrequency = 200
+        Me.tbSpectrumAnalyzerCutoff.Value = 300
+        '
+        'Label25
+        '
+        Me.Label25.AutoSize = True
+        Me.Label25.Location = New System.Drawing.Point(22, 160)
+        Me.Label25.Name = "Label25"
+        Me.Label25.Size = New System.Drawing.Size(99, 13)
+        Me.Label25.TabIndex = 62
+        Me.Label25.Text = "ASIO Input Device:"
+        '
+        'tbSpectrumAnalyzerSens
+        '
+        Me.tbSpectrumAnalyzerSens.Location = New System.Drawing.Point(330, 36)
+        Me.tbSpectrumAnalyzerSens.Maximum = 20
+        Me.tbSpectrumAnalyzerSens.Name = "tbSpectrumAnalyzerSens"
+        Me.tbSpectrumAnalyzerSens.Size = New System.Drawing.Size(147, 45)
+        Me.tbSpectrumAnalyzerSens.TabIndex = 63
+        Me.tbSpectrumAnalyzerSens.Value = 6
+        '
         'cbFlipTLCHorizontal
         '
         Me.cbFlipTLCHorizontal.AutoSize = True
@@ -536,6 +618,14 @@ Partial Class frmMain
         Me.cbFlipTLCVertical.Text = "Flip TLC Map vertical"
         Me.cbFlipTLCVertical.UseVisualStyleBackColor = True
         '
+        'cbChannels
+        '
+        Me.cbChannels.FormattingEnabled = True
+        Me.cbChannels.Location = New System.Drawing.Point(127, 190)
+        Me.cbChannels.Name = "cbChannels"
+        Me.cbChannels.Size = New System.Drawing.Size(181, 21)
+        Me.cbChannels.TabIndex = 61
+        '
         'chkFlipHorizontal
         '
         Me.chkFlipHorizontal.AutoSize = True
@@ -545,6 +635,14 @@ Partial Class frmMain
         Me.chkFlipHorizontal.TabIndex = 44
         Me.chkFlipHorizontal.Text = "Flip horizontal"
         Me.chkFlipHorizontal.UseVisualStyleBackColor = True
+        '
+        'comboInputSelect
+        '
+        Me.comboInputSelect.FormattingEnabled = True
+        Me.comboInputSelect.Location = New System.Drawing.Point(127, 158)
+        Me.comboInputSelect.Name = "comboInputSelect"
+        Me.comboInputSelect.Size = New System.Drawing.Size(181, 21)
+        Me.comboInputSelect.TabIndex = 61
         '
         'chkFlipVertical
         '
@@ -558,7 +656,7 @@ Partial Class frmMain
         '
         'txtNumChannelsPerLED
         '
-        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(183, 111)
+        Me.txtNumChannelsPerLED.Location = New System.Drawing.Point(107, 67)
         Me.txtNumChannelsPerLED.Name = "txtNumChannelsPerLED"
         Me.txtNumChannelsPerLED.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannelsPerLED.TabIndex = 43
@@ -568,7 +666,7 @@ Partial Class frmMain
         'lblChannelsPerLED
         '
         Me.lblChannelsPerLED.AutoSize = True
-        Me.lblChannelsPerLED.Location = New System.Drawing.Point(80, 114)
+        Me.lblChannelsPerLED.Location = New System.Drawing.Point(4, 70)
         Me.lblChannelsPerLED.Name = "lblChannelsPerLED"
         Me.lblChannelsPerLED.Size = New System.Drawing.Size(97, 13)
         Me.lblChannelsPerLED.TabIndex = 36
@@ -578,7 +676,7 @@ Partial Class frmMain
         'lblNumColumns
         '
         Me.lblNumColumns.AutoSize = True
-        Me.lblNumColumns.Location = New System.Drawing.Point(102, 141)
+        Me.lblNumColumns.Location = New System.Drawing.Point(26, 97)
         Me.lblNumColumns.Name = "lblNumColumns"
         Me.lblNumColumns.Size = New System.Drawing.Size(75, 13)
         Me.lblNumColumns.TabIndex = 37
@@ -588,7 +686,7 @@ Partial Class frmMain
         'lblNumLEDs
         '
         Me.lblNumLEDs.AutoSize = True
-        Me.lblNumLEDs.Location = New System.Drawing.Point(269, 167)
+        Me.lblNumLEDs.Location = New System.Drawing.Point(193, 123)
         Me.lblNumLEDs.Name = "lblNumLEDs"
         Me.lblNumLEDs.Size = New System.Drawing.Size(61, 13)
         Me.lblNumLEDs.TabIndex = 34
@@ -598,7 +696,7 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(264, 114)
+        Me.Label4.Location = New System.Drawing.Point(188, 70)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(67, 13)
         Me.Label4.TabIndex = 35
@@ -608,7 +706,7 @@ Partial Class frmMain
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(251, 61)
+        Me.Label2.Location = New System.Drawing.Point(175, 17)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(80, 13)
         Me.Label2.TabIndex = 38
@@ -618,7 +716,7 @@ Partial Class frmMain
         'lblNumTLCs
         '
         Me.lblNumTLCs.AutoSize = True
-        Me.lblNumTLCs.Location = New System.Drawing.Point(115, 61)
+        Me.lblNumTLCs.Location = New System.Drawing.Point(39, 17)
         Me.lblNumTLCs.Name = "lblNumTLCs"
         Me.lblNumTLCs.Size = New System.Drawing.Size(60, 13)
         Me.lblNumTLCs.TabIndex = 41
@@ -628,7 +726,7 @@ Partial Class frmMain
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(271, 139)
+        Me.Label3.Location = New System.Drawing.Point(195, 95)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(57, 13)
         Me.Label3.TabIndex = 42
@@ -638,7 +736,7 @@ Partial Class frmMain
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(257, 88)
+        Me.Label1.Location = New System.Drawing.Point(181, 44)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(73, 13)
         Me.Label1.TabIndex = 39
@@ -648,7 +746,7 @@ Partial Class frmMain
         'lblNumChannels
         '
         Me.lblNumChannels.AutoSize = True
-        Me.lblNumChannels.Location = New System.Drawing.Point(98, 88)
+        Me.lblNumChannels.Location = New System.Drawing.Point(22, 44)
         Me.lblNumChannels.Name = "lblNumChannels"
         Me.lblNumChannels.Size = New System.Drawing.Size(79, 13)
         Me.lblNumChannels.TabIndex = 40
@@ -658,7 +756,7 @@ Partial Class frmMain
         'lblNumRows
         '
         Me.lblNumRows.AutoSize = True
-        Me.lblNumRows.Location = New System.Drawing.Point(115, 168)
+        Me.lblNumRows.Location = New System.Drawing.Point(39, 124)
         Me.lblNumRows.Name = "lblNumRows"
         Me.lblNumRows.Size = New System.Drawing.Size(62, 13)
         Me.lblNumRows.TabIndex = 33
@@ -668,7 +766,7 @@ Partial Class frmMain
         'txtNumColumns
         '
         Me.txtNumColumns.Enabled = False
-        Me.txtNumColumns.Location = New System.Drawing.Point(183, 138)
+        Me.txtNumColumns.Location = New System.Drawing.Point(107, 94)
         Me.txtNumColumns.Name = "txtNumColumns"
         Me.txtNumColumns.Size = New System.Drawing.Size(46, 20)
         Me.txtNumColumns.TabIndex = 26
@@ -677,7 +775,7 @@ Partial Class frmMain
         'txtNumLEDs
         '
         Me.txtNumLEDs.Enabled = False
-        Me.txtNumLEDs.Location = New System.Drawing.Point(338, 164)
+        Me.txtNumLEDs.Location = New System.Drawing.Point(262, 120)
         Me.txtNumLEDs.Name = "txtNumLEDs"
         Me.txtNumLEDs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumLEDs.TabIndex = 27
@@ -686,7 +784,7 @@ Partial Class frmMain
         'txtMatrixRows
         '
         Me.txtMatrixRows.Enabled = False
-        Me.txtMatrixRows.Location = New System.Drawing.Point(338, 109)
+        Me.txtMatrixRows.Location = New System.Drawing.Point(262, 65)
         Me.txtMatrixRows.Name = "txtMatrixRows"
         Me.txtMatrixRows.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixRows.TabIndex = 24
@@ -694,7 +792,7 @@ Partial Class frmMain
         '
         'txtNumTLCRows
         '
-        Me.txtNumTLCRows.Location = New System.Drawing.Point(338, 58)
+        Me.txtNumTLCRows.Location = New System.Drawing.Point(262, 14)
         Me.txtNumTLCRows.Name = "txtNumTLCRows"
         Me.txtNumTLCRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCRows.TabIndex = 25
@@ -704,7 +802,7 @@ Partial Class frmMain
         'txtMatrixCols
         '
         Me.txtMatrixCols.Enabled = False
-        Me.txtMatrixCols.Location = New System.Drawing.Point(338, 136)
+        Me.txtMatrixCols.Location = New System.Drawing.Point(262, 92)
         Me.txtMatrixCols.Name = "txtMatrixCols"
         Me.txtMatrixCols.Size = New System.Drawing.Size(46, 20)
         Me.txtMatrixCols.TabIndex = 28
@@ -712,7 +810,7 @@ Partial Class frmMain
         '
         'txtNumTLCCols
         '
-        Me.txtNumTLCCols.Location = New System.Drawing.Point(338, 85)
+        Me.txtNumTLCCols.Location = New System.Drawing.Point(262, 41)
         Me.txtNumTLCCols.Name = "txtNumTLCCols"
         Me.txtNumTLCCols.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCCols.TabIndex = 31
@@ -722,7 +820,7 @@ Partial Class frmMain
         'txtNumTLCs
         '
         Me.txtNumTLCs.Enabled = False
-        Me.txtNumTLCs.Location = New System.Drawing.Point(183, 58)
+        Me.txtNumTLCs.Location = New System.Drawing.Point(107, 14)
         Me.txtNumTLCs.Name = "txtNumTLCs"
         Me.txtNumTLCs.Size = New System.Drawing.Size(46, 20)
         Me.txtNumTLCs.TabIndex = 32
@@ -730,7 +828,7 @@ Partial Class frmMain
         '
         'txtNumChannels
         '
-        Me.txtNumChannels.Location = New System.Drawing.Point(183, 85)
+        Me.txtNumChannels.Location = New System.Drawing.Point(107, 41)
         Me.txtNumChannels.Name = "txtNumChannels"
         Me.txtNumChannels.Size = New System.Drawing.Size(46, 20)
         Me.txtNumChannels.TabIndex = 29
@@ -739,7 +837,7 @@ Partial Class frmMain
         '
         'txtNumRows
         '
-        Me.txtNumRows.Location = New System.Drawing.Point(183, 165)
+        Me.txtNumRows.Location = New System.Drawing.Point(107, 121)
         Me.txtNumRows.Name = "txtNumRows"
         Me.txtNumRows.Size = New System.Drawing.Size(46, 20)
         Me.txtNumRows.TabIndex = 30
@@ -769,7 +867,7 @@ Partial Class frmMain
         Me.tabJunk.Name = "tabJunk"
         Me.tabJunk.Size = New System.Drawing.Size(502, 304)
         Me.tabJunk.TabIndex = 3
-        Me.tabJunk.Text = "Junk"
+        Me.tabJunk.Text = " Debug"
         Me.tabJunk.UseVisualStyleBackColor = True
         '
         'Label9
@@ -824,7 +922,7 @@ Partial Class frmMain
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(774, 498)
+        Me.Label7.Location = New System.Drawing.Point(780, 511)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(18, 13)
         Me.Label7.TabIndex = 27
@@ -833,7 +931,7 @@ Partial Class frmMain
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(774, 469)
+        Me.Label6.Location = New System.Drawing.Point(780, 482)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(13, 13)
         Me.Label6.TabIndex = 28
@@ -945,7 +1043,7 @@ Partial Class frmMain
         '
         'btnDump
         '
-        Me.btnDump.Location = New System.Drawing.Point(920, 127)
+        Me.btnDump.Location = New System.Drawing.Point(919, 94)
         Me.btnDump.Name = "btnDump"
         Me.btnDump.Size = New System.Drawing.Size(73, 23)
         Me.btnDump.TabIndex = 45
@@ -1218,22 +1316,11 @@ Partial Class frmMain
         Me.tbRowOff.TabIndex = 51
         Me.tbRowOff.TickFrequency = 20
         '
-        'cbPlay
-        '
-        Me.cbPlay.Appearance = System.Windows.Forms.Appearance.Button
-        Me.cbPlay.AutoSize = True
-        Me.cbPlay.Location = New System.Drawing.Point(833, 156)
-        Me.cbPlay.Name = "cbPlay"
-        Me.cbPlay.Size = New System.Drawing.Size(80, 23)
-        Me.cbPlay.TabIndex = 52
-        Me.cbPlay.Text = "  Play Music  "
-        Me.cbPlay.UseVisualStyleBackColor = True
-        '
         'cbEnableSpectrum
         '
         Me.cbEnableSpectrum.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbEnableSpectrum.AutoSize = True
-        Me.cbEnableSpectrum.Location = New System.Drawing.Point(920, 156)
+        Me.cbEnableSpectrum.Location = New System.Drawing.Point(920, 127)
         Me.cbEnableSpectrum.Name = "cbEnableSpectrum"
         Me.cbEnableSpectrum.Size = New System.Drawing.Size(74, 23)
         Me.cbEnableSpectrum.TabIndex = 52
@@ -1244,7 +1331,7 @@ Partial Class frmMain
         '
         Me.cbRainbow.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRainbow.AutoSize = True
-        Me.cbRainbow.Location = New System.Drawing.Point(834, 279)
+        Me.cbRainbow.Location = New System.Drawing.Point(832, 215)
         Me.cbRainbow.Name = "cbRainbow"
         Me.cbRainbow.Size = New System.Drawing.Size(90, 23)
         Me.cbRainbow.TabIndex = 50
@@ -1255,7 +1342,7 @@ Partial Class frmMain
         '
         Me.cbVis1.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbVis1.AutoSize = True
-        Me.cbVis1.Location = New System.Drawing.Point(833, 188)
+        Me.cbVis1.Location = New System.Drawing.Point(834, 244)
         Me.cbVis1.Name = "cbVis1"
         Me.cbVis1.Size = New System.Drawing.Size(82, 23)
         Me.cbVis1.TabIndex = 52
@@ -1264,7 +1351,7 @@ Partial Class frmMain
         '
         'pbMiniMe
         '
-        Me.pbMiniMe.Location = New System.Drawing.Point(908, 513)
+        Me.pbMiniMe.Location = New System.Drawing.Point(12, 389)
         Me.pbMiniMe.Name = "pbMiniMe"
         Me.pbMiniMe.Size = New System.Drawing.Size(100, 50)
         Me.pbMiniMe.TabIndex = 1
@@ -1292,7 +1379,7 @@ Partial Class frmMain
         '
         'pbSerialOut
         '
-        Me.pbSerialOut.Location = New System.Drawing.Point(793, 493)
+        Me.pbSerialOut.Location = New System.Drawing.Point(799, 506)
         Me.pbSerialOut.Maximum = 4096
         Me.pbSerialOut.Name = "pbSerialOut"
         Me.pbSerialOut.Size = New System.Drawing.Size(179, 18)
@@ -1300,7 +1387,7 @@ Partial Class frmMain
         '
         'pbSerialIn
         '
-        Me.pbSerialIn.Location = New System.Drawing.Point(793, 469)
+        Me.pbSerialIn.Location = New System.Drawing.Point(799, 482)
         Me.pbSerialIn.Maximum = 4096
         Me.pbSerialIn.Name = "pbSerialIn"
         Me.pbSerialIn.Size = New System.Drawing.Size(178, 18)
@@ -1309,7 +1396,7 @@ Partial Class frmMain
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(842, 453)
+        Me.Label5.Location = New System.Drawing.Point(848, 466)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(68, 13)
         Me.Label5.TabIndex = 29
@@ -1381,7 +1468,7 @@ Partial Class frmMain
         '
         Me.cbRainbow2.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRainbow2.AutoSize = True
-        Me.cbRainbow2.Location = New System.Drawing.Point(833, 220)
+        Me.cbRainbow2.Location = New System.Drawing.Point(831, 156)
         Me.cbRainbow2.Name = "cbRainbow2"
         Me.cbRainbow2.Size = New System.Drawing.Size(85, 23)
         Me.cbRainbow2.TabIndex = 50
@@ -1412,59 +1499,62 @@ Partial Class frmMain
         '
         Me.cbRainbowWave.Appearance = System.Windows.Forms.Appearance.Button
         Me.cbRainbowWave.AutoSize = True
-        Me.cbRainbowWave.Location = New System.Drawing.Point(833, 249)
+        Me.cbRainbowWave.Location = New System.Drawing.Point(831, 185)
         Me.cbRainbowWave.Name = "cbRainbowWave"
         Me.cbRainbowWave.Size = New System.Drawing.Size(91, 23)
         Me.cbRainbowWave.TabIndex = 50
         Me.cbRainbowWave.Text = "Rainbow Wave"
         Me.cbRainbowWave.UseVisualStyleBackColor = True
         '
-        'cbLineInput
-        '
-        Me.cbLineInput.Appearance = System.Windows.Forms.Appearance.Button
-        Me.cbLineInput.AutoSize = True
-        Me.cbLineInput.Location = New System.Drawing.Point(834, 308)
-        Me.cbLineInput.Name = "cbLineInput"
-        Me.cbLineInput.Size = New System.Drawing.Size(88, 23)
-        Me.cbLineInput.TabIndex = 50
-        Me.cbLineInput.Text = "    Line Input    "
-        Me.cbLineInput.UseVisualStyleBackColor = True
-        '
-        'comboInputSelect
-        '
-        Me.comboInputSelect.FormattingEnabled = True
-        Me.comboInputSelect.Location = New System.Drawing.Point(139, 192)
-        Me.comboInputSelect.Name = "comboInputSelect"
-        Me.comboInputSelect.Size = New System.Drawing.Size(231, 21)
-        Me.comboInputSelect.TabIndex = 61
-        '
         'lblBassLatency
         '
         Me.lblBassLatency.AutoSize = True
-        Me.lblBassLatency.Location = New System.Drawing.Point(397, 506)
+        Me.lblBassLatency.Location = New System.Drawing.Point(804, 537)
         Me.lblBassLatency.Name = "lblBassLatency"
         Me.lblBassLatency.Size = New System.Drawing.Size(118, 13)
         Me.lblBassLatency.TabIndex = 62
         Me.lblBassLatency.Text = "Bass.Net latency:  0 ms"
-        Me.lblBassLatency.Visible = False
-        '
-        'cbChannels
-        '
-        Me.cbChannels.FormattingEnabled = True
-        Me.cbChannels.Location = New System.Drawing.Point(139, 217)
-        Me.cbChannels.Name = "cbChannels"
-        Me.cbChannels.Size = New System.Drawing.Size(231, 21)
-        Me.cbChannels.TabIndex = 61
         '
         'lblChannelPosition
         '
         Me.lblChannelPosition.AutoSize = True
-        Me.lblChannelPosition.Location = New System.Drawing.Point(397, 528)
+        Me.lblChannelPosition.Location = New System.Drawing.Point(397, 507)
         Me.lblChannelPosition.Name = "lblChannelPosition"
         Me.lblChannelPosition.Size = New System.Drawing.Size(147, 13)
         Me.lblChannelPosition.TabIndex = 62
         Me.lblChannelPosition.Text = "Bass.Net Channel Position:  0"
         Me.lblChannelPosition.Visible = False
+        '
+        'btnFortune
+        '
+        Me.btnFortune.Location = New System.Drawing.Point(379, 527)
+        Me.btnFortune.Name = "btnFortune"
+        Me.btnFortune.Size = New System.Drawing.Size(75, 23)
+        Me.btnFortune.TabIndex = 27
+        Me.btnFortune.Text = "Fortune!"
+        Me.btnFortune.UseVisualStyleBackColor = True
+        '
+        'cbScrollRight
+        '
+        Me.cbScrollRight.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbScrollRight.AutoSize = True
+        Me.cbScrollRight.Location = New System.Drawing.Point(834, 278)
+        Me.cbScrollRight.Name = "cbScrollRight"
+        Me.cbScrollRight.Size = New System.Drawing.Size(83, 23)
+        Me.cbScrollRight.TabIndex = 50
+        Me.cbScrollRight.Text = "  Scroll Right  "
+        Me.cbScrollRight.UseVisualStyleBackColor = True
+        '
+        'cbstars
+        '
+        Me.cbstars.Appearance = System.Windows.Forms.Appearance.Button
+        Me.cbstars.AutoSize = True
+        Me.cbstars.Location = New System.Drawing.Point(834, 307)
+        Me.cbstars.Name = "cbstars"
+        Me.cbstars.Size = New System.Drawing.Size(83, 23)
+        Me.cbstars.TabIndex = 50
+        Me.cbstars.Text = "       Stars       "
+        Me.cbstars.UseVisualStyleBackColor = True
         '
         'frmMain
         '
@@ -1492,15 +1582,15 @@ Partial Class frmMain
         Me.Controls.Add(Me.cbEnableSpectrum)
         Me.Controls.Add(Me.pbSerialOut)
         Me.Controls.Add(Me.cbVis1)
-        Me.Controls.Add(Me.cbPlay)
         Me.Controls.Add(Me.txtRowOff)
         Me.Controls.Add(Me.txtRowOn)
         Me.Controls.Add(Me.tabContainer)
         Me.Controls.Add(Me.tbRowOff)
         Me.Controls.Add(Me.tbRowOn)
+        Me.Controls.Add(Me.cbstars)
+        Me.Controls.Add(Me.cbScrollRight)
         Me.Controls.Add(Me.cbRainbowWave)
         Me.Controls.Add(Me.cbRainbow2)
-        Me.Controls.Add(Me.cbLineInput)
         Me.Controls.Add(Me.cbRainbow)
         Me.Controls.Add(Me.cbRandom)
         Me.Controls.Add(Me.PictureBox10)
@@ -1537,6 +1627,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.btnSendFrame)
         Me.Controls.Add(Me.txtFontName)
         Me.Controls.Add(Me.btnChooseFont)
+        Me.Controls.Add(Me.btnFortune)
         Me.Controls.Add(Me.btnSayIt)
         Me.Controls.Add(Me.txtSayIt)
         Me.Controls.Add(Me.btnColorSolid)
@@ -1560,6 +1651,8 @@ Partial Class frmMain
         CType(Me.pbPixelArray, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabMatrixSetup.ResumeLayout(False)
         Me.tabMatrixSetup.PerformLayout()
+        CType(Me.tbSpectrumAnalyzerCutoff, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.tbSpectrumAnalyzerSens, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tabJunk.ResumeLayout(False)
         Me.tabJunk.PerformLayout()
         CType(Me.pbSayIt, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1688,7 +1781,6 @@ Partial Class frmMain
     Friend WithEvents tabJunk As System.Windows.Forms.TabPage
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents Label6 As System.Windows.Forms.Label
-    Friend WithEvents cbPlay As System.Windows.Forms.CheckBox
     Friend WithEvents cbEnableSpectrum As System.Windows.Forms.CheckBox
     Friend WithEvents cbRainbow As System.Windows.Forms.CheckBox
     Friend WithEvents cbVis1 As System.Windows.Forms.CheckBox
@@ -1712,10 +1804,18 @@ Partial Class frmMain
     Friend WithEvents tbHueSpeed As System.Windows.Forms.TrackBar
     Friend WithEvents Label24 As System.Windows.Forms.Label
     Friend WithEvents cbRainbowWave As System.Windows.Forms.CheckBox
-    Friend WithEvents cbLineInput As System.Windows.Forms.CheckBox
     Friend WithEvents comboInputSelect As System.Windows.Forms.ComboBox
     Friend WithEvents lblBassLatency As System.Windows.Forms.Label
     Friend WithEvents cbChannels As System.Windows.Forms.ComboBox
     Friend WithEvents lblChannelPosition As System.Windows.Forms.Label
+    Friend WithEvents btnFortune As System.Windows.Forms.Button
+    Friend WithEvents Label26 As System.Windows.Forms.Label
+    Friend WithEvents Label25 As System.Windows.Forms.Label
+    Friend WithEvents tbSpectrumAnalyzerSens As System.Windows.Forms.TrackBar
+    Friend WithEvents Label27 As System.Windows.Forms.Label
+    Friend WithEvents tbSpectrumAnalyzerCutoff As System.Windows.Forms.TrackBar
+    Friend WithEvents Label28 As System.Windows.Forms.Label
+    Friend WithEvents cbScrollRight As System.Windows.Forms.CheckBox
+    Friend WithEvents cbstars As System.Windows.Forms.CheckBox
 
 End Class
