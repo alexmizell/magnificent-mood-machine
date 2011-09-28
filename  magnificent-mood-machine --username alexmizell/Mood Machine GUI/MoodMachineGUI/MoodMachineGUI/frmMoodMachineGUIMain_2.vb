@@ -113,6 +113,8 @@ Public Class frmMain
     Dim color As Color
     Dim rndcolor As Integer
 
+    Dim rainbowArray() As Color
+    Dim rainbowWaveCounter As Integer = 0
 
     'Private lineInputProc As RECORDPROC
     Private asioInputProc As ASIOPROC
@@ -185,7 +187,8 @@ Public Class frmMain
         Dim matrixTall As Integer = Val(txtNumTLCRows.Text) * Val(txtNumRows.Text)
         'Dim widestLetter As Integer
 
-        scrollingFont = New Font("Microsoft Sans Serif", 14, FontStyle.Regular, GraphicsUnit.Pixel)
+        'scrollingFont = New Font("Microsoft Sans Serif", 14, FontStyle.Regular, GraphicsUnit.Pixel)
+        scrollingFont = New Font("Century Gothic", 16, FontStyle.Bold, GraphicsUnit.Pixel)
         'scrollingFont = txtFontName.Font
 
 
@@ -306,7 +309,7 @@ Public Class frmMain
 
         Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero)
 
-        BassAsio.BASS_ASIO_Init(0, BASSASIOInit.BASS_ASIO_DEFAULT)
+        BassAsio.BASS_ASIO_Init(2, BASSASIOInit.BASS_ASIO_DEFAULT)
 
         'Dim bassInfo As BASS_INFO = Bass.BASS_GetInfo
         Dim bassAsioChannelInfo As New BASS_ASIO_CHANNELINFO
@@ -316,17 +319,17 @@ Public Class frmMain
         For i As Integer = 0 To BassAsio.BASS_ASIO_GetDeviceCount - 1
 
             Dim name As String = BassAsio.BASS_ASIO_GetDeviceInfo(i).name
-            comboInputSelect.Items.Add(i.ToString & " " & name)
+            comboInputSelect.Items.Add(i.ToString & ": " & name)
 
         Next i
 
-        comboInputSelect.SelectedIndex = 0
+        comboInputSelect.SelectedIndex = 2
 
         Dim j As Integer = 0
 
         While BassAsio.BASS_ASIO_ChannelGetInfo(True, j, bassAsioChannelInfo)
 
-            cbChannels.Items.Add("IN" & j.ToString & " " & bassAsioChannelInfo.name & " " & BassAsio.BASS_ASIO_ChannelGetFormat(True, j).ToString)
+            cbChannels.Items.Add("IN" & j.ToString & ": " & bassAsioChannelInfo.name & " ")
 
             j = j + 1
 
@@ -336,13 +339,13 @@ Public Class frmMain
 
         While BassAsio.BASS_ASIO_ChannelGetInfo(False, j, bassAsioChannelInfo)
 
-            cbChannels.Items.Add("OUT" & j.ToString & " " & bassAsioChannelInfo.name)
+            cbChannels.Items.Add("OUT" & j.ToString & ": " & bassAsioChannelInfo.name)
 
             j = j + 1
 
         End While
 
-        cbChannels.SelectedIndex = 0
+        cbChannels.SelectedIndex = 6
 
         'lineInputProc = New RECORDPROC(AddressOf lineInputHandler)
 
@@ -351,16 +354,16 @@ Public Class frmMain
         asioInputProc = New ASIOPROC(AddressOf asioInputHandler)
 
 
-        BassAsio.BASS_ASIO_ChannelSetFormat(True, 0, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT)
+        BassAsio.BASS_ASIO_ChannelSetFormat(True, 6, BASSASIOFormat.BASS_ASIO_FORMAT_FLOAT)
         'BassAsio.BASS_ASIO_ChannelSetFormat(True, 1, BASSASIOFormat.BASS_ASIO_FORMAT_32BIT)
-        BassAsio.BASS_ASIO_ChannelSetRate(True, 0, 44100)
+        'BassAsio.BASS_ASIO_ChannelSetRate(True, 0, 44100)
         'BassAsio.BASS_ASIO_ChannelSetRate(True, 1, 44100)
 
-        BassAsio.BASS_ASIO_ChannelEnable(True, 0, asioInputProc, IntPtr.Zero)
+        BassAsio.BASS_ASIO_ChannelEnable(True, 6, asioInputProc, IntPtr.Zero)
         'BassAsio.BASS_ASIO_ChannelEnable(True, 1, asioInputProc, New IntPtr(lineInputHandle))
         'BassAsio.BASS_ASIO_ChannelJoin(False, 7, 6)
 
-        BassAsio.BASS_ASIO_Start(0)
+        BassAsio.BASS_ASIO_Start(256)
 
         'Dim outputLatency As Single = BassAsio.BASS_ASIO_GetLatency(True) / 44100
         'lblBassLatency.Text = "Bass.Net latency:  " & outputLatency.ToString & " ms"
@@ -374,8 +377,8 @@ Public Class frmMain
 
         'System.Threading.Thread.Sleep(100)
 
-        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_VOL, 0.1)
-        'Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_NOBUFFER, True)
+        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_VOL, 0)
+        Bass.BASS_ChannelSetAttribute(lineInputHandle, BASSAttribute.BASS_ATTRIB_NOBUFFER, True)
 
         Bass.BASS_ChannelPlay(lineInputHandle, True)
 
@@ -416,8 +419,9 @@ Public Class frmMain
 
         ' for spectrum analyzer
         rectangle = New Rectangle(0, 0, pixelArray.Width + 1, pixelArray.Height)
-        myVisuals.MaxFrequencySpectrum = 300
-        myVisuals.ScaleFactorSqr = 6
+        myVisuals.MaxFrequencySpectrum = tbSpectrumAnalyzerCutoff.Value
+        myVisuals.ScaleFactorSqr = tbSpectrumAnalyzerSens.Value
+
 
         ' for bass_sfx visualisations
 
@@ -448,6 +452,23 @@ Public Class frmMain
 
         movingAverageCount = 0
 
+        lblBassLatency.Text = "Bass.Net latency:  " & BassAsio.BASS_ASIO_GetLatency(True) & " samples"
+
+        ' create rainbow color array
+        ' array is twice long as the matrix is tall
+
+        ReDim rainbowArray(Val(txtMatrixRows.Text) * 2)
+
+        For i = 0 To Val(txtMatrixRows.Text) * 2
+
+            Dim hue = (1 / Val(txtMatrixRows.Text)) * i
+
+            If hue > 1 Then hue = hue - 1
+
+            rainbowArray(i) = RGBHSL.SetHue(Drawing.Color.Red, hue)
+
+        Next i
+        
 
     End Sub
 
@@ -474,7 +495,7 @@ Public Class frmMain
         'Dim currentLatency As Integer = bassInfo.latency
         ''Dim minimumLatency As Integer = 
 
-        'lblBassLatency.Text = "Bass.Net latency:  " & BassAsio.BASS_ASIO_GetLatency(True) & " samples"
+
 
         'lblChannelPosition.Text = "Bass.Net Channel Position:  " & Bass.BASS_ChannelGetPosition(lineInputHandle).ToString
 
@@ -498,6 +519,28 @@ Public Class frmMain
             'txtSerial.Text = txtSerial.Text & SerialInput.ToString
 
             txtSerial.AppendText(SerialInput)
+
+        End If
+
+        If cbstars.Checked Then
+
+            Dim farRightCol As Integer = Val(txtMatrixCols.Text) - 1
+
+            For j = 0 To Val(txtMatrixRows.Text) - 1
+
+                If GetRandom(0, 100) = 0 Then
+
+                    drawPixel(farRightCol, j, TextBox1.BackColor)
+
+                Else
+
+                    drawPixel(farRightCol, j, color.Black)
+
+                End If
+
+            Next
+
+            btnShiftLeft_Click(sender, e)
 
         End If
 
@@ -656,38 +699,56 @@ Public Class frmMain
             tbHue.Value = hue + (tbHueSpeed.Value * 0.045)
 
 
-
         End If
 
         ' render visualizations
 
         If cbVis1.Checked Then
 
-
-
             BASS_SFX_PluginRender(hSFX, lineInputHandle, hVisDC)
-
-
-
 
             'Dim bmp As Bitmap = CType(pbMiniMe.Image, Bitmap)
 
             'pbPixelArray.BackgroundImage = CType(copyRect(pbMiniMe, New RectangleF(0, 0, pbMiniMe.Width, pbMiniMe.Height)), Bitmap)
             'pbPixelArray.Refresh()
 
+        End If
 
+        If cbRainbowWave.Checked Then
 
+            btnShiftLeft_Click(sender, e)
+
+            Dim farRightCol As Integer = Val(txtMatrixCols.Text) - 1
+
+            If rainbowWaveCounter = 15 Then rainbowWaveCounter = 0
+
+            Dim color As Color
+
+            For j = 0 To Val(txtMatrixRows.Text) - 1
+
+                'writing down the far right column
+                'selectPixel(Val(txtMatrixCols.Text) - 1, j)
+
+                color = rainbowArray(j + rainbowWaveCounter)
+
+                drawPixel(farRightCol, j, color)
+
+            Next
+
+            rainbowWaveCounter = rainbowWaveCounter + 1
+
+            pbPixelArray.Refresh()
 
         End If
 
+        If cbScrollRight.Checked Then
+
+            btnShiftLeft_Click(sender, e)
+
+        End If
 
     End Sub
 
-    Private Sub btnRainbow_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-
-
-
-    End Sub
 
     Private Sub btnReset_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnReset.Click
 
@@ -1471,11 +1532,14 @@ Public Class frmMain
 
                 btnShiftLeft_Click(sender, e)
 
-                pixelArrayG.DrawImage(pixelArray, -1, 0)
+                ' slow down scroll speed if not connected
+                If Not SerialPort1.IsOpen Then System.Threading.Thread.Sleep(20)
 
-                ' pixelArrayG.DrawImage(messageBitmap, column * -1, 0, messageBitmap.Width, messageBitmap.Height)
+                'pixelArrayG.DrawImage(pixelArray, -1, 0)
 
-                pbPixelArray.Refresh()
+                '' pixelArrayG.DrawImage(messageBitmap, column * -1, 0, messageBitmap.Width, messageBitmap.Height)
+
+                'pbPixelArray.Refresh()
 
             Next
 
@@ -1687,7 +1751,9 @@ Public Class frmMain
 
         End If
 
-        Dim pixelArrayShifted As Bitmap = pixelArray.Clone
+        pixelArrayG.DrawImage(pixelArray, -1, 0)
+
+        pbPixelArray.Refresh()
 
 
     End Sub
@@ -2178,23 +2244,6 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub cbPlay_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbPlay.CheckedChanged, cbVis1.CheckedChanged
-
-
-        If cbPlay.Checked Then
-
-            Bass.BASS_Start()
-
-        Else
-
-            Bass.BASS_Pause()
-
-        End If
-
-    End Sub
-
-
-
     Private Sub frmMain_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed
 
         ReleaseDC(pbPixelArray.Handle, hVisDC)
@@ -2558,6 +2607,59 @@ Public Class frmMain
 
 
     End Sub
+
+    Private Sub btnFortune_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFortune.Click
+
+        ' dim load fortune.txt into string array
+        ' load it every time the button is pushed in case it was updated
+
+        Dim fortunes(1) As String
+
+        Dim streamReader As New System.IO.StreamReader("fortunes.txt")
+
+        Dim i As Integer = 0
+
+        While Not streamReader.EndOfStream
+
+            Array.Resize(fortunes, i + 1)
+            fortunes(i) = streamReader.ReadLine
+            i = i + 1
+
+        End While
+
+        txtSayIt.Text = fortunes(GetRandom(0, fortunes.Length - 1))
+
+        txtSayIt.Refresh()
+
+        btnSayIt_Click(sender, e)
+
+        streamReader.Close()
+
+    End Sub
+
+    Public Function GetRandom(ByVal Min As Integer, ByVal Max As Integer) As Integer
+
+        ' by making Generator static, we preserve the same instance '
+        ' (i.e., do not create new instances with the same seed over and over) '
+        ' between calls '
+
+        Static Generator As System.Random = New System.Random()
+        Return Generator.Next(Min, Max)
+
+    End Function
+
+    Private Sub tbSpectrumAnalyzerSens_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tbSpectrumAnalyzerSens.Scroll
+
+        myVisuals.ScaleFactorSqr = tbSpectrumAnalyzerSens.Value
+
+    End Sub
+
+    Private Sub tbSpectrumAnalyzerCutoff_Scroll(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tbSpectrumAnalyzerCutoff.Scroll
+
+        myVisuals.MaxFrequencySpectrum = tbSpectrumAnalyzerCutoff.Value
+
+    End Sub
+
 
 End Class
 
