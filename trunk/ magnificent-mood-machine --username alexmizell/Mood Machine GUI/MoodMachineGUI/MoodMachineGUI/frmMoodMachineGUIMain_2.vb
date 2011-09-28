@@ -75,6 +75,7 @@ Public Class frmMain
 
     Dim pixelArray As Bitmap
     Dim lastFrame As Bitmap
+    Dim frameBeforeLast As Bitmap
     Dim pixelArrayG As Graphics
 
     Dim lastColor As Color
@@ -124,16 +125,16 @@ Public Class frmMain
 
         ' stopWatch1.Start()
 
-        SerialPort1.Open()
+        'SerialPort1.Open()
 
-        'too-simple test with no timeout 
-        'for determining whether we're connected to the MCU
-        'slams the CPU, bad code, bad!
+        ''too-simple test with no timeout 
+        ''for determining whether we're connected to the MCU
+        ''slams the CPU, bad code, bad!
 
-        SerialPort1.Write("t") ' Send reset
+        'SerialPort1.Write("t") ' Send reset
 
-        While SerialPort1.BytesToRead < 1
-        End While
+        'While SerialPort1.BytesToRead < 1
+        'End While
 
         System.Threading.Thread.Sleep(100)
 
@@ -444,11 +445,11 @@ Public Class frmMain
         frameDeltaTimer = New Stopwatch
         movingAverageList = New List(Of Integer)
 
-        'For i = 0 To 99
+        For i = 0 To 99
 
-        '    movingAverageList.Add(0)
+            movingAverageList.Add(0)
 
-        'Next
+        Next
 
         movingAverageCount = 0
 
@@ -541,6 +542,101 @@ Public Class frmMain
             Next
 
             btnShiftLeft_Click(sender, e)
+
+        End If
+
+        If cbGameOfLife.Checked Then
+
+            Dim farRightCol As Integer = Val(txtMatrixCols.Text) - 1
+
+            Dim neighborCount As Integer = 0
+
+            Dim color As Color = TextBox1.BackColor
+
+
+            ' make a new bitmap from pixelarray
+            Dim newPixelArray As Bitmap = pixelArray.Clone
+
+            For y As Integer = 0 To Val(txtMatrixRows.Text) - 1
+
+                For x As Integer = 0 To Val(txtMatrixCols.Text) - 1
+
+                    Dim xminus1 = x - 1
+                    Dim xplus1 = x + 1
+                    Dim yminus1 = y - 1
+                    Dim yplus1 = y + 1
+
+                    ' wrap around first and last columns and rows
+                    If xminus1 < 0 Then xminus1 = farRightCol
+                    If xplus1 > farRightCol Then xplus1 = 0
+                    If yminus1 < 0 Then yminus1 = Val(txtMatrixRows.Text) - 1
+                    If yplus1 > Val(txtMatrixRows.Text) - 1 Then yplus1 = 0
+
+                    ' total up the number of neighbors
+                    If Not pixelArray.GetPixel(xminus1, yminus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(x, yminus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(xplus1, yminus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(xminus1, y) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(xplus1, y) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(xminus1, yplus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(x, yplus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+                    If Not pixelArray.GetPixel(xplus1, yplus1) = color.FromArgb(255, 0, 0, 0) Then neighborCount = neighborCount + 1
+
+                    ' if the cell is populated
+                    If Not pixelArray.GetPixel(x, y) = color.FromArgb(255, 0, 0, 0) Then
+
+                        ' pixel so ronery
+                        If neighborCount <= 1 Then newPixelArray.SetPixel(x, y, Drawing.Color.Black)
+
+                        ' survival!
+                        If neighborCount >= 2 And neighborCount <= 3 Then newPixelArray.SetPixel(x, y, color)
+
+                        ' overpopulation
+                        If neighborCount >= 4 Then newPixelArray.SetPixel(x, y, Drawing.Color.Black)
+
+                    Else ' if the cell is empty
+
+                        ' hot 3 way sex
+                        If neighborCount = 3 Then
+
+                            newPixelArray.SetPixel(x, y, color)
+
+                        Else
+
+                            ' sweet merciful death
+                            newPixelArray.SetPixel(x, y, Drawing.Color.Black)
+
+                            ' spontaneous generation of life just for visual interest (keeps it from dying)
+
+                            If neighborCount > 0 Then
+
+                                If GetRandom(0, 800) = 0 Then newPixelArray.SetPixel(x, y, color)
+
+                            End If
+
+                        End If
+
+
+                    End If
+
+
+
+                    neighborCount = 0
+
+                Next
+
+            Next
+
+            'frameBeforeLast = lastFrame
+            lastFrame = pixelArray.Clone
+
+            pixelArray = newPixelArray
+
+            pbPixelArray.BackgroundImage = pixelArray
+
+            pbPixelArray.Refresh()
+
+            sendFrameDelta()
 
         End If
 
@@ -746,6 +842,8 @@ Public Class frmMain
             btnShiftLeft_Click(sender, e)
 
         End If
+
+        'pbPixelArray.Refresh()
 
     End Sub
 
@@ -1297,7 +1395,7 @@ Public Class frmMain
         End If
     End Sub
 
-    Private Sub selectPixel(ByVal x As Integer, ByVal y As Integer)
+    Private Sub selectPixelByXY(ByVal x As Integer, ByVal y As Integer)
 
         Dim pixel As Integer = y * Val(txtMatrixCols.Text) + x
 
@@ -1624,7 +1722,7 @@ Public Class frmMain
             ' send pixel on to the array
             ' not that easy here either
 
-            selectPixel(x, y)
+            selectPixelByXY(x, y)
 
             If color <> lastColor Then
 
@@ -2358,7 +2456,7 @@ Public Class frmMain
             End If
 
             ' color should be right, send pixel on
-            selectPixel(pixelData(3), pixelData(4))
+            selectPixelByXY(pixelData(3), pixelData(4))
 
             bytesPerFrame += 3
 
@@ -2660,6 +2758,73 @@ Public Class frmMain
 
     End Sub
 
+
+
+    Private Sub cbGameOfLife_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cbGameOfLife.CheckedChanged
+
+        If cbGameOfLife.Checked Then
+
+
+
+            ' iterate once for every cell
+            For j = 0 To Val(txtMatrixRows.Text) - 1
+
+                For i = 0 To Val(txtMatrixCols.Text) - 1
+
+                    If GetRandom(0, 2) = 0 Then
+
+                        drawPixel(i, j, Drawing.Color.Black)
+
+                    Else
+
+                        drawPixel(i, j, Drawing.Color.White)
+
+                    End If
+
+                Next
+
+            Next
+
+        Else
+
+            Dim oldColor As Color = TextBox1.BackColor
+
+            ' clear the matrix
+            red = 0
+            green = 0
+            blue = 0
+            colorSolid()
+
+            ' green
+            red = oldColor.R
+            green = oldColor.G
+            blue = oldColor.B
+
+
+        End If
+
+        pbPixelArray.Refresh()
+
+    End Sub
+
+    Private Sub selectPixel(ByVal pixel)
+
+        lblSelectedPixel.Text = "Selected pixel: " & pixel
+
+        Dim byteArray(2) As Byte
+
+        byteArray = BitConverter.GetBytes(pixel)
+
+        If SerialPort1.IsOpen Then
+
+            SerialPort1.Write("p")
+            SerialPort1.Write(byteArray, 0, 2)
+
+            'txtSerial.AppendText("SENT p: " & totalOffset & " " & byteArray.ToString & vbCrLf)
+
+        End If
+
+    End Sub
 
 End Class
 
